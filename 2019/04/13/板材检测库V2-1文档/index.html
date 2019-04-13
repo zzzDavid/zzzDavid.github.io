@@ -1,7 +1,22 @@
-<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><meta name="author" content="Niansong Zhang"><link rel="icon" href="/me.jpg"><title>Niansong Zhang</title><meta name="description"><link rel="alternate" type="application/rss+xml" title="Niansong Zhang" href="/atom.xml"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/highlight.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class="container-fluid"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target="#main-navbar" class="navbar-toggle"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Niansong Zhang</a></div><div id="main-navbar" class="collapse navbar-collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/archives">Archive</a></li><li><a href="https://github.com/zzzDavid">Github</a></li><li><a href="/about/">About</a></li></ul></div><div class="avatar-container"><div class="avatar-img-border"><a href="/"><img src="/me.jpg" class="avatar-img"></a></div></div></div></nav><header class="header-section"><div class="intro-header no-img"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>板材检测库V2.1文档</h1><p class="post-meta">Posted on Apr 13 2019 · <a href="/tags/CV/" class="tag post-meta">CV</a></p></div></div></div></div></div></header><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role="main" class="blog-post"><p>GitHub代码地址为：<a href="https://github.com/Patrick22414/MeasurePlate.git" target="_blank" rel="noopener">MeasurePlate</a>，这是一个私人仓库，需要相应的权限才可以进入。项目环境配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- Visual Studio 2015及以上</span><br><span class="line">- .netFramework 4.6以上 （推荐使用4.7.2）</span><br><span class="line">- .netFramework 开发环境</span><br><span class="line">- OpenCvSharp4.Windows</span><br><span class="line">- NUnit（UnitTest测试用，非必要）</span><br></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Measure                             Project名称</span><br><span class="line">|-------UnitTests.cs                单元测试文件</span><br><span class="line">|-------src</span><br><span class="line">        |------Circles.cs           检测内部孔</span><br><span class="line">        |------Curves.cs            检测外轮廓中曲线</span><br><span class="line">        |------Lines.cs             检测外轮廓中直线</span><br><span class="line">        |------MeasurePlates.cs     Constructor与Destructor</span><br><span class="line">        |------Rectangular.cs       当板材为矩形板时，检测角点与长宽对角线差</span><br><span class="line">        |------Slots.cs             检测铣槽与锯槽</span><br><span class="line">        |------TestAPIs.cs          测试中查看Private成员使用的API</span><br><span class="line">        |______Utils.cs             工具函数</span><br></pre></td></tr></table></figure>
-<h2 id="主要函数"><a href="#主要函数" class="headerlink" title="主要函数"></a>主要函数</h2><p>此项目的全部代码使用一个命名空间<code>Measure</code>, 并且整个库只包含一个类<code>MeasurePlate</code>。此类中包含7个功能函数，分别实现板材检测的某一个功能。功能函数的名称与作用如下：<br>下表中所有函数输出变量<code>status</code>表示函数执行状态，输入<code>unit</code>代表输出数据的单位，默认毫米，后不再赘述。</p>
+<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><meta name="author" content="Niansong Zhang"><link rel="icon" href="/me.jpg"><title>Niansong Zhang</title><meta name="description"><link rel="alternate" type="application/rss+xml" title="Niansong Zhang" href="/atom.xml"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/highlight.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"></head><body><nav class="navbar navbar-default navbar-fixed-top navbar-custom"><div class="container-fluid"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target="#main-navbar" class="navbar-toggle"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">Niansong Zhang</a></div><div id="main-navbar" class="collapse navbar-collapse"><ul class="nav navbar-nav navbar-right"><li><a href="/archives">Archive</a></li><li><a href="https://github.com/zzzDavid">Github</a></li><li><a href="/about/">About</a></li></ul></div><div class="avatar-container"><div class="avatar-img-border"><a href="/"><img src="/me.jpg" class="avatar-img"></a></div></div></div></nav><header class="header-section"><div class="intro-header no-img"><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><div class="post-heading"><h1>板材检测库V2.1文档</h1><p class="post-meta">Posted on Apr 13 2019 · <a href="/tags/CV/" class="tag post-meta">CV</a></p></div></div></div></div></div></header><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1"><article role="main" class="blog-post"><p>GitHub代码地址为：<a href="https://github.com/Patrick22414/MeasurePlate.git" target="_blank" rel="noopener">MeasurePlate</a>，这是一个私人仓库，需要相应的权限才可以进入。项目环境配置：</p>
+<pre><code>- Visual Studio 2015及以上
+- .netFramework 4.6以上 （推荐使用4.7.2）
+- .netFramework 开发环境
+- OpenCvSharp4.Windows
+- NUnit（UnitTest测试用，非必要）
+</code></pre><hr>
+<h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><pre><code>Measure                             Project名称
+|-------UnitTests.cs                单元测试文件
+|-------src
+        |------Circles.cs           检测内部孔
+        |------Curves.cs            检测外轮廓中曲线
+        |------Lines.cs             检测外轮廓中直线
+        |------MeasurePlates.cs     Constructor与Destructor
+        |------Rectangular.cs       当板材为矩形板时，检测角点与长宽对角线差
+        |------Slots.cs             检测铣槽与锯槽
+        |------TestAPIs.cs          测试中查看Private成员使用的API
+        |______Utils.cs             工具函数
+</code></pre><h2 id="主要函数"><a href="#主要函数" class="headerlink" title="主要函数"></a>主要函数</h2><p>此项目的全部代码使用一个命名空间<code>Measure</code>, 并且整个库只包含一个类<code>MeasurePlate</code>。此类中包含7个功能函数，分别实现板材检测的某一个功能。功能函数的名称与作用如下：<br>下表中所有函数输出变量<code>status</code>表示函数执行状态，输入<code>unit</code>代表输出数据的单位，默认毫米，后不再赘述。</p>
 <table>
 <thead>
 <tr>
@@ -48,6 +63,99 @@
 </tr>
 </tbody>
 </table>
+<hr>
+<h2 id="项目代码解析"><a href="#项目代码解析" class="headerlink" title="项目代码解析"></a>项目代码解析</h2><h3 id="1-MeasurePlate-cs"><a href="#1-MeasurePlate-cs" class="headerlink" title="1. MeasurePlate.cs"></a>1. MeasurePlate.cs</h3><p><code>MeasurePlate.cs</code>包含类的Constructor与Destructor. Constructor承担了大部分计算任务，其主要功能是在实例化的同时初始化后面检测函数要用到的数据，比如原图与亮度调整后的图；同时，为了避免重复计算，Constructor从图中提取板材的内外轮廓。</p>
+<h4 id="Constructor"><a href="#Constructor" class="headerlink" title="Constructor"></a>Constructor</h4><p>Constructor的工作流程：找ROI -&gt; 从整张图片截取ROI部分 -&gt; 计算参数 -&gt; 确定内外轮廓</p>
+<pre><code class="java">public MeasurePlate(string filename, float ratio = 0.11F)
+{
+    var image = 读入灰度图;
+    var smallImage = 缩小(image);
+
+    var largestContour = 二值化并找最大外轮廓(smallImage);
+
+    板材灰度均值 = Mean(最大轮廓内区域)
+    _roi = 外接矩形（largestContour）* 扩大倍数
+    _roiEx = 扩张(roi) * 扩大倍数
+
+    _im = image中_roiEx的部分
+    _imAdjusted = 亮度调整(_im)
+
+    外轮廓 = _SetExtContour();
+    内轮廓 = _SetIntContour(); 
+}
+</code></pre>
+<h4 id="SetExtContour"><a href="#SetExtContour" class="headerlink" title="SetExtContour()"></a>SetExtContour()</h4><p>这是对参数非常敏感且对检测结果影响很大的一部分。在原来的图片素材中由于板材分亮暗，锯槽会不会把板材分为两部分等多种情况，所以这里主要采用分类讨论的办法。分类讨论的依据就是板材的灰度均值，板材外轮廓是否被锯槽分为两部分等等。只有正确检测了外轮廓，才能得到正确的直线检测与弧线检测结果。</p>
+<pre><code class="java">private Point[] _SetExtContour()
+{
+    预处理
+
+    使用OTSU法尝试第一次二值化，寻找外轮廓
+
+    统计面积大于1e5的外轮廓的个数n
+    if (n &gt; 1)
+        板材被锯槽分为多个部分
+
+    _extContour = 最大的外轮廓
+    extPoly = 多边形拟合(_extContour)
+
+    if (extPoly中包含的点太多了 || 板材被锯槽分为多个部分)
+    {
+        重新使用固定阈值二值化，并分情况讨论
+        var threshold = 0
+        if (板材比较亮 &amp;&amp; 没有锯槽 &amp;&amp; extPoly中包含的点不是特别多)
+        {
+            这是外轮廓上有破边孔的亮色板
+            threshold = 240
+        }
+        else if (板材比较亮 &amp;&amp; 没有锯槽 &amp;&amp; extPoly中包含的点太多了)
+        {
+            这是比较亮的板，但是OSTU法让它的外轮廓损坏严重
+            threshold = 80
+        }
+        else if (板材稍微暗 &amp;&amp; 没有锯槽)
+        {
+            threshold = 80
+        }
+        else if (板材很亮 &amp;&amp; 有锯槽)
+        {
+            threshold = 80
+            定一个很低的阈值来得到完整的外轮廓
+        }
+        else
+            thresold = 45 对于暗色板
+
+        使用threshold二值化
+        寻找外轮廓
+        _extContour = 最大的外轮廓
+    }
+
+}
+</code></pre>
+<h3 id="2-Rectangular-cs"><a href="#2-Rectangular-cs" class="headerlink" title="2. Rectangular.cs"></a>2. Rectangular.cs</h3><p><code>Rectangular.cs</code> 包含两个相互独立的函数。这两个函数在仅仅应用外轮廓的结果计算需要返回的量。这两部分代码基本上不被调用。</p>
+<h4 id="FourCorners"><a href="#FourCorners" class="headerlink" title="FourCorners"></a>FourCorners</h4><pre><code class="java">public bool FourCorners(out float[] corners, out string status)
+{
+    找到外轮廓最小外接矩形
+
+    返回最小外接矩形的四个角点坐标
+}
+</code></pre>
+<h4 id="WidthHeighDiagonal"><a href="#WidthHeighDiagonal" class="headerlink" title="WidthHeighDiagonal"></a>WidthHeighDiagonal</h4><pre><code class="java">public bool WidthHeightDiagonal (oiut float[] lengths, out stirng status)
+{
+    var polygon = 多边形拟合(_extContour)
+
+    计算多边形中心点
+
+    根据与中心的相对位置确定上下左右四个角点
+
+    计算宽，高，对角线差
+}
+</code></pre>
+<h3 id="3-Circles-cs"><a href="#3-Circles-cs" class="headerlink" title="3. Circles.cs"></a>3. Circles.cs</h3><p>孔检测，包含两个函数<code>Circles</code>和<code>_MergeCircles</code>，其中<code>_MergeCircles</code>被<code>Circles</code>调用，其作用是合并距离很近的多个孔检测结果。<code>Circles</code>是孔检测的主要函数。</p>
+<h4 id="Circles"><a href="#Circles" class="headerlink" title="Circles"></a>Circles</h4><pre><code class="java">public bool Circles(out List&lt;float[]&gt; circles, out string status)
+{
+
+}
+</code></pre>
 </article><ul class="pager blog-pager"><li class="next"><a href="/2019/04/09/Goodbye-to-All-That/" data-toggle="tooltip" data-placement="top" title="Goodbye to All That">Next Post →</a></li></ul><div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div><script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"> </script><script>var cloudTieConfig = {
   url: document.location.href, 
   sourceId: "",
