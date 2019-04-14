@@ -200,6 +200,187 @@
 }
 </code></pre>
 <p>这里<code>_MergeCircles</code>是一个帮助函数，它的作用是将圆心邻近并且半径大小差不多的圆合并成一个圆。</p>
+<h3 id="4-Curves-cs"><a href="#4-Curves-cs" class="headerlink" title="4. Curves.cs"></a>4. Curves.cs</h3><h4 id="Curves"><a href="#Curves" class="headerlink" title="Curves"></a>Curves</h4><p><code>Curves</code>函数是用来检测外轮廓上的弧线的。需要注意的是，如果外轮廓上的弧线超过了半圆，则算作破边孔，不包括在曲线检测之内。</p>
+<pre><code class="C#">public bool Curves(out List&lt;float[]&gt; curves, out string status)
+{
+    points = new List&lt;Point&gt;(_extPolygon);
+
+    // 这个函数分析外轮廓上的所有点，返回一个与外轮廓上点的数目相同的数组
+    // 数组中是0或1，对应于外轮廓上的每一个点
+    // 如果该点在弧线上则对应1，否则对应0
+    var isOnCircle = _AnalyzePointsOnCircle(Points);
+
+    //为了让所有在外轮廓上的点连续(一条弧线的点不会分别出现在数组开头和结尾)
+    //需要对数组旋转
+    while(isOnCircle最后一个元素==1)
+    {
+        isOnCircle = 旋转(isOnCircle);
+        points = 旋转(Points);
+    }
+
+    // 计算圆的方程
+    for (;;)
+    {
+        curve = inOnCircle中每段连续的1;
+        circle = 最小二乘法拟合圆的方程(curve)
+    }
+}
+</code></pre>
+<h3 id="5-Lines-cs"><a href="#5-Lines-cs" class="headerlink" title="5. Lines.cs"></a>5. Lines.cs</h3><p><code>Lines.cs</code>只包含一个函数<code>Line</code>，用来检测外轮廓上的直线。</p>
+<h4 id="Lines"><a href="#Lines" class="headerlink" title="Lines"></a>Lines</h4><pre><code class="C#">public bool Lines(out List&lt;float[]&gt; lines, out string status)
+{
+    points = new List&lt;Point&gt;(_exPolygon);
+    n = points.长度
+    if ( n &lt; 3)
+        ERROR(&quot;点太少了&quot;)
+
+    if (是矩形板)
+    {
+        if(n ==5)
+        {
+            点多了一个，尝试减少一个点
+        }
+        //去除了一个点之后有4个点，生成直线
+        for(var i=0; i&lt;4; i++)
+            lines.Add(两点确定的直线)
+    }
+    else
+    {
+        // 这个函数分析外轮廓上的所有点，返回一个与外轮廓上点的数目相同的数组
+        // 数组中是0或1，对应于外轮廓上的每一个点
+        // 如果该点在弧线上则对应1，否则对应0
+        var isOnCircle = _AnalyzePointsOnCircle(points)
+        然后根据isOnCircle的信息把直线添加到lines中
+    }
+}
+</code></pre>
+<h3 id="6-Slots-cs"><a href="#6-Slots-cs" class="headerlink" title="6. Slots.cs"></a>6. Slots.cs</h3><p><code>Slots.cs</code>包含两个函数，分别负责检测锯槽与铣槽。</p>
+<h4 id="MillSlot"><a href="#MillSlot" class="headerlink" title="MillSlot"></a>MillSlot</h4><p>铣槽的检测方法十分简单，在Constructor中已经提取了内轮廓，所以就利用提取的内轮廓，从中筛选出近似矩形的轮廓即可</p>
+<pre><code class="C#">public bool MillSlot(out List&lt;float[]&gt; slots, out string status)
+{
+    // 判断内轮廓是否为矩形
+    foreach (var intContour in _intContours)
+    {
+        box = 最小外接矩形(intContour);
+        areaOfContour = 求轮廓面积(intContour)
+        areaOfBox = box.Width * box.height
+        if(!_IsCircularContour(intContour) &amp;&amp; areaOfContour足够大 &amp;&amp; 
+            areaofContour/areaofBox &gt; 1.1 * PI/4)
+            SlotContour.Add(intContour)
+    }
+
+    // 根据SlotContour计算需要返回的值
+}
+</code></pre>
+<h4 id="SawSlot"><a href="#SawSlot" class="headerlink" title="SawSlot"></a>SawSlot</h4><p><code>SawSlot</code>相对比较复杂，它主要将槽分为两种方法检测。一种是亮色板的锯槽，因为这种锯槽会把板面分为两部分，这样就会出现两个较大的轮廓。另一种是暗色板的槽，这种槽内部有很多干扰的噪声，这种槽就利用Canny提取纹理信息，利用槽内部的花纹检测。</p>
+<pre><code class="C#">public bool SawSlot(out list&lt;float[]&gt; slots, out string status)
+{
+    if (不是亮色板||没有两个较大的轮廓||不是矩形板)
+    {
+        去除背景噪声
+
+        根据_mean分类讨论，二值化并进行Canny操作得到imCanny
+
+        lineSegments = 霍夫直线(imCanny);
+        horizontal = 选出所有横线(lineSegments)
+        vertical = 选出所有竖线(lineSegments)
+
+        将横线竖线分别画在两张图上，并且膨胀
+
+        分别提取所有轮廓，找到外接矩形面积最大的轮廓，这些轮廓就是槽
+    }
+    else
+    {
+        转到FindSlotRect函数，返回槽的信息
+    }
+}
+</code></pre>
+<h4 id="FindSlotRect"><a href="#FindSlotRect" class="headerlink" title="FindSlotRect"></a>FindSlotRect</h4><p>这个函数是专门用来处理亮色板锯槽的函数，因为亮色板的锯槽会把板面分成几个部分，所以二值化之后就产生多个外轮廓</p>
+<pre><code class="C#">private List&lt;float[]&gt; FindSlotRect()
+{
+    预处理
+
+    extContours = 找到所有外轮廓()
+
+    boxes = 找到所有外接矩形(extContours)
+
+    根据boxes中前两个box的位置关系判断槽是横的还是竖的
+
+    if(横的)
+        boxes.从左到右排序
+    else
+        boxes.从上到下排序
+
+    这时相邻两个box之间就是一个槽，按顺序找到槽的位置，并返回
+}
+</code></pre>
+<h3 id="7-Util-cs"><a href="#7-Util-cs" class="headerlink" title="7. Util.cs"></a>7. Util.cs</h3><p>这里全部都是帮助函数，这些函数基本不需要修改，因此下面仅列出这些函数的函数名与对应的功能</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">函数名称</th>
+<th style="text-align:center">函数功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>_Distance</code></td>
+<td style="text-align:center">计算两点之间距离</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_AngleOfLine</code></td>
+<td style="text-align:center">计算直线与水平夹角</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_AngleOfPath</code></td>
+<td style="text-align:center">计算三个点确定的两条直线的夹角</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LargestContourByRect</code></td>
+<td style="text-align:center">输入一组轮廓，返回这些轮廓中外接矩形面积最大的轮廓</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LargestContourByArea</code></td>
+<td style="text-align:center">输入一组轮廓，返回这些轮廓中面积最大的轮廓</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LargestRectsByArea</code></td>
+<td style="text-align:center">输入一组矩形，返回一个或多个面积较大的矩形</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_isCircularContour</code></td>
+<td style="text-align:center">判断一个轮廓是否为近似圆的轮廓</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_AnalyzePointsOnCircle</code></td>
+<td style="text-align:center">分析轮廓所有点，返回一个与输入数组同样大小的数组，对应输入数组中的每个点，如果该点在曲线上则对应位置为1，反之为0</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LSCircleFitting</code></td>
+<td style="text-align:center">最小二乘法圆拟合</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_imAdjust</code></td>
+<td style="text-align:center">调整暗色板亮度</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_IsSawSlot</code></td>
+<td style="text-align:center">判断轮廓是否为锯槽</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_SmartLines</code></td>
+<td style="text-align:center">智能直线，将外轮廓上的毛刺，拐角缺损等去掉，达到理想的外轮廓检测效果</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_InterSection4</code></td>
+<td style="text-align:center">计算四个点确定给的两条直线的交点</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_Entropy</code></td>
+<td style="text-align:center">计算图像的熵</td>
+</tr>
+</tbody>
+</table>
 </article><ul class="pager blog-pager"><li class="next"><a href="/2019/04/09/Goodbye-to-All-That/" data-toggle="tooltip" data-placement="top" title="Goodbye to All That">Next Post →</a></li></ul><div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div><script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"> </script><script>var cloudTieConfig = {
   url: document.location.href, 
   sourceId: "",
