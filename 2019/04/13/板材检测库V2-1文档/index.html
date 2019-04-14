@@ -151,11 +151,55 @@
 }
 </code></pre>
 <h3 id="3-Circles-cs"><a href="#3-Circles-cs" class="headerlink" title="3. Circles.cs"></a>3. Circles.cs</h3><p>孔检测，包含两个函数<code>Circles</code>和<code>_MergeCircles</code>，其中<code>_MergeCircles</code>被<code>Circles</code>调用，其作用是合并距离很近的多个孔检测结果。<code>Circles</code>是孔检测的主要函数。</p>
-<h4 id="Circles"><a href="#Circles" class="headerlink" title="Circles"></a>Circles</h4><pre><code class="java">public bool Circles(out List&lt;float[]&gt; circles, out string status)
+<h4 id="Circles"><a href="#Circles" class="headerlink" title="Circles"></a>Circles</h4><pre><code class="C#">public bool Circles(out List&lt;float[]&gt; circles, out string status)
 {
+    // 找内轮廓中的圆形
+    if (板材是暗色板)
+    {
+        imDarkBin = 预处理并且缩小(_im);
+        imDarkBin = Canny(imDarkBin)
+        for (r = 20; r&lt;=30; r+=2)
+        {
+            houghCircles = cv2.HoughCircles(imDarkBin, r);
+        }
+        avgCircles = _MergeCircles(houghCircles);
+        circles0 = 放大(avgCircles)
+    }
+    else //板材不是暗色板
+    {
+        foreach (var contour in _intContours)
+        {
+            rect = 外接矩形(contour)
+            if(rect的长或宽太小)
+                continue
 
+            area = 求轮廓面积(contour)
+            if(area太小 || area/矩形面积太小)
+                continue
+
+            hull = cv2.ConvexHull(contour)
+            circle = 最小二乘法圆拟合(hull)
+
+            circles1.Add(circle)
+        }
+        circles1 = 去除重叠的圆(circles1)
+    }
+
+    // 找外轮廓中的圆形
+    imOut = 将板材外轮廓附近的图像抠出来(_im);
+    imCanny = Canny(imOut)
+    imOut = cv2.GaussianBlur(imOut, Mean(imCanny));
+    for (i = 24; i&lt;=30; i+=2)
+    {
+        houghCircles2 = cv2.HoughCircle(imOut, i)
+    }
+    circles2 = houghCircles2
+
+    // 合并结果
+    circles3 = _MergeCircles(circles0, circles1, circles2)
 }
 </code></pre>
+<p>这里<code>_MergeCircles</code>是一个帮助函数，它的作用是将圆心邻近并且半径大小差不多的圆合并成一个圆。</p>
 </article><ul class="pager blog-pager"><li class="next"><a href="/2019/04/09/Goodbye-to-All-That/" data-toggle="tooltip" data-placement="top" title="Goodbye to All That">Next Post →</a></li></ul><div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div><script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"> </script><script>var cloudTieConfig = {
   url: document.location.href, 
   sourceId: "",
