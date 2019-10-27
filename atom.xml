@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-10-27T17:35:54.488Z</updated>
+  <updated>2019-10-27T19:45:27.981Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,9 +21,24 @@
     <link href="http://yoursite.com/2019/10/28/Waterloo/"/>
     <id>http://yoursite.com/2019/10/28/Waterloo/</id>
     <published>2019-10-27T17:35:54.000Z</published>
-    <updated>2019-10-27T17:35:54.488Z</updated>
+    <updated>2019-10-27T19:45:27.981Z</updated>
+    
+    <content type="html"><![CDATA[<div class="row">    <embed src="http://www.pdf995.com/samples/pdf.pdf" width="100%" height="550" type="application/pdf"></div>]]></content>
     
     <summary type="html">
+    
+      
+      
+        
+
+	&lt;div class=&quot;row&quot;&gt;
+    &lt;embed src=&quot;http://www.pdf995.com/samples/pdf.pdf&quot; width=&quot;100%&quot; height=&quot;550&quot; type=&quot;application/pdf&quot;&gt;
+	&lt;/div&gt;
+
+
+
+
+      
     
     </summary>
     

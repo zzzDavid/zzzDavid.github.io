@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/10/28/Waterloo/</loc>
+    
+    <lastmod>2019-10-27T19:45:27.981Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/all-archives/index.html</loc>
     
     <lastmod>2019-10-27T18:31:50.691Z</lastmod>
@@ -23,13 +30,6 @@
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/10/28/Waterloo/</loc>
-    
-    <lastmod>2019-10-27T17:35:54.488Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yoursite.com/2019/04/19/hello/</loc>
     
     <lastmod>2019-04-18T16:11:58.909Z</lastmod>
@@ -37,7 +37,7 @@
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/04/13/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/</loc>
+    <loc>http://yoursite.com/2019/04/13/%25E6%259D%25BF%25E6%259D%2590%25E6%25A3%2580%25E6%25B5%258B%25E5%25BA%2593V2-1%25E6%2596%2587%25E6%25A1%25A3/</loc>
     
     <lastmod>2019-04-14T12:32:56.578Z</lastmod>
     
