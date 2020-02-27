@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-27T10:16:24.515Z</updated>
+  <updated>2020-02-27T10:29:41.141Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,24 +21,16 @@
     <link href="http://yoursite.com/2019/10/28/Waterloo/"/>
     <id>http://yoursite.com/2019/10/28/Waterloo/</id>
     <published>2019-10-27T17:35:54.000Z</published>
-    <updated>2020-02-27T10:16:24.515Z</updated>
+    <updated>2020-02-27T10:29:41.141Z</updated>
     
-    <content type="html"><![CDATA[<div class="row">    <embed src="http://www.pdf995.com/samples/pdf.pdf" width="100%" height="550" type="application/pdf"></div><p><a href="../../public/assets/pdf/CV-niansong.pdf">CV</a></p>]]></content>
+    <content type="html"><![CDATA[<p><a href="/pdf/CV-niansong.pdf">CV</a></p>]]></content>
     
     <summary type="html">
     
       
       
-        
+        &lt;p&gt;&lt;a href=&quot;/pdf/CV-niansong.pdf&quot;&gt;CV&lt;/a&gt;&lt;/p&gt;
 
-	&lt;div class=&quot;row&quot;&gt;
-    &lt;embed src=&quot;http://www.pdf995.com/samples/pdf.pdf&quot; width=&quot;100%&quot; height=&quot;550&quot; type=&quot;application/pdf&quot;&gt;
-	&lt;/div&gt;
-
-
-
-
-&lt;p
       
     
     </summary>
