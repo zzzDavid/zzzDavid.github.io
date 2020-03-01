@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-27T22:07:49.916Z</updated>
+  <updated>2020-03-01T08:30:46.778Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,13 +17,39 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know</title>
+    <link href="http://yoursite.com/2020/02/10/Matrix/"/>
+    <id>http://yoursite.com/2020/02/10/Matrix/</id>
+    <published>2020-02-10T15:41:18.000Z</published>
+    <updated>2020-03-01T08:30:46.778Z</updated>
+    
+    <content type="html"><![CDATA[<!-- excerpt --><h2 id="Personal-Note"><a href="#Personal-Note" class="headerlink" title="Personal Note"></a>Personal Note</h2><p>Well today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p><h2 id="Eigenvalue-and-Eigenvectors"><a href="#Eigenvalue-and-Eigenvectors" class="headerlink" title="Eigenvalue and Eigenvectors"></a>Eigenvalue and Eigenvectors</h2><p>First thing you should know is that a Matrix can be seen as a linear tranformation (I should elaborate on this). </p><p>In essence, a eigenvector $\mathbf{v}$ of a linear tranformation $\mathbf{T}$ is a nonzero vector that, when $\mathbf{T}$ is applied to it, it does not change the direction. Applying $\mathbf{T}$ to the vector $\mathbf{v}$ only scales it, i.e. change its length. We can write this condition like this:</p><script type="math/tex; mode=display">\mathbf{T} ( \mathbf{v} ) = \lambda \mathbf{v}</script>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;I love Keanu Reeves more than linear algebra, and let’s be honest, you do, too.&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Tutorial" scheme="http://yoursite.com/categories/Tutorial/"/>
+    
+    
+      <category term="Math" scheme="http://yoursite.com/tags/Math/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Sequential Models - RNNs and All</title>
     <link href="http://yoursite.com/2020/02/10/RNN/"/>
     <id>http://yoursite.com/2020/02/10/RNN/</id>
     <published>2020-02-10T15:41:18.000Z</published>
-    <updated>2020-02-27T22:07:49.916Z</updated>
+    <updated>2020-03-01T16:14:25.226Z</updated>
+    
+    <content type="html"><![CDATA[<!-- excerpt --><h2 id="Basic-Model"><a href="#Basic-Model" class="headerlink" title="Basic Model"></a>Basic Model</h2><h2 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h2><hr><h2 id="C-LSTM-Enabling-Efficient-LSTM-using-Structured-Compression-Techniques-on-FPGAs"><a href="#C-LSTM-Enabling-Efficient-LSTM-using-Structured-Compression-Techniques-on-FPGAs" class="headerlink" title="C-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAs"></a>C-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAs</h2><h3 id="Addressed-Problems"><a href="#Addressed-Problems" class="headerlink" title="Addressed Problems"></a>Addressed Problems</h3><h3 id="Key-Concepts"><a href="#Key-Concepts" class="headerlink" title="Key Concepts"></a>Key Concepts</h3><h3 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h3><h3 id="Results-and-Conclusions"><a href="#Results-and-Conclusions" class="headerlink" title="Results and Conclusions"></a>Results and Conclusions</h3><h3 id="Strengths-and-Weaknesses"><a href="#Strengths-and-Weaknesses" class="headerlink" title="Strengths and Weaknesses"></a>Strengths and Weaknesses</h3><h3 id="Relationships-to-other-works"><a href="#Relationships-to-other-works" class="headerlink" title="Relationships to other works"></a>Relationships to other works</h3><h3 id="Contribution-to-my-understandings"><a href="#Contribution-to-my-understandings" class="headerlink" title="Contribution to my understandings"></a>Contribution to my understandings</h3>]]></content>
     
     <summary type="html">
+    
+      &lt;p&gt;RNNs and stuff&lt;/p&gt;
     
     </summary>
     
@@ -46,9 +72,9 @@
       <category term="Researches" scheme="http://yoursite.com/categories/Researches/"/>
     
     
-      <category term="FPGA" scheme="http://yoursite.com/tags/FPGA/"/>
-    
       <category term="Projects" scheme="http://yoursite.com/tags/Projects/"/>
+    
+      <category term="FPGA" scheme="http://yoursite.com/tags/FPGA/"/>
     
   </entry>
   
@@ -137,9 +163,9 @@
       <category term="PersonalEssay" scheme="http://yoursite.com/categories/Literature/PersonalEssay/"/>
     
     
-      <category term="JoanDidion" scheme="http://yoursite.com/tags/JoanDidion/"/>
-    
       <category term="PersonalEssay" scheme="http://yoursite.com/tags/PersonalEssay/"/>
+    
+      <category term="JoanDidion" scheme="http://yoursite.com/tags/JoanDidion/"/>
     
   </entry>
   

@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2020/02/10/RNN/</loc>
+    
+    <lastmod>2020-03-01T16:14:25.226Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/02/10/Matrix/</loc>
+    
+    <lastmod>2020-03-01T08:30:46.778Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2017/08/15/UBC/</loc>
     
     <lastmod>2020-02-27T22:28:26.549Z</lastmod>
@@ -12,13 +26,6 @@
     <loc>http://yoursite.com/2019/10/28/Waterloo/</loc>
     
     <lastmod>2020-02-27T22:18:23.651Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2020/02/10/RNN/</loc>
-    
-    <lastmod>2020-02-27T22:07:49.916Z</lastmod>
     
   </url>
   

@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
-    <title>RapidLayout, Fast Evolutionary Placer for FPGA-Optimized Systolic Arrays - Niansong Zhang</title>
+    <title>Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
         <meta name="keywords" content="Niansong Zhang,Niansong,Sun Yat-sen University,">
@@ -15,14 +15,16 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"","dateCreated":"2020-01-10T23:41:18+08:00","dateModified":"2020-02-28T05:55:31+08:00","datePublished":"2020-01-10T23:41:18+08:00","description":"","headline":"RapidLayout, Fast Evolutionary Placer for FPGA-Optimized Systolic Arrays","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582839603/posts/rapidlayout_fwzx8d.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/01/10/RapidLayout/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/01/10/RapidLayout/","keywords":"Projects, FPGA","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582839603/posts/rapidlayout_fwzx8d.png"}</script>
-    <meta name="keywords" content="Projects,FPGA">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nPersonal NoteWell today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. \nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation (I should elaborate on this). \nIn essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathbf{T}$ is a nonzero vector that, when $\\mathbf{T}$ is applied to it, it does not change the direction. Applying $\\mathbf{T}$ to the vector $\\mathbf{v}$ only scales it, i.e. change its length. We can write this condition like this:\n\\mathbf{T} ( \\mathbf{v} ) = \\lambda \\mathbf{v}","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-03-01T16:30:46+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"I love Keanu Reeves more than linear algebra, and let’s be honest, you do, too.","headline":"Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
+    <meta name="description" content="I love Keanu Reeves more than linear algebra, and let’s be honest, you do, too.">
+<meta name="keywords" content="Math">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="RapidLayout, Fast Evolutionary Placer for FPGA-Optimized Systolic Arrays">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;01&#x2F;10&#x2F;RapidLayout&#x2F;index.html">
+<meta property="og:title" content="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;10&#x2F;Matrix&#x2F;index.html">
 <meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="I love Keanu Reeves more than linear algebra, and let’s be honest, you do, too.">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-02-27T21:55:31.590Z">
+<meta property="og:updated_time" content="2020-03-01T08:30:46.778Z">
 <meta name="twitter:card" content="summary">
     
     
@@ -32,9 +34,12 @@
         <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"/>
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582839603/posts/rapidlayout_fwzx8d.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582839603/posts/rapidlayout_fwzx8d.png"/>
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
     
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
     
     
     <!--STYLES-->
@@ -241,43 +246,55 @@
 </nav>
 
             
+        <div class="post-header-cover
+                    text-left
+                    "
+             style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg');"
+             data-behavior="5">
+            
+                <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-02-10T23:41:18+08:00">
+	
+		    Feb 10, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+            
+        </div>
+
             <div id="main" data-behavior="5"
-                 class="
+                 class="hasCover
                         hasCoverMetaIn
                         ">
                 
 <article class="post">
     
     
-        <div class="post-header main-content-wrap text-left">
-    
-        <h1 class="post-title">
-            RapidLayout, Fast Evolutionary Placer for FPGA-Optimized Systolic Arrays
-        </h1>
-    
-    
-        <div class="post-meta">
-    <time datetime="2020-01-10T23:41:18+08:00">
-	
-		    Jan 10, 2020
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Researches/">Researches</a>
-
-
-    
-</div>
-
-    
-</div>
-
-    
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            
+            <!-- excerpt -->
+<h2 id="Personal-Note"><a href="#Personal-Note" class="headerlink" title="Personal Note"></a>Personal Note</h2><p>Well today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p>
+<h2 id="Eigenvalue-and-Eigenvectors"><a href="#Eigenvalue-and-Eigenvectors" class="headerlink" title="Eigenvalue and Eigenvectors"></a>Eigenvalue and Eigenvectors</h2><p>First thing you should know is that a Matrix can be seen as a linear tranformation (I should elaborate on this). </p>
+<p>In essence, a eigenvector $\mathbf{v}$ of a linear tranformation $\mathbf{T}$ is a nonzero vector that, when $\mathbf{T}$ is applied to it, it does not change the direction. Applying $\mathbf{T}$ to the vector $\mathbf{v}$ only scales it, i.e. change its length. We can write this condition like this:</p>
+<script type="math/tex; mode=display">\mathbf{T} ( \mathbf{v} ) = \lambda \mathbf{v}</script>
             
 
 
@@ -288,7 +305,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/FPGA/" rel="tag">FPGA</a> <a class="tag tag--primary tag--small t-link" href="/tags/Projects/" rel="tag">Projects</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/Math/" rel="tag">Math</a>
 
             </div>
         
@@ -298,14 +315,11 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/2020/02/10/RNN/"
-                    data-tooltip="Sequential Models - RNNs and All"
-                    aria-label="PREVIOUS: Sequential Models - RNNs and All"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -315,9 +329,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/10/28/Waterloo/"
-                    data-tooltip="The University of Waterloo"
-                    aria-label="NEXT: The University of Waterloo"
+                    href="/2020/02/10/RNN/"
+                    data-tooltip="Sequential Models - RNNs and All"
+                    aria-label="NEXT: Sequential Models - RNNs and All"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -342,7 +356,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/01/10/RapidLayout/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -355,7 +369,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/01/10/RapidLayout/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -368,7 +382,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/01/10/RapidLayout/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -413,14 +427,11 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/2020/02/10/RNN/"
-                    data-tooltip="Sequential Models - RNNs and All"
-                    aria-label="PREVIOUS: Sequential Models - RNNs and All"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -430,9 +441,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2019/10/28/Waterloo/"
-                    data-tooltip="The University of Waterloo"
-                    aria-label="NEXT: The University of Waterloo"
+                    href="/2020/02/10/RNN/"
+                    data-tooltip="Sequential Models - RNNs and All"
+                    aria-label="NEXT: Sequential Models - RNNs and All"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -457,7 +468,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/01/10/RapidLayout/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -470,7 +481,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/01/10/RapidLayout/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -483,7 +494,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/01/10/RapidLayout/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -517,7 +528,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/01/10/RapidLayout/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -530,7 +541,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/01/10/RapidLayout/"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -543,7 +554,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2020/01/10/RapidLayout/"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
                         aria-label="Share on Google+"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
