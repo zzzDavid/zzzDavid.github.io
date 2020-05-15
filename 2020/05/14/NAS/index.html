@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
-    <title>Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know - Niansong Zhang</title>
+    <title>Neural Architecture Search, Basic Concepts, Paper Summary and Implementations - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
         <meta name="keywords" content="Niansong Zhang,Niansong,Sun Yat-sen University,">
@@ -15,21 +15,22 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nPersonal NoteWell today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. \nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:\n\nLet’s say that multiplication by $\\mathit{A}$ transforms $\\mathbf{x}$ into $\\mathbf{b}$ and transforms $\\mathbf{u}$ into the zero vector. \n\nWe can think of matrix $\\mathit{A}$ as an object that “acts” on a vector $\\mathbf{x}$ by multiplication to produce a new vector $\\mathbf{b}$. Here, matrix $\\mathit{A}$ is a correspondence rule that assigns each vector in $\\mathbb{R}^3$ a vector $A(\\mathbf{x})$ in $\\mathbb{R}^2$. You can call it a mapping, or a function.\nEvery matrix transformation is a linear transformation, because: $A(\\mathbf{u} + \\mathbf{v}) = A(\\mathbf{u}) + A(\\mathbf{v})$ $A(c\\mathbf{u}) = cA(\\mathbf{u})$\n\nLet’s move to eigenvalues and eigenvectors. the word eigen origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\\mathit{A}$ is usually square. In essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathit{A}$ is a nonzero vector that, when $\\mathit{A}$ is applied to it, it does not change the direction. Applying $\\mathit{A}$ to the vector $\\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:\n\\mathit{A} ( \\mathbf{v} ) = \\lambda \\mathbf{v}A only scales vector v, without changing its direction","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-03-02T04:03:10+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"Because Matrix is pretty cool","headline":"Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
-    <meta name="description" content="Because Matrix is pretty cool">
-<meta name="keywords" content="Math">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nOverviewNeural Architecture Search, or NAS, can be seen as a subtask of AutoML. It tries to automate the designing process of neural network architectures. An architecture search space can be seen as a Directed Asyclic Graph (DAG), and each possible architecture is a subgraph. We denote the search space as $A$, the subgraph $a$, the searched neural network $N(a,w)$. The goals of NAS are often two-fold: \n\nWeight Optimization\n\nw_a = \\underset{w}{\\operatorname{argmin}}(Loss_{train}(N(a,w)))\nArchitecture Optimization\n\na^* = \\underset{a\\in A}{\\operatorname{argmax}}(Accuracy_{val}(N(a,w)))The constraints are diverse: such as computation (FLOPS), speed (latency), or even energy consumption and memory usage.\nSurveysNeural Architecture Search: A Survey\nAuthors: Thomas Elsken, Jan Hendrik Metzen, Frank Hutter\nInstitution: Bosch Center for AI, University of Freiburg\narXiv: https://arxiv.org/abs/1808.05377\n\n\nNAS methods encompasses three sub-tasks: designing search space, select search strategy, and use proper estimation strategy.\nSearch SpaceThe search space defines what architectures are discoverable during search. Search space designs can be largely classified into global search space and cell-based search space.\n\nGlobal: chain-structured, chain-structured with skip, segment-based\nCell-based\n\nGlobal Search Space\nChain-Structured Search SpaceThe simplist form of search space. Parameters include: the number of layers, the type of layers, hyperparameters of the layers, e.g., number of filters, kernel sizes and strides for convolutional layer.\nChain-Structured with SkipsObviously the idea comes from ResNet, DenseNet or Xception. The branching can be described with layer’s inputs as a function \ng_i (L_{i-1}^{out}, ..., L_0^{out})Taking existing architectures for example, for chain-structured net, g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out}. For ResNet, g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out} + L_j^{out}, (j < i-1). For DenseNet, g_i (L_{i-1}^{out}, ..., L_0^{out}) = concat(L_{i-1}^{out},...,L_0^{out})\nSegment-basedSegment-based method is considered as a global search space design, but with another level of granularity: segment, or block. \nMnas Search Space\nTaking Mnas as an example, the network layers are grouped into a many blocks. The skeleton constructed with blocks is predefined. Inside each block, there are a variable number of repeated layers. Blocks are not necessarily the the same, the layer amount and operations can be different.\nCell-based StructureCell-based architecture is a lot like the segment-based one. However, instead of searching the topology/hyperparameters of each block, cell-based approach defines several types of cells, then connects repeated cells in a pre-defined manner. In such ways, the search space is further downsized.\nIllustration of the cell search space\n(Zoph, 2018) defined two types of cell: normal cell or reduction cell. Normal cell preserves dimensionality while reduction cell reduces spatial dimensions. \nThe problem of cell-based structure is that the macro-architecture, i.e. the structure based on cells, are still manually designed. (Liu, 2018b) tried to overcome macro-architecture engineering by introducing hierarchical search space. \nSearch Strategy","dateCreated":"2020-05-14T17:27:00+08:00","dateModified":"2020-05-15T10:50:19+08:00","datePublished":"2020-05-14T17:27:00+08:00","description":"Knowledge and methods for Neural Architecture Search and Automated Deep Learning.","headline":"Neural Architecture Search, Basic Concepts, Paper Summary and Implementations","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/05/14/NAS/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/05/14/NAS/","keywords":"AI","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"}</script>
+    <meta name="description" content="Knowledge and methods for Neural Architecture Search and Automated Deep Learning.">
+<meta name="keywords" content="AI">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;10&#x2F;Matrix&#x2F;index.html">
+<meta property="og:title" content="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;14&#x2F;NAS&#x2F;index.html">
 <meta property="og:site_name" content="Niansong Zhang">
-<meta property="og:description" content="Because Matrix is pretty cool">
+<meta property="og:description" content="Knowledge and methods for Neural Architecture Search and Automated Deep Learning.">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583091229&#x2F;posts&#x2F;transform_aceidd.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583092580&#x2F;posts&#x2F;Screen_Shot_2020-03-02_at_03.56.05_bprarw.png">
-<meta property="og:updated_time" content="2020-03-01T20:03:10.288Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1589450934&#x2F;posts&#x2F;Screen_Shot_2020-05-14_at_18.08.16_amj1pu.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1589455315&#x2F;posts&#x2F;searchspace_v83k9c.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1589509162&#x2F;posts&#x2F;Screen_Shot_2020-05-15_at_10.17.01_neskhw.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1589510150&#x2F;posts&#x2F;Screen_Shot_2020-05-15_at_10.35.39_dl207b.png">
+<meta property="og:updated_time" content="2020-05-15T02:50:19.477Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1589450934&#x2F;posts&#x2F;Screen_Shot_2020-05-14_at_18.08.16_amj1pu.png">
     
     
         
@@ -38,12 +39,12 @@
         <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"/>
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
     
     
     <!--STYLES-->
@@ -253,20 +254,20 @@
         <div class="post-header-cover
                     text-left
                     "
-             style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg');"
+             style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg');"
              data-behavior="5">
             
                 <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know
+            Neural Architecture Search, Basic Concepts, Paper Summary and Implementations
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2020-02-10T23:41:18+08:00">
+    <time datetime="2020-05-14T17:27:00+08:00">
 	
-		    Feb 10, 2020
+		    May 14, 2020
     	
     </time>
     
@@ -295,16 +296,38 @@
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
-<h2 id="Personal-Note"><a href="#Personal-Note" class="headerlink" title="Personal Note"></a>Personal Note</h2><p>Well today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p>
-<h2 id="Eigenvalue-and-Eigenvectors"><a href="#Eigenvalue-and-Eigenvectors" class="headerlink" title="Eigenvalue and Eigenvectors"></a>Eigenvalue and Eigenvectors</h2><p>First thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:</p>
-<div class="figure center" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" alt=""></a></div><div style="clear:both;"></div>
-<p>Let’s say that multiplication by $\mathit{A}$ transforms $\mathbf{x}$ into $\mathbf{b}$ and transforms $\mathbf{u}$ into the zero vector. </p>
-<div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583091229/posts/transform_aceidd.png" style="width:70%;"alt=""></div>
-<p>We can think of matrix $\mathit{A}$ as an object that “acts” on a vector $\mathbf{x}$ by multiplication to produce a new vector $\mathbf{b}$. Here, matrix $\mathit{A}$ is a correspondence rule that assigns each vector in $\mathbb{R}^3$ a vector $A(\mathbf{x})$ in $\mathbb{R}^2$. You can call it a <strong>mapping</strong>, or a <strong>function</strong>.</p>
-<div class="alert success"><p>Every matrix transformation is a linear transformation, because:<br> $A(\mathbf{u} + \mathbf{v}) = A(\mathbf{u}) + A(\mathbf{v})$<br> $A(c\mathbf{u}) = cA(\mathbf{u})$</p>
-</div>
-<p>Let’s move to eigenvalues and eigenvectors. the word <em>eigen</em> origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\mathit{A}$ is usually square. In essence, a <strong>eigenvector</strong> $\mathbf{v}$ of a linear tranformation $\mathit{A}$ is a nonzero vector that, when $\mathit{A}$ is applied to it, <span class="highlight-text red">it does not change the direction</span>. Applying $\mathit{A}$ to the vector $\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:</p>
-<script type="math/tex; mode=display">\mathit{A} ( \mathbf{v} ) = \lambda \mathbf{v}</script><div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583092580/posts/Screen_Shot_2020-03-02_at_03.56.05_bprarw.png" style="width:70%;"alt="A only scales vector v, without changing its direction"><span class="caption">A only scales vector v, without changing its direction</span></div>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>Neural Architecture Search, or NAS, can be seen as a subtask of AutoML. It tries to automate the designing process of neural network architectures. An architecture search space can be seen as a Directed Asyclic Graph (DAG), and each possible architecture is a subgraph. We denote the search space as $A$, the subgraph $a$, the searched neural network $N(a,w)$. The goals of NAS are often two-fold: </p>
+<ul>
+<li>Weight Optimization</li>
+</ul>
+<script type="math/tex; mode=display">w_a = \underset{w}{\operatorname{argmin}}(Loss_{train}(N(a,w)))</script><ul>
+<li>Architecture Optimization</li>
+</ul>
+<script type="math/tex; mode=display">a^* = \underset{a\in A}{\operatorname{argmax}}(Accuracy_{val}(N(a,w)))</script><p>The constraints are diverse: such as computation (FLOPS), speed (latency), or even energy consumption and memory usage.</p>
+<h2 id="Surveys"><a href="#Surveys" class="headerlink" title="Surveys"></a>Surveys</h2><h3 id="Neural-Architecture-Search-A-Survey"><a href="#Neural-Architecture-Search-A-Survey" class="headerlink" title="Neural Architecture Search: A Survey"></a>Neural Architecture Search: A Survey</h3><ul>
+<li>Authors: Thomas Elsken, Jan Hendrik Metzen, Frank Hutter</li>
+<li>Institution: Bosch Center for AI, University of Freiburg</li>
+<li>arXiv: <a href="https://arxiv.org/abs/1808.05377" target="_blank" rel="noopener">https://arxiv.org/abs/1808.05377</a></li>
+</ul>
+<div class="figure center" style="width:100%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589450934/posts/Screen_Shot_2020-05-14_at_18.08.16_amj1pu.png" style="width:100%;"alt=""></div>
+<p>NAS methods encompasses three sub-tasks: designing search space, select search strategy, and use proper estimation strategy.</p>
+<h4 id="Search-Space"><a href="#Search-Space" class="headerlink" title="Search Space"></a>Search Space</h4><p>The search space defines what architectures are discoverable during search. Search space designs can be largely classified into global search space and cell-based search space.</p>
+<ul>
+<li>Global: chain-structured, chain-structured with skip, segment-based</li>
+<li>Cell-based</li>
+</ul>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589455315/posts/searchspace_v83k9c.png" alt="Global Search Space"><span class="caption">Global Search Space</span></div>
+<h5 id="Chain-Structured-Search-Space"><a href="#Chain-Structured-Search-Space" class="headerlink" title="Chain-Structured Search Space"></a>Chain-Structured Search Space</h5><p>The simplist form of search space. Parameters include: the number of layers, the type of layers, hyperparameters of the layers, e.g., number of filters, kernel sizes and strides for convolutional layer.</p>
+<h5 id="Chain-Structured-with-Skips"><a href="#Chain-Structured-with-Skips" class="headerlink" title="Chain-Structured with Skips"></a>Chain-Structured with Skips</h5><p>Obviously the idea comes from ResNet, DenseNet or Xception. The branching can be described with layer’s inputs as a function </p>
+<script type="math/tex; mode=display">g_i (L_{i-1}^{out}, ..., L_0^{out})</script><p>Taking existing architectures for example, for chain-structured net, <script type="math/tex">g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out}</script>. For ResNet, <script type="math/tex">g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out} + L_j^{out}, (j < i-1)</script>. For DenseNet, <script type="math/tex">g_i (L_{i-1}^{out}, ..., L_0^{out}) = concat(L_{i-1}^{out},...,L_0^{out})</script></p>
+<h5 id="Segment-based"><a href="#Segment-based" class="headerlink" title="Segment-based"></a>Segment-based</h5><p>Segment-based method is considered as a global search space design, but with another level of granularity: segment, or block. </p>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589509162/posts/Screen_Shot_2020-05-15_at_10.17.01_neskhw.png" alt="Mnas Search Space"><span class="caption">Mnas Search Space</span></div>
+<p>Taking Mnas as an example, the network layers are grouped into a many blocks. The skeleton constructed with blocks is predefined. Inside each block, there are a variable number of repeated layers. Blocks are not necessarily the the same, the layer amount and operations can be different.</p>
+<h4 id="Cell-based-Structure"><a href="#Cell-based-Structure" class="headerlink" title="Cell-based Structure"></a>Cell-based Structure</h4><p>Cell-based architecture is a lot like the segment-based one. However, instead of searching the topology/hyperparameters of each block, cell-based approach defines several types of cells, then connects repeated cells in a pre-defined manner. In such ways, the search space is further downsized.</p>
+<div class="figure center" style="width:80%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589510150/posts/Screen_Shot_2020-05-15_at_10.35.39_dl207b.png" style="width:80%;"alt="Illustration of the cell search space"><span class="caption">Illustration of the cell search space</span></div>
+<p>(Zoph, 2018) defined two types of cell: <em>normal cell</em> or <em>reduction cell</em>. Normal cell preserves dimensionality while reduction cell reduces spatial dimensions. </p>
+<p>The problem of cell-based structure is that the macro-architecture, i.e. the structure based on cells, are still manually designed. (Liu, 2018b) tried to overcome macro-architecture engineering by introducing hierarchical search space. </p>
+<h4 id="Search-Strategy"><a href="#Search-Strategy" class="headerlink" title="Search Strategy"></a>Search Strategy</h4>
             
 
 
@@ -315,7 +338,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Math/" rel="tag">Math</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/AI/" rel="tag">AI</a>
 
             </div>
         
@@ -325,14 +348,11 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/2020/05/14/NAS/"
-                    data-tooltip="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
-                    aria-label="PREVIOUS: Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -342,9 +362,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2020/02/10/RNN/"
-                    data-tooltip="Sequential Models - RNNs and All"
-                    aria-label="NEXT: Sequential Models - RNNs and All"
+                    href="/2020/02/10/Matrix/"
+                    data-tooltip="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
+                    aria-label="NEXT: Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -369,7 +389,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/05/14/NAS/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -382,7 +402,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/05/14/NAS/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -395,7 +415,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/05/14/NAS/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -440,14 +460,11 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/2020/05/14/NAS/"
-                    data-tooltip="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
-                    aria-label="PREVIOUS: Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -457,9 +474,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/2020/02/10/RNN/"
-                    data-tooltip="Sequential Models - RNNs and All"
-                    aria-label="NEXT: Sequential Models - RNNs and All"
+                    href="/2020/02/10/Matrix/"
+                    data-tooltip="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
+                    aria-label="NEXT: Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -484,7 +501,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/05/14/NAS/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -497,7 +514,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/05/14/NAS/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -510,7 +527,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
+                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/05/14/NAS/"
                     title="Share on Google+"
                     aria-label="Share on Google+"
                 >
@@ -544,7 +561,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/05/14/NAS/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -557,7 +574,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/05/14/NAS/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -570,7 +587,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
+                        href="https://plus.google.com/share?url=http://yoursite.com/2020/05/14/NAS/"
                         aria-label="Share on Google+"
                     >
                         <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
