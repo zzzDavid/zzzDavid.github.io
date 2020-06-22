@@ -9706,7 +9706,7 @@ a.fancybox {
       text-decoration: none; }
   .post .post-meta {
     line-height: 1.5em;
-    font-family: "Open Sans", sans-serif;
+    font-family: "Merriweather", serif;
     font-size: 1.3rem;
     font-weight: 400;
     color: #9eabb3; }
@@ -9715,7 +9715,7 @@ a.fancybox {
   .post .post-content {
     text-rendering: optimizelegibility;
     letter-spacing: -0.3px;
-    font-family: "Merriweather", serif;
+    font-family: "Open Sans", sans-serif;
     color: #5d686f;
     margin-top: 20px;
     font-weight: 400;
@@ -9846,7 +9846,7 @@ a.fancybox {
         text-decoration: none; }
     .post-header-cover .post-header .post-meta {
       max-width: 750px;
-      font-family: "Open Sans", sans-serif;
+      font-family: "Merriweather", serif;
       font-size: 1.6rem;
       color: white !important;
       font-weight: 400;
@@ -10001,7 +10001,7 @@ a.fancybox {
   .postShorten .postShorten-content {
     text-rendering: optimizelegibility;
     letter-spacing: -0.3px;
-    font-family: "Merriweather", serif;
+    font-family: "Open Sans", sans-serif;
     color: #5d686f;
     font-weight: 400;
     overflow: hidden;

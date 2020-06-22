@@ -6,20 +6,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
-    <title>Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know - Niansong Zhang</title>
+    <title>Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
-        <meta name="keywords" content="Niansong Zhang,Niansong,Sun Yat-sen University,">
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
     
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1592794206/favicon_izvft0.ico">
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nPersonal NoteWell today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. \nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:\n\nLet’s say that multiplication by $\\mathit{A}$ transforms $\\mathbf{x}$ into $\\mathbf{b}$ and transforms $\\mathbf{u}$ into the zero vector. \n\nWe can think of matrix $\\mathit{A}$ as an object that “acts” on a vector $\\mathbf{x}$ by multiplication to produce a new vector $\\mathbf{b}$. Here, matrix $\\mathit{A}$ is a correspondence rule that assigns each vector in $\\mathbb{R}^3$ a vector $A(\\mathbf{x})$ in $\\mathbb{R}^2$. You can call it a mapping, or a function.\nEvery matrix transformation is a linear transformation, because: $A(\\mathbf{u} + \\mathbf{v}) = A(\\mathbf{u}) + A(\\mathbf{v})$ $A(c\\mathbf{u}) = cA(\\mathbf{u})$\n\nLet’s move to eigenvalues and eigenvectors. the word eigen origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\\mathit{A}$ is usually square. In essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathit{A}$ is a nonzero vector that, when $\\mathit{A}$ is applied to it, it does not change the direction. Applying $\\mathit{A}$ to the vector $\\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:\n\\mathit{A} ( \\mathbf{v} ) = \\lambda \\mathbf{v}A only scales vector v, without changing its direction","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-03-02T04:03:10+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"Because Matrix is pretty cool","headline":"Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:\n\nLet’s say that multiplication by $\\mathit{A}$ transforms $\\mathbf{x}$ into $\\mathbf{b}$ and transforms $\\mathbf{u}$ into the zero vector. \n\nWe can think of matrix $\\mathit{A}$ as an object that “acts” on a vector $\\mathbf{x}$ by multiplication to produce a new vector $\\mathbf{b}$. Here, matrix $\\mathit{A}$ is a correspondence rule that assigns each vector in $\\mathbb{R}^3$ a vector $A(\\mathbf{x})$ in $\\mathbb{R}^2$. You can call it a mapping, or a function.\nEvery matrix transformation is a linear transformation, because: $A(\\mathbf{u} + \\mathbf{v}) = A(\\mathbf{u}) + A(\\mathbf{v})$ $A(c\\mathbf{u}) = cA(\\mathbf{u})$\n\nLet’s move to eigenvalues and eigenvectors. the word eigen origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\\mathit{A}$ is usually square. In essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathit{A}$ is a nonzero vector that, when $\\mathit{A}$ is applied to it, it does not change the direction. Applying $\\mathit{A}$ to the vector $\\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:\n\\mathit{A} ( \\mathbf{v} ) = \\lambda \\mathbf{v}A only scales vector v, without changing its direction\nA Personal NoteWell today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. ","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-06-05T09:26:32+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"Because Matrix is pretty cool","headline":"Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
     <meta name="description" content="Because Matrix is pretty cool">
 <meta name="keywords" content="Math">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know">
+<meta property="og:title" content="Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;10&#x2F;Matrix&#x2F;index.html">
 <meta property="og:site_name" content="Niansong Zhang">
 <meta property="og:description" content="Because Matrix is pretty cool">
@@ -27,7 +29,7 @@
 <meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583091229&#x2F;posts&#x2F;transform_aceidd.png">
 <meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583092580&#x2F;posts&#x2F;Screen_Shot_2020-03-02_at_03.56.05_bprarw.png">
-<meta property="og:updated_time" content="2020-03-01T20:03:10.288Z">
+<meta property="og:updated_time" content="2020-06-05T01:26:32.282Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
     
@@ -47,7 +49,7 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-04wbg1alsdwnoazomvybjzj05cjrgpmp9u0ssuz4ypjmpsntlawflexnafiz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-7shtuhgmzwjpykbcpbi3teyiex5eul2fu3fgrlu9pmsrerwtihwrdswyalmf.min.css">
     <!--STYLES END-->
     
 
@@ -114,8 +116,7 @@
                 </a>
                 <h4 class="sidebar-profile-name">Niansong Zhang</h4>
                 
-                    <h5 class="sidebar-profile-bio"><p>Undergraduate Student, Researcher</p>
-</h5>
+                    <h5 class="sidebar-profile-bio"></h5>
                 
             </div>
         
@@ -229,23 +230,6 @@
             
         </ul>
         
-            <ul class="sidebar-buttons">
-            
-                <li class="sidebar-button">
-                    
-                        <a  class="sidebar-button-link "
-                             href="/atom.xml"
-                            
-                            title="RSS"
-                        >
-                    
-                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">RSS</span>
-                    </a>
-            </li>
-            
-        </ul>
-        
     </div>
 </nav>
 
@@ -259,7 +243,7 @@
                 <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know
+            Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know
         </h1>
     
     
@@ -295,7 +279,6 @@
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
-<h2 id="Personal-Note"><a href="#Personal-Note" class="headerlink" title="Personal Note"></a>Personal Note</h2><p>Well today I was doing some reading about RNN compression, and came across something called “circulant matrix”. The word “circulant” pulled me back to the signal processing class two years ago in Guangzhou where in my memory is, always hot and humid. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too stupid and forgetful, for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p>
 <h2 id="Eigenvalue-and-Eigenvectors"><a href="#Eigenvalue-and-Eigenvectors" class="headerlink" title="Eigenvalue and Eigenvectors"></a>Eigenvalue and Eigenvectors</h2><p>First thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:</p>
 <div class="figure center" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" alt=""></a></div><div style="clear:both;"></div>
 <p>Let’s say that multiplication by $\mathit{A}$ transforms $\mathbf{x}$ into $\mathbf{b}$ and transforms $\mathbf{u}$ into the zero vector. </p>
@@ -305,6 +288,7 @@
 </div>
 <p>Let’s move to eigenvalues and eigenvectors. the word <em>eigen</em> origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\mathit{A}$ is usually square. In essence, a <strong>eigenvector</strong> $\mathbf{v}$ of a linear tranformation $\mathit{A}$ is a nonzero vector that, when $\mathit{A}$ is applied to it, <span class="highlight-text red">it does not change the direction</span>. Applying $\mathit{A}$ to the vector $\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:</p>
 <script type="math/tex; mode=display">\mathit{A} ( \mathbf{v} ) = \lambda \mathbf{v}</script><div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583092580/posts/Screen_Shot_2020-03-02_at_03.56.05_bprarw.png" style="width:70%;"alt="A only scales vector v, without changing its direction"><span class="caption">A only scales vector v, without changing its direction</span></div>
+<h2 id="A-Personal-Note"><a href="#A-Personal-Note" class="headerlink" title="A Personal Note"></a>A Personal Note</h2><p>Well today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p>
             
 
 
@@ -390,20 +374,17 @@
                 </a>
             </li>
         
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
-                </a>
-            </li>
         
-        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
             
         
         <li class="post-action">
@@ -419,6 +400,10 @@
 
         
         
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
             
         
     </div>
@@ -505,20 +490,17 @@
                 </a>
             </li>
         
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
-                </a>
-            </li>
         
-        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
             
         
         <li class="post-action">
@@ -564,19 +546,6 @@
                     </a>
                 </li>
             
-                
-                
-                <li class="share-option">
-                    <a
-                        class="share-option-btn"
-                        target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/Matrix/"
-                        aria-label="Share on Google+"
-                    >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
-                    </a>
-                </li>
-            
         </ul>
     </div>
 
@@ -600,14 +569,13 @@
         
             <h4 id="about-card-name">Niansong Zhang</h4>
         
-            <div id="about-card-bio"><p>Undergraduate Student, Researcher</p>
-</div>
+            <div id="about-card-bio"></div>
         
         
             <div id="about-card-job">
                 <i class="fa fa-briefcase"></i>
                 <br/>
-                <p>Sun Yat-sen University</p>
+                <p>Cornell University</p>
 
             </div>
         
@@ -623,12 +591,29 @@
 
         
         
-<div id="cover" style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582839262/Backgrounds/clint-patterson-RWL7WPFaAHs-unsplash_tfba22.jpg');"></div>
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1592732598/david-clode-1364915-unsplash_fdvrmc.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-dm0jxt1x7qewovhm9vdq23bcy2txovek6tiq8gk2xfgzrzxsxqwxekmgeqva.min.js"></script>
+<script src="/assets/js/script-2tgmbq3zpsbmqxnck9roddq54wcmsjhv2iwbfqf4fjjkb3x5nud13uhnmpat.min.js"></script>
 <!--SCRIPTS END-->
 
 
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'http://yoursite.com/2020/02/10/Matrix/';
+              
+            this.page.identifier = '2020/02/10/Matrix/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
     
 
 

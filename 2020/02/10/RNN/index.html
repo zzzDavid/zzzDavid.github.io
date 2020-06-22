@@ -9,15 +9,17 @@
     <title>Sequential Models - RNNs and All - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
-        <meta name="keywords" content="Niansong Zhang,Niansong,Sun Yat-sen University,">
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
     
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1592794206/favicon_izvft0.ico">
     
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
     <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nBasic ModelGRU\nC-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAsAddressed ProblemsKey ConceptsMethodsResults and ConclusionsStrengths and WeaknessesRelationships to other worksContribution to my understandings","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-03-02T00:14:25+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"RNNs and stuff","headline":"Sequential Models - RNNs and All","image":[null,"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583079147/posts/speech_fer3qm.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/RNN/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/RNN/","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583079147/posts/speech_fer3qm.png"}</script>
     <meta name="description" content="RNNs and stuff">
-<meta name="keywords" content="Niansong Zhang,Niansong,Sun Yat-sen University">
+<meta name="keywords" content="Niansong Zhang,Niansong">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Sequential Models - RNNs and All">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;10&#x2F;RNN&#x2F;index.html">
@@ -40,7 +42,7 @@
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-04wbg1alsdwnoazomvybjzj05cjrgpmp9u0ssuz4ypjmpsntlawflexnafiz.min.css">
+    <link rel="stylesheet" href="/assets/css/style-7shtuhgmzwjpykbcpbi3teyiex5eul2fu3fgrlu9pmsrerwtihwrdswyalmf.min.css">
     <!--STYLES END-->
     
 
@@ -107,8 +109,7 @@
                 </a>
                 <h4 class="sidebar-profile-name">Niansong Zhang</h4>
                 
-                    <h5 class="sidebar-profile-bio"><p>Undergraduate Student, Researcher</p>
-</h5>
+                    <h5 class="sidebar-profile-bio"></h5>
                 
             </div>
         
@@ -222,23 +223,6 @@
             
         </ul>
         
-            <ul class="sidebar-buttons">
-            
-                <li class="sidebar-button">
-                    
-                        <a  class="sidebar-button-link "
-                             href="/atom.xml"
-                            
-                            title="RSS"
-                        >
-                    
-                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">RSS</span>
-                    </a>
-            </li>
-            
-        </ul>
-        
     </div>
 </nav>
 
@@ -307,8 +291,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2020/02/10/Matrix/"
-                    data-tooltip="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
-                    aria-label="PREVIOUS: Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
+                    data-tooltip="Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know"
+                    aria-label="PREVIOUS: Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -368,20 +352,17 @@
                 </a>
             </li>
         
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/RNN/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
-                </a>
-            </li>
         
-        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
             
         
         <li class="post-action">
@@ -397,6 +378,10 @@
 
         
         
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
             
         
     </div>
@@ -422,8 +407,8 @@
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2020/02/10/Matrix/"
-                    data-tooltip="Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
-                    aria-label="PREVIOUS: Matrixes, Eigenvalues and Other Linear Algebra Stuff You Probably Should Know"
+                    data-tooltip="Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know"
+                    aria-label="PREVIOUS: Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -483,20 +468,17 @@
                 </a>
             </li>
         
-            
-            
-            <li class="post-action hide-xs">
-                <a
-                    class="post-action-btn btn btn--default"
-                    target="new" href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/RNN/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
-                >
-                    <i class="fab fa-google-plus" aria-hidden="true"></i>
-                </a>
-            </li>
         
-        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
             
         
         <li class="post-action">
@@ -542,19 +524,6 @@
                     </a>
                 </li>
             
-                
-                
-                <li class="share-option">
-                    <a
-                        class="share-option-btn"
-                        target="new"
-                        href="https://plus.google.com/share?url=http://yoursite.com/2020/02/10/RNN/"
-                        aria-label="Share on Google+"
-                    >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
-                    </a>
-                </li>
-            
         </ul>
     </div>
 
@@ -578,14 +547,13 @@
         
             <h4 id="about-card-name">Niansong Zhang</h4>
         
-            <div id="about-card-bio"><p>Undergraduate Student, Researcher</p>
-</div>
+            <div id="about-card-bio"></div>
         
         
             <div id="about-card-job">
                 <i class="fa fa-briefcase"></i>
                 <br/>
-                <p>Sun Yat-sen University</p>
+                <p>Cornell University</p>
 
             </div>
         
@@ -601,12 +569,29 @@
 
         
         
-<div id="cover" style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582839262/Backgrounds/clint-patterson-RWL7WPFaAHs-unsplash_tfba22.jpg');"></div>
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1592732598/david-clode-1364915-unsplash_fdvrmc.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-dm0jxt1x7qewovhm9vdq23bcy2txovek6tiq8gk2xfgzrzxsxqwxekmgeqva.min.js"></script>
+<script src="/assets/js/script-2tgmbq3zpsbmqxnck9roddq54wcmsjhv2iwbfqf4fjjkb3x5nud13uhnmpat.min.js"></script>
 <!--SCRIPTS END-->
 
 
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'http://yoursite.com/2020/02/10/RNN/';
+              
+            this.page.identifier = '2020/02/10/RNN/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
     
 
 
