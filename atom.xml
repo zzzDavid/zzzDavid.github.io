@@ -142,9 +142,9 @@
       <category term="Research" scheme="http://yoursite.com/categories/Research/"/>
     
     
-      <category term="FPGA" scheme="http://yoursite.com/tags/FPGA/"/>
-    
       <category term="Projects" scheme="http://yoursite.com/tags/Projects/"/>
+    
+      <category term="FPGA" scheme="http://yoursite.com/tags/FPGA/"/>
     
   </entry>
   
