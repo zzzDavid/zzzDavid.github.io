@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
-    <title>Road to HeteroCL - Niansong Zhang</title>
+    <title>On HeteroCL - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
         <meta name="keywords" content="Niansong Zhang,Niansong,">
@@ -17,17 +17,17 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nWelcoming to my notes on HeteroCL.\n\nHow do we install it?To install HeteroCL, simple clone it from GitHb.1$ git clone --recursive https://github.com/cornell-zhang/heterocl.git\nAfter that, go to the downloaded directory and make it.1$ make -j8\nOptions\nYou can set your own CMake or LLVM version by setting the PATH in Makefile.config.\nYou can turn off the VHLS C simulation feature by setting USE_VIVADO_HLS to 0 in Makefile.config.\n\nComponents of HeteroCLHeteroCL framework overview\nWorkflow of HeteroCLBasic steps to use HeteroCL include:\n\nImport HeteroCL import heterocl as hcl\nInitialize Environment hcl.init()\nDefine Algorithm\nDefine Inputs/Outputs hcl.placeholder()\nApply Hardware Customization s= hcl.create_schedule  \nView lower IR hcl.lower(s)\nCreate Executable f = hcl.build()\nRun Executable f()\n\nFor FPGA backend HeteroCL generates HLS code. For CPU backend it generates a executable.\nTutorialsQuick Link","dateCreated":"2020-06-05T07:41:18+08:00","dateModified":"2020-06-21T23:26:06+08:00","datePublished":"2020-06-05T07:41:18+08:00","description":"HeteroCL is a software-defined reconfigurable computing framework. It is composed of a Python-based DSL (Domain-Specific Language) and an FPGA compilation flow. ","headline":"Road to HeteroCL","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1592753028/printed-circuit-board_oja4wl.jpg","https://res.cloudinary.com/dxzx2bxch/image/upload/v1591319551/Essay-Roads-Featured_koy5ir.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/06/05/HeteroCL/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/06/05/HeteroCL/","keywords":"FPGA","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1592753028/printed-circuit-board_oja4wl.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nWelcoming to my notes on HeteroCL.\n\nHow do we install it?To install HeteroCL, simple clone it from GitHb.1$ git clone --recursive https://github.com/cornell-zhang/heterocl.git\nAfter that, go to the downloaded directory and make it.1$ make -j8\nOptions\nYou can set your own CMake or LLVM version by setting the PATH in Makefile.config.\nYou can turn off the VHLS C simulation feature by setting USE_VIVADO_HLS to 0 in Makefile.config.\n\nComponents of HeteroCLHeteroCL framework overview\nWorkflow of HeteroCLBasic steps to use HeteroCL include:\n\nImport HeteroCL import heterocl as hcl\nInitialize Environment hcl.init()\nDefine Algorithm\nDefine Inputs/Outputs hcl.placeholder()\nApply Hardware Customization s= hcl.create_schedule  \nView lower IR hcl.lower(s)\nCreate Executable f = hcl.build()\nRun Executable f()\n\nFor FPGA backend HeteroCL generates HLS code. For CPU backend it generates a executable.\nTutorialsQuick Link","dateCreated":"2020-06-05T07:41:18+08:00","dateModified":"2020-06-29T11:49:50+08:00","datePublished":"2020-06-05T07:41:18+08:00","description":"HeteroCL is a software-defined reconfigurable computing framework. It is composed of a Python-based DSL (Domain-Specific Language) and an FPGA compilation flow. ","headline":"On HeteroCL","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1592753028/printed-circuit-board_oja4wl.jpg","https://res.cloudinary.com/dxzx2bxch/image/upload/v1591319551/Essay-Roads-Featured_koy5ir.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/06/05/HeteroCL/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/06/05/HeteroCL/","keywords":"FPGA","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1592753028/printed-circuit-board_oja4wl.jpg"}</script>
     <meta name="description" content="HeteroCL is a software-defined reconfigurable computing framework. It is composed of a Python-based DSL (Domain-Specific Language) and an FPGA compilation flow.">
 <meta name="keywords" content="FPGA">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Road to HeteroCL">
+<meta property="og:title" content="On HeteroCL">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;05&#x2F;HeteroCL&#x2F;index.html">
 <meta property="og:site_name" content="Niansong Zhang">
 <meta property="og:description" content="HeteroCL is a software-defined reconfigurable computing framework. It is composed of a Python-based DSL (Domain-Specific Language) and an FPGA compilation flow.">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dxzx2bxch&#x2F;image&#x2F;upload&#x2F;v1591322050&#x2F;Screen_Shot_2020-06-05_at_09.53.57_v6rkbe.png">
-<meta property="og:updated_time" content="2020-06-21T15:26:06.568Z">
+<meta property="og:updated_time" content="2020-06-29T03:49:50.486Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dxzx2bxch&#x2F;image&#x2F;upload&#x2F;v1591322050&#x2F;Screen_Shot_2020-06-05_at_09.53.57_v6rkbe.png">
     
@@ -114,7 +114,8 @@
                 </a>
                 <h4 class="sidebar-profile-name">Niansong Zhang</h4>
                 
-                    <h5 class="sidebar-profile-bio"></h5>
+                    <h5 class="sidebar-profile-bio"><p>I am an incoming M.S. student at Cornell University,  commencing 2021 Spring. I’m now working at Tsinghua University  and NOVAUTO Technology, Beijing, on hardware accelerators,  model compression, and neural architecture search.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
                 
             </div>
         
@@ -241,7 +242,7 @@
                 <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            Road to HeteroCL
+            On HeteroCL
         </h1>
     
     
@@ -419,8 +420,6 @@
     </div>
 </article>
 
-
-
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
         Copyrights &copy; 2020 Niansong Zhang. All Rights Reserved.
@@ -579,7 +578,8 @@
         
             <h4 id="about-card-name">Niansong Zhang</h4>
         
-            <div id="about-card-bio"></div>
+            <div id="about-card-bio"><p>I am an incoming M.S. student at Cornell University,  commencing 2021 Spring. I’m now working at Tsinghua University  and NOVAUTO Technology, Beijing, on hardware accelerators,  model compression, and neural architecture search.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
         
         
             <div id="about-card-job">

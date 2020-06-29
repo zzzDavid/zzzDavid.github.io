@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2020/06/21/application/</loc>
+    
+    <lastmod>2020-06-29T20:12:00.909Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/06/05/HeteroCL/</loc>
+    
+    <lastmod>2020-06-29T03:49:50.486Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2020/01/10/RapidLayout/</loc>
     
     <lastmod>2020-06-23T06:16:34.655Z</lastmod>
@@ -16,23 +30,9 @@
   </url>
   
   <url>
-    <loc>http://yoursite.com/2020/06/21/application/</loc>
-    
-    <lastmod>2020-06-22T02:28:09.590Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yoursite.com/2016/01/09/Goodbye-to-All-That/</loc>
     
     <lastmod>2020-06-21T15:33:31.253Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2020/06/05/HeteroCL/</loc>
-    
-    <lastmod>2020-06-21T15:26:06.568Z</lastmod>
     
   </url>
   
