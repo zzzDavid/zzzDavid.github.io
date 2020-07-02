@@ -1,4 +1,8 @@
-<!DOCTYPE html><html lang="en"><head>
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
@@ -13,35 +17,35 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:\n\nLet’s say that multiplication by $\\mathit{A}$ transforms $\\mathbf{x}$ into $\\mathbf{b}$ and transforms $\\mathbf{u}$ into the zero vector. \n\nWe can think of matrix $\\mathit{A}$ as an object that “acts” on a vector $\\mathbf{x}$ by multiplication to produce a new vector $\\mathbf{b}$. Here, matrix $\\mathit{A}$ is a correspondence rule that assigns each vector in $\\mathbb{R}^3$ a vector $A(\\mathbf{x})$ in $\\mathbb{R}^2$. You can call it a mapping, or a function.\nEvery matrix transformation is a linear transformation, because: $A(\\mathbf{u} + \\mathbf{v}) = A(\\mathbf{u}) + A(\\mathbf{v})$ $A(c\\mathbf{u}) = cA(\\mathbf{u})$\n\nLet’s move to eigenvalues and eigenvectors. the word eigen origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\\mathit{A}$ is usually square. In essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathit{A}$ is a nonzero vector that, when $\\mathit{A}$ is applied to it, it does not change the direction. Applying $\\mathit{A}$ to the vector $\\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:\n\\mathit{A} ( \\mathbf{v} ) = \\lambda \\mathbf{v}A only scales vector v, without changing its direction\nA Personal NoteWell today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. \n","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-06-05T09:26:32+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"Because Matrix is pretty cool","headline":"Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"},"articleBody":"\nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:\n\nLet’s say that multiplication by $\\mathit{A}$ transforms $\\mathbf{x}$ into $\\mathbf{b}$ and transforms $\\mathbf{u}$ into the zero vector. \n\nWe can think of matrix $\\mathit{A}$ as an object that “acts” on a vector $\\mathbf{x}$ by multiplication to produce a new vector $\\mathbf{b}$. Here, matrix $\\mathit{A}$ is a correspondence rule that assigns each vector in $\\mathbb{R}^3$ a vector $A(\\mathbf{x})$ in $\\mathbb{R}^2$. You can call it a mapping, or a function.\nEvery matrix transformation is a linear transformation, because: $A(\\mathbf{u} + \\mathbf{v}) = A(\\mathbf{u}) + A(\\mathbf{v})$ $A(c\\mathbf{u}) = cA(\\mathbf{u})$\n\nLet’s move to eigenvalues and eigenvectors. the word eigen origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\\mathit{A}$ is usually square. In essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathit{A}$ is a nonzero vector that, when $\\mathit{A}$ is applied to it, it does not change the direction. Applying $\\mathit{A}$ to the vector $\\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:\n\\mathit{A} ( \\mathbf{v} ) = \\lambda \\mathbf{v}A only scales vector v, without changing its direction\nA Personal NoteWell today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. ","dateCreated":"2020-02-10T23:41:18+08:00","dateModified":"2020-06-05T09:26:32+08:00","datePublished":"2020-02-10T23:41:18+08:00","description":"Because Matrix is pretty cool","headline":"Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://yoursite.com/2020/02/10/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"}},"url":"http://yoursite.com/2020/02/10/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
     <meta name="description" content="Because Matrix is pretty cool">
 <meta name="keywords" content="Math">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know">
-<meta property="og:url" content="http://yoursite.com/2020/02/10/Matrix/index.html">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;02&#x2F;10&#x2F;Matrix&#x2F;index.html">
 <meta property="og:site_name" content="Niansong Zhang">
 <meta property="og:description" content="Because Matrix is pretty cool">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://yoursite.com/js/lazyload-plugin/loading.svg">
-<meta property="og:image" content="http://yoursite.com/js/lazyload-plugin/loading.svg">
-<meta property="og:image" content="http://yoursite.com/js/lazyload-plugin/loading.svg">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583091229&#x2F;posts&#x2F;transform_aceidd.png">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583092580&#x2F;posts&#x2F;Screen_Shot_2020-03-02_at_03.56.05_bprarw.png">
 <meta property="og:updated_time" content="2020-06-05T01:26:32.282Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/js/lazyload-plugin/loading.svg">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
     
     
         
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg">
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg"/>
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg">
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg">
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg">
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg">
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
     
     
     <!--STYLES-->
@@ -70,16 +74,24 @@
 <header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
-        <a class="header-title-link" href="/%20" aria-label>
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
             Niansong Zhang
         </a>
     </div>
     
         
-            <a class="header-right-picture " href="#about" aria-label="Open the link: /#about">
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
         
         
-            <img class="header-picture" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg" alt="Author's picture">
+            <img class="header-picture" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg" alt="Author&#39;s picture"/>
         
         </a>
     
@@ -96,8 +108,11 @@
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
-                <a href="/#about" aria-label="Read more about the author">
-                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg" alt="Author's picture">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg" alt="Author&#39;s picture"/>
                 </a>
                 <h4 class="sidebar-profile-name">Niansong Zhang</h4>
                 
@@ -111,7 +126,11 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/" title="Home">
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="Home"
+                        >
                     
                         <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Home</span>
@@ -120,7 +139,11 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-categories" title="Categories">
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
                     
                         <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Categories</span>
@@ -129,7 +152,11 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/all-tags" title="Tags">
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
                     
                         <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Tags</span>
@@ -138,7 +165,11 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link open-algolia-search" href="/all-archives" title="Archives">
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
                     
                         <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Archives</span>
@@ -147,7 +178,11 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="/pdf/CV-niansong.pdf" title="Resume/CV">
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
                     
                         <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Resume/CV</span>
@@ -160,7 +195,7 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
                     
                         <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
@@ -169,7 +204,7 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
                     
                         <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Twitter</span>
@@ -178,7 +213,7 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
                     
                         <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">LinkedIn</span>
@@ -187,7 +222,7 @@
             
                 <li class="sidebar-button">
                     
-                        <a class="sidebar-button-link " href="mailto:zhangns@mail2.sysu.edu.cn" target="_blank" rel="noopener" title="Mail">
+                        <a  class="sidebar-button-link " href="mailto:zhangns@mail2.sysu.edu.cn" target="_blank" rel="noopener" title="Mail">
                     
                         <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Mail</span>
@@ -202,7 +237,9 @@
             
         <div class="post-header-cover
                     text-left
-                    " style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg');" data-behavior="5">
+                    "
+             style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg');"
+             data-behavior="5">
             
                 <div class="post-header main-content-wrap text-left">
     
@@ -232,7 +269,8 @@
             
         </div>
 
-            <div id="main" data-behavior="5" class="hasCover
+            <div id="main" data-behavior="5"
+                 class="hasCover
                         hasCoverMetaIn
                         ">
                 
@@ -243,16 +281,15 @@
         <div class="main-content-wrap">
             <!-- excerpt -->
 <h2 id="Eigenvalue-and-Eigenvectors"><a href="#Eigenvalue-and-Eigenvectors" class="headerlink" title="Eigenvalue and Eigenvectors"></a>Eigenvalue and Eigenvectors</h2><p>First thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:</p>
-<div class="figure center" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" target="_blank" rel="noopener" title data-caption data-fancybox="default"><div class="progress-images" style="width:1994px"><div class="progress-images--placeholder" style="padding-bottom: 23.16950852557673%;"></div><img class="progress-images--original" src="/js/lazyload-plugin/loading.svg" alt data-original="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" data-thumb="/images/thumb/457b6e2afd02afceef7eb4efef089096.png"></div></a></div><div style="clear:both;"></div>
+<div class="figure center" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" alt=""></a></div><div style="clear:both;"></div>
 <p>Let’s say that multiplication by $\mathit{A}$ transforms $\mathbf{x}$ into $\mathbf{b}$ and transforms $\mathbf{u}$ into the zero vector. </p>
-<div class="figure center" style="width:70%;"><div class="progress-images" style="width:1046px"><div class="progress-images--placeholder" style="padding-bottom: 56.78776290630975%;"></div><img class="progress-images--original" src="/js/lazyload-plugin/loading.svg" style="width:70%;" alt data-original="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583091229/posts/transform_aceidd.png" data-thumb="/images/thumb/a81f27a041556019c9533f84d56cf65d.png"></div></div>
+<div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583091229/posts/transform_aceidd.png" style="width:70%;"alt=""></div>
 <p>We can think of matrix $\mathit{A}$ as an object that “acts” on a vector $\mathbf{x}$ by multiplication to produce a new vector $\mathbf{b}$. Here, matrix $\mathit{A}$ is a correspondence rule that assigns each vector in $\mathbb{R}^3$ a vector $A(\mathbf{x})$ in $\mathbb{R}^2$. You can call it a <strong>mapping</strong>, or a <strong>function</strong>.</p>
 <div class="alert success"><p>Every matrix transformation is a linear transformation, because:<br> $A(\mathbf{u} + \mathbf{v}) = A(\mathbf{u}) + A(\mathbf{v})$<br> $A(c\mathbf{u}) = cA(\mathbf{u})$</p>
 </div>
 <p>Let’s move to eigenvalues and eigenvectors. the word <em>eigen</em> origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\mathit{A}$ is usually square. In essence, a <strong>eigenvector</strong> $\mathbf{v}$ of a linear tranformation $\mathit{A}$ is a nonzero vector that, when $\mathit{A}$ is applied to it, <span class="highlight-text red">it does not change the direction</span>. Applying $\mathit{A}$ to the vector $\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:</p>
-<script type="math/tex; mode=display">\mathit{A} ( \mathbf{v} ) = \lambda \mathbf{v}</script><div class="figure center" style="width:70%;"><div class="progress-images" style="width:830px"><div class="progress-images--placeholder" style="padding-bottom: 46.74698795180723%;"></div><img class="progress-images--original" src="/js/lazyload-plugin/loading.svg" style="width:70%;" alt="A only scales vector v, without changing its direction" data-original="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583092580/posts/Screen_Shot_2020-03-02_at_03.56.05_bprarw.png" data-thumb="/images/thumb/1d01139a45a1663066a50cd70ad7ed69.png"></div><span class="caption">A only scales vector v, without changing its direction</span></div>
+<script type="math/tex; mode=display">\mathit{A} ( \mathbf{v} ) = \lambda \mathbf{v}</script><div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583092580/posts/Screen_Shot_2020-03-02_at_03.56.05_bprarw.png" style="width:70%;"alt="A only scales vector v, without changing its direction"><span class="caption">A only scales vector v, without changing its direction</span></div>
 <h2 id="A-Personal-Note"><a href="#A-Personal-Note" class="headerlink" title="A Personal Note"></a>A Personal Note</h2><p>Well today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p>
-
             
 
 
@@ -261,7 +298,7 @@
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">TAGGED IN</span><br>
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
     <a class="tag tag--primary tag--small t-link" href="/tags/Math/" rel="tag">Math</a>
 
@@ -274,7 +311,12 @@
             <li class="post-action">
                 
                     
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2020/05/14/NAS/" data-tooltip="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations" aria-label="PREVIOUS: Neural Architecture Search, Basic Concepts, Paper Summary and Implementations">
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/05/14/NAS/"
+                    data-tooltip="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
+                    aria-label="PREVIOUS: Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
+                >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
@@ -283,7 +325,12 @@
             <li class="post-action">
                 
                     
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2020/02/10/RNN/" data-tooltip="Sequential Models - RNNs and All" aria-label="NEXT: Sequential Models - RNNs and All">
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/02/10/RNN/"
+                    data-tooltip="Sequential Models - RNNs and All"
+                    aria-label="NEXT: Sequential Models - RNNs and All"
+                >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -293,7 +340,11 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -301,7 +352,12 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/" title="Share on Facebook" aria-label="Share on Facebook">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -309,7 +365,12 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/" title="Share on Twitter" aria-label="Share on Twitter">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -317,7 +378,11 @@
         
             
                 <li class="post-action">
-                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
                         <i class="fa fa-comment"></i>
                     </a>
                 </li>
@@ -347,7 +412,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights © 2020 Niansong Zhang. All Rights Reserved.
+        Copyrights &copy; 2020 Niansong Zhang. All Rights Reserved.
     </span>
 </footer>
 
@@ -360,7 +425,12 @@
             <li class="post-action">
                 
                     
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2020/05/14/NAS/" data-tooltip="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations" aria-label="PREVIOUS: Neural Architecture Search, Basic Concepts, Paper Summary and Implementations">
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/05/14/NAS/"
+                    data-tooltip="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
+                    aria-label="PREVIOUS: Neural Architecture Search, Basic Concepts, Paper Summary and Implementations"
+                >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
@@ -369,7 +439,12 @@
             <li class="post-action">
                 
                     
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2020/02/10/RNN/" data-tooltip="Sequential Models - RNNs and All" aria-label="NEXT: Sequential Models - RNNs and All">
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2020/02/10/RNN/"
+                    data-tooltip="Sequential Models - RNNs and All"
+                    aria-label="NEXT: Sequential Models - RNNs and All"
+                >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -379,7 +454,11 @@
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
@@ -387,7 +466,12 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/" title="Share on Facebook" aria-label="Share on Facebook">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
@@ -395,7 +479,12 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/" title="Share on Twitter" aria-label="Share on Twitter">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
             </li>
@@ -403,7 +492,11 @@
         
             
                 <li class="post-action">
-                    <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
                         <i class="fa fa-comment"></i>
                     </a>
                 </li>
@@ -429,7 +522,12 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/" aria-label="Share on Facebook">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2020/02/10/Matrix/"
+                        aria-label="Share on Facebook"
+                    >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
                     </a>
                 </li>
@@ -437,7 +535,12 @@
                 
                 
                 <li class="share-option">
-                    <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/" aria-label="Share on Twitter">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://yoursite.com/2020/02/10/Matrix/"
+                        aria-label="Share on Twitter"
+                    >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
                     </a>
                 </li>
@@ -461,7 +564,7 @@
             <i class="fa fa-times"></i>
         </div>
         
-            <img id="about-card-picture" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg" alt="Author's picture">
+            <img id="about-card-picture" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1582815704/IMG_1121_uzn297.jpg" alt="Author&#39;s picture"/>
         
             <h4 id="about-card-name">Niansong Zhang</h4>
         
@@ -471,7 +574,7 @@
         
             <div id="about-card-job">
                 <i class="fa fa-briefcase"></i>
-                <br>
+                <br/>
                 <p>Cornell University</p>
 
             </div>
@@ -479,7 +582,7 @@
         
             <div id="about-card-location">
                 <i class="fa fa-map-marker-alt"></i>
-                <br>
+                <br/>
                 Beijing, China
             </div>
         
@@ -516,6 +619,20 @@
 
 
 
-    
-
-<script type="text/javascript" charset="utf-8" src="/js/lazyload-plugin/lazyload.intersectionObserver.min.js"></script></body></html>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
+</html>
