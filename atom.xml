@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.zzzdavid.tech/"/>
-  <updated>2020-08-05T07:16:43.376Z</updated>
+  <updated>2020-08-05T07:27:15.245Z</updated>
   <id>https://www.zzzdavid.tech/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://www.zzzdavid.tech/pruning/"/>
     <id>https://www.zzzdavid.tech/pruning/</id>
     <published>2020-08-05T06:49:18.000Z</published>
-    <updated>2020-08-05T07:16:43.376Z</updated>
+    <updated>2020-08-05T07:27:15.245Z</updated>
     
-    <content type="html"><![CDATA[<!-- excerpt --><p>I have been working on neural network pruning since last winter, starting from a convolution neural network pruning tool based on Caffe. I did not have a thorough understanding of the topic when I started. As I keep working on the framework, I become familiar with the process of pruning a convolution neural net. So I think I should write a post about it.</p><p>There sure are a plethora of methods to prune a neural network. But this post focuses more about the implementation of one particular method, less about reviewing various methods. In fact, I think researchers are moving to Neural Architecture Search for light-weight neural nets. </p><p>Anyway, this post writes about an iterative pruning method. It only prunes away convolution kernels, so it eschews the pain of re-implementing a sparse computation framework, we can just use standard CUDA. The pruned model is still dense - there are no random zeros inside the convolution kernels. Less important kernels are removed entirely. The pruned convolution layer has less kernels, which means it has less output channels.</p><p>By iterative pruning I mean, we prune the nets again and again, with increasing pruning rate. For example, we start at a pruning rate of 0.5, meaning we want to remove half of the convolution kernels. Then we finetune (or as others may call it, re-train) the pruned model to convergence, and we see if the performance is still satisfactory. In the next round, we increase the pruning rate, prune and finetune the model, and see if the performance is good still. We continue this process until the performance of pruned model is no longer satisfactory. </p><h2 id="Sensitivity-Analysis"><a href="#Sensitivity-Analysis" class="headerlink" title="Sensitivity Analysis"></a>Sensitivity Analysis</h2>]]></content>
+    <content type="html"><![CDATA[<!-- excerpt --><h2 id="Some-Rambling"><a href="#Some-Rambling" class="headerlink" title="Some Rambling"></a>Some Rambling</h2><p>I have been working on neural network pruning since last winter, starting from a convolution neural network pruning tool based on Caffe. I did not have a thorough understanding of the topic when I started. As I keep working on the framework, I become familiar with the process of pruning a convolution neural net. So I think I should write a post about it.</p><p>There sure are a plethora of methods to prune a neural network. But this post focuses more about the implementation of one particular method, less about reviewing various methods. In fact, I think researchers are moving to Neural Architecture Search for light-weight neural nets. </p><p>Anyway, this post writes about an iterative pruning method. It only prunes away convolution kernels, so it eschews the pain of re-implementing a sparse computation framework, we can just use standard CUDA. The pruned model is still dense - there are no random zeros inside the convolution kernels. Less important kernels are removed entirely. The pruned convolution layer has less kernels, which means it has less output channels.</p><p>By iterative pruning I mean, we prune the nets again and again, with increasing pruning rate. For example, we start at a pruning rate of 0.5, meaning we want to remove half of the convolution kernels. Then we finetune (or as others may call it, re-train) the pruned model to convergence, and we see if the performance is still satisfactory. In the next round, we increase the pruning rate, prune and finetune the model, and see if the performance is good still. We continue this process until the performance of pruned model is no longer satisfactory. </p><h2 id="Sensitivity-Analysis"><a href="#Sensitivity-Analysis" class="headerlink" title="Sensitivity Analysis"></a>Sensitivity Analysis</h2>]]></content>
     
     <summary type="html">
     
@@ -142,9 +142,9 @@
       <category term="Research" scheme="https://www.zzzdavid.tech/categories/Research/"/>
     
     
-      <category term="Projects" scheme="https://www.zzzdavid.tech/tags/Projects/"/>
-    
       <category term="FPGA" scheme="https://www.zzzdavid.tech/tags/FPGA/"/>
+    
+      <category term="Projects" scheme="https://www.zzzdavid.tech/tags/Projects/"/>
     
   </entry>
   
