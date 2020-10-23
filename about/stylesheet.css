@@ -1,0 +1,18 @@
+body {
+    background-color: rgba(225, 238, 240, 0.829);
+  }
+heading {
+    color: rgb(0,0,0);
+    font-family: courier;
+    font-size: 160%;
+  }
+  p {
+    color: rgb(0, 0, 0);
+    font-family: courier;
+    font-size: 100%;
+  }
+
+  name {
+      font-family:  courier;
+      font-size: 200%
+  }
