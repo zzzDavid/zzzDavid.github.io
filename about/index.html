@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148984682-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-148984682-2');
+  </script>
+  
+  <title>Kai Zhang</title>
+  
+  <meta name="author" content="Kai Zhang">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <link rel="icon" type="image/png" href="images/seal_icon.png">
+</head>
+
+<body>
+  <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+    <tr style="padding:0px">
+      <td style="padding:0px">
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr style="padding:0px">
+            <td style="padding:2.5%;width:63%;vertical-align:middle">
+              <p style="text-align:center">
+                <name>Kai Zhang</name>
+              </p>
+              <p>I am a PhD student at <a href="https://tech.cornell.edu/">Cornell University/Cornell Tech</a>, where I am very fortunate to work with <a href="http://www.cs.cornell.edu/~snavely/">Prof. Noah Snavely</a>. Before PhD, I did my undergraduate in Electronic Engineering at <a href="https://www.tsinghua.edu.cn/publish/thu2018en/index.html">Tsinghua University</a>.
+                
+              <p>In the past, I feel lucky to have worked with <a href="https://cqf.io/"> Prof. Qifeng Chen</a> at HKUST. </p>
+              </p>
+<!--               <p>
+                At Google I've worked on <a href="https://ai.googleblog.com/2014/04/lens-blur-in-new-google-camera-app.html">Lens Blur</a>, <a href="https://ai.googleblog.com/2014/10/hdr-low-light-and-high-dynamic-range.html">HDR+</a>, <a href="https://www.google.com/get/cardboard/jump/">Jump</a>, <a href="https://ai.googleblog.com/2017/10/portrait-mode-on-pixel-2-and-pixel-2-xl.html">Portrait Mode</a>, and <a href="https://www.youtube.com/watch?v=JSnB06um5r4">Glass</a>. I did my PhD at <a href="http://www.eecs.berkeley.edu/">UC Berkeley</a>, where I was advised by <a href="http://www.cs.berkeley.edu/~malik/">Jitendra Malik</a> and funded by the <a href="http://www.nsfgrfp.org/">NSF GRFP</a>. I did my bachelors at the <a href="http://cs.toronto.edu">University of Toronto</a>.
+              </p> -->
+              <p style="text-align:center">
+                <a href="mailto:kz298@cornell.edu">Email</a> &nbsp/&nbsp
+<!--                 <a href="./">Email</a> &nbsp/&nbsp
+ -->                <a href="https://github.com/Kai-46/">GitHub</a> &nbsp/&nbsp
+                <!-- <a href="data/JonBarron-bio.txt">Biography</a> &nbsp/&nbsp -->
+<!--                 <a href="https://scholar.google.com/citations?hl=en&user=jktWnL8AAAAJ">Google Scholar</a> &nbsp/&nbsp
+ -->            <a href="https://www.linkedin.com/in/kai-zhang-53910214a/">LinkedIn</a>
+              </p>
+            </td>
+            <td style="padding:2.5%;width:40%;max-width:40%">
+              <a href="images/JonBarron.jpg"><img style="width:70%;max-width:100%" alt="profile photo" src="images/me.png" class="hoverZoomLink"></a>
+            </td>
+          </tr>
+        </tbody></table>
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr>
+            <td style="padding:20px;width:100%;vertical-align:middle">
+              <heading>Research</heading>
+              <p>
+                I'm broadly interested in 3D-related computer vision research, including reconstruction, depth sensing, computational photography, etc. 
+              </p>
+            </td>
+          </tr>
+        </tbody></table>
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+          <tr onmouseout="motionblur_stop()" onmouseover="motionblur_start()">
+            <td style="padding:20px;width:25%;vertical-align:middle">
+              <div class="one">
+                <div class="two" id='DepthSensing'><img src='images/depth_sensing.png'></div>
+                <img src='images/depth_sensing.png'>
+              </div>
+              <script type="text/javascript">
+                function motionblur_start() {
+                  document.getElementById('DepthSensing').style.opacity = "1";
+                }
+
+                function motionblur_stop() {
+                  document.getElementById('DepthSensing').style.opacity = "0";
+                }
+                motionblur_stop()
+              </script>
+            </td>
+            <td style="padding:20px;width:75%;vertical-align:middle">
+              <a href="">
+                <papertitle>Depth Sensing Beyond LiDAR Range</papertitle>
+              </a>
+              <br>
+              <strong>Kai Zhang</strong>,
+              Jiaxin Xie,
+              <a href="http://www.cs.cornell.edu/~snavely/">Noah Snavely</a>,
+              <a href="https://cqf.io/">Qifeng Chen</a>
+              <br>
+              <em>CVPR</em>, 2020 &nbsp
+              <br>
+              <a href="https://arxiv.org/abs/2004.03048">arxiv</a> /
+              <a href="https://kai-46.github.io/DepthSensing/">project page</a> /
+<!--               <a href="https://kai-46.github.io/VisSat/#code">code</a>  -->
+              <p></p>
+              <p>We propose a novel cost-effective camera-based solution to sense the depth of distant objects that are not reachable by typical LiDARs. This can be particularly helpful for heavily-weighted autonomous trucks.</p>
+            </td>
+          </tr>
+          
+          <tr onmouseout="motionblur_stop()" onmouseover="motionblur_start()">
+            <td style="padding:20px;width:25%;vertical-align:middle">
+              <div class="one">
+                <div class="two" id='VisSat'><img src='images/VisSat.png'></div>
+                <img src='images/VisSat.png'>
+              </div>
+              <script type="text/javascript">
+                function motionblur_start() {
+                  document.getElementById('VisSat').style.opacity = "1";
+                }
+
+                function motionblur_stop() {
+                  document.getElementById('VisSat').style.opacity = "0";
+                }
+                motionblur_stop()
+              </script>
+            </td>
+            <td style="padding:20px;width:75%;vertical-align:middle">
+              <a href="https://arxiv.org/abs/1910.02989">
+                <papertitle>Leveraging Vision Reconstruction Pipelines for Satellite Imagery</papertitle>
+              </a>
+              <br>
+              <strong>Kai Zhang</strong>,
+              <a>Jin Sun</a>,
+              <a href="http://www.cs.cornell.edu/~snavely/">Noah Snavely</a>
+              <br>
+              <em>ICCV 3DRW Workshop</em>, 2019 &nbsp
+              <br>
+              <a href="https://arxiv.org/abs/1910.02989">arxiv</a> /
+              <a href="https://kai-46.github.io/VisSat/my_files/paper_supp.pdf">supplement</a> /
+              <a href="https://kai-46.github.io/VisSat/">project page</a> /
+              <a href="https://kai-46.github.io/VisSat/#code">code</a> 
+              <p></p>
+              <p>We approximate RPC cameras in the satelite domain with perspective cameras, and adapt general-purpose vision reconstruction pipelines (SfM+MVS) such that they can also process satellite images with competitive accuracy and increased scalability.</p>
+            </td>
+          </tr>
+
+        </tbody></table>
+<!-- 
+        <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
+          <tr>
+            <td>
+              <heading>Service</heading>
+            </td>
+          </tr>
+        </tbody></table>
+        <table width="100%" align="center" border="0" cellpadding="20"><tbody>
+          <tr>
+            <td style="padding:20px;width:25%;vertical-align:middle"><img src="images/cvf.jpg"></td>
+            <td width="75%" valign="center">
+              <a href="http://cvpr2019.thecvf.com/area_chairs">Area Chair, CVPR 2019</a>
+              <br>
+              <br>
+              <a href="http://cvpr2018.thecvf.com/organizers/area_chairs">Area Chair, CVPR 2018</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px;width:25%;vertical-align:middle">
+              <img src="images/cs188.jpg" alt="cs188">
+            </td>
+            <td width="75%" valign="center">
+              <a href="http://inst.eecs.berkeley.edu/~cs188/sp11/announcements.html">Graduate Student Instructor, CS188 Spring 2011</a>
+              <br>
+              <br>
+              <a href="http://inst.eecs.berkeley.edu/~cs188/fa10/announcements.html">Graduate Student Instructor, CS188 Fall 2010</a>
+              <br>
+              <br>
+              <a href="http://aima.cs.berkeley.edu/">Figures, "Artificial Intelligence: A Modern Approach", 3rd Edition</a>
+            </td>
+          </tr>
+        </tbody></table> -->
+
+        <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
+          <tr>
+            <td>
+              <heading>Teaching</heading>
+              <p>
+              Teaching Assistant for <a href="http://www.cs.cornell.edu/courses/cs5670/2020sp/">Introduction to Computer Vision, 2020 Spring</a>
+              </p>
+              <p>
+               Head Teaching Assistant for <a href="http://www.cs.cornell.edu/courses/cs5670/2019sp/">Introduction to Computer Vision, 2019 Spring</a>
+              </p>
+            </td>
+          </tr>
+        </tbody></table>
+  
+<!--           <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
+          <tr>
+            <td>
+              <heading>Others</heading>
+              <p>
+              <a href="https://docs.google.com/document/d/1_Sx1guxy2elwqFD8cLMdN0JaNZbqhcdHBvjWla5Cx1Q/edit?usp=sharing">Some tools/utilities I use a lot</a>
+              </p>
+            </td>
+          </tr>
+        </tbody></table> -->
+
+        <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+          <tr>
+            <td style="padding:0px">
+              <br>
+              <p style="text-align:center;font-size:small;">
+              	This website is heavily borrowed from <a href="https://jonbarron.info/">Dr. Jon Barron's personal page</a>.
+              </p>
+            </td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>
