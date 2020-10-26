@@ -23,8 +23,8 @@ name {
       font-size: 200%
   }
   .circle_image {
-    width: 250px;
-    border-radius: 125px;
+    width: 100%;
+    border-radius: 100%;
 }
 
 papertitle {
