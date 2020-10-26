@@ -3,11 +3,17 @@ body {
 }
 heading {
     color: rgb(0,0,0);
-    font-family: optima; 
+    font-family: 'Cormorant Garamond', serif; 
     font-size: 160%;
   }
 p {
     color: rgb(0, 0, 0);
+    font-family: optima;
+    font-size: 100%;
+  }
+
+a {
+    color: rgb(15, 155, 236);
     font-family: optima;
     font-size: 100%;
   }
@@ -19,4 +25,23 @@ name {
   .circle_image {
     width: 250px;
     border-radius: 125px;
+}
+
+papertitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120%
+}
+
+strong{
+    font-family: optima;
+    font-size: 100%;
+}
+em{
+    font-family: optima;
+    font-size: 100%;
+}
+
+br{
+    font-family: optima;
+    font-size: 100%;
 }
