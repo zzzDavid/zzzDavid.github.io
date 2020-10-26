@@ -1,18 +1,22 @@
 body {
-    background-color: rgba(225, 238, 240, 0.829);
-  }
+    background-color: rgb(255, 255, 255);
+}
 heading {
     color: rgb(0,0,0);
-    font-family: courier;
+    font-family: optima; 
     font-size: 160%;
   }
-  p {
+p {
     color: rgb(0, 0, 0);
-    font-family: courier;
+    font-family: optima;
     font-size: 100%;
   }
 
-  name {
-      font-family:  courier;
+name {
+      font-family:  optima;
       font-size: 200%
   }
+  .circle_image {
+    width: 250px;
+    border-radius: 125px;
+}
