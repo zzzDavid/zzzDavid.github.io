@@ -103,6 +103,26 @@
   </entry>
   
   <entry>
+    <title>Sequential Models - RNNs and All</title>
+    <link href="https://www.zzzdavid.tech/RNN/"/>
+    <id>https://www.zzzdavid.tech/RNN/</id>
+    <published>2020-02-10T15:41:18.000Z</published>
+    <updated>2020-03-01T16:14:25.226Z</updated>
+    
+    <content type="html"><![CDATA[<!-- excerpt --><h2 id="Basic-Model"><a href="#Basic-Model" class="headerlink" title="Basic Model"></a>Basic Model</h2><h2 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h2><hr><h2 id="C-LSTM-Enabling-Efficient-LSTM-using-Structured-Compression-Techniques-on-FPGAs"><a href="#C-LSTM-Enabling-Efficient-LSTM-using-Structured-Compression-Techniques-on-FPGAs" class="headerlink" title="C-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAs"></a>C-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAs</h2><h3 id="Addressed-Problems"><a href="#Addressed-Problems" class="headerlink" title="Addressed Problems"></a>Addressed Problems</h3><h3 id="Key-Concepts"><a href="#Key-Concepts" class="headerlink" title="Key Concepts"></a>Key Concepts</h3><h3 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h3><h3 id="Results-and-Conclusions"><a href="#Results-and-Conclusions" class="headerlink" title="Results and Conclusions"></a>Results and Conclusions</h3><h3 id="Strengths-and-Weaknesses"><a href="#Strengths-and-Weaknesses" class="headerlink" title="Strengths and Weaknesses"></a>Strengths and Weaknesses</h3><h3 id="Relationships-to-other-works"><a href="#Relationships-to-other-works" class="headerlink" title="Relationships to other works"></a>Relationships to other works</h3><h3 id="Contribution-to-my-understandings"><a href="#Contribution-to-my-understandings" class="headerlink" title="Contribution to my understandings"></a>Contribution to my understandings</h3>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;RNNs and stuff&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Researches" scheme="https://www.zzzdavid.tech/categories/Researches/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know</title>
     <link href="https://www.zzzdavid.tech/Matrix/"/>
     <id>https://www.zzzdavid.tech/Matrix/</id>
@@ -121,26 +141,6 @@
     
     
       <category term="Math" scheme="https://www.zzzdavid.tech/tags/Math/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Sequential Models - RNNs and All</title>
-    <link href="https://www.zzzdavid.tech/RNN/"/>
-    <id>https://www.zzzdavid.tech/RNN/</id>
-    <published>2020-02-10T15:41:18.000Z</published>
-    <updated>2020-03-01T16:14:25.226Z</updated>
-    
-    <content type="html"><![CDATA[<!-- excerpt --><h2 id="Basic-Model"><a href="#Basic-Model" class="headerlink" title="Basic Model"></a>Basic Model</h2><h2 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h2><hr><h2 id="C-LSTM-Enabling-Efficient-LSTM-using-Structured-Compression-Techniques-on-FPGAs"><a href="#C-LSTM-Enabling-Efficient-LSTM-using-Structured-Compression-Techniques-on-FPGAs" class="headerlink" title="C-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAs"></a>C-LSTM: Enabling Efficient LSTM using Structured Compression Techniques on FPGAs</h2><h3 id="Addressed-Problems"><a href="#Addressed-Problems" class="headerlink" title="Addressed Problems"></a>Addressed Problems</h3><h3 id="Key-Concepts"><a href="#Key-Concepts" class="headerlink" title="Key Concepts"></a>Key Concepts</h3><h3 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h3><h3 id="Results-and-Conclusions"><a href="#Results-and-Conclusions" class="headerlink" title="Results and Conclusions"></a>Results and Conclusions</h3><h3 id="Strengths-and-Weaknesses"><a href="#Strengths-and-Weaknesses" class="headerlink" title="Strengths and Weaknesses"></a>Strengths and Weaknesses</h3><h3 id="Relationships-to-other-works"><a href="#Relationships-to-other-works" class="headerlink" title="Relationships to other works"></a>Relationships to other works</h3><h3 id="Contribution-to-my-understandings"><a href="#Contribution-to-my-understandings" class="headerlink" title="Contribution to my understandings"></a>Contribution to my understandings</h3>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;RNNs and stuff&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Researches" scheme="https://www.zzzdavid.tech/categories/Researches/"/>
-    
     
   </entry>
   
