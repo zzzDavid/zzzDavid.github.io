@@ -6,6 +6,12 @@ heading {
     font-family: 'Cormorant Garamond', serif; 
     font-size: 160%;
   }
+
+subheading {
+    color: rgb(0,0,0);
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 120%; 
+}  
 p {
     color: rgb(0, 0, 0);
     font-family: optima;
@@ -23,8 +29,8 @@ name {
       font-size: 200%
   }
   .circle_image {
-    width: 100%;
-    border-radius: 100%;
+    width: 80%;
+    border-radius: 80%;
 }
 
 papertitle {
