@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.zzzdavid.tech/pruning/</loc>
+    <loc>https://www.zzzdavid.tech/Readings/</loc>
     
-    <lastmod>2020-08-05T09:24:31.155Z</lastmod>
+    <lastmod>2020-10-27T12:09:53.935Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
     
-    <lastmod>2020-07-29T09:00:45.447Z</lastmod>
+    <lastmod>2020-10-27T08:00:58.868Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/pruning/</loc>
+    
+    <lastmod>2020-08-05T09:24:31.155Z</lastmod>
     
   </url>
   
