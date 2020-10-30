@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.zzzdavid.tech/"/>
-  <updated>2020-10-28T21:18:40.292Z</updated>
+  <updated>2020-10-30T07:23:13.317Z</updated>
   <id>https://www.zzzdavid.tech/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>GraphNN</title>
+    <link href="https://www.zzzdavid.tech/GraphNN/"/>
+    <id>https://www.zzzdavid.tech/GraphNN/</id>
+    <published>2020-10-30T07:23:13.317Z</published>
+    <updated>2020-10-30T07:23:13.317Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="GCN"><a href="#GCN" class="headerlink" title="GCN"></a>GCN</h2><script type="math/tex; mode=display">Agg(\{h_v^l | v \in N(u) \}) = \sum_{v\in N(u) \cup \{u\} }{ \frac{h_v^l}{ \sqrt( |N(u)+1| |N(v)+1| )} }</script><h2 id="GraphSAGE"><a href="#GraphSAGE" class="headerlink" title="GraphSAGE"></a>GraphSAGE</h2><script type="math/tex; mode=display">h_{N(v)}^k  \leftarrow AGGREGATE_k(\{ h_u ^{k-1}, \forall u \in N(v) \})</script><script type="math/tex; mode=display">h_v^k \leftarrow \sigma(W^k \bullet CONCAT(h_v^{k-1}, h_{N(v)}^k))</script><script type="math/tex; mode=display">h_v^k \leftarrow h_v^k / ||h_v^k||_2, \forall v \in V</script><h2 id="GAT"><a href="#GAT" class="headerlink" title="GAT"></a>GAT</h2><script type="math/tex; mode=display">\overrightarrow{h_v^{'|} } = \prod_{k=1}^{K} \sigma ( \, \sum_{j\in N_i} \alpha_{ij}^{k} W^k \overrightarrow{h_j} ) \,</script>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;GCN&quot;&gt;&lt;a href=&quot;#GCN&quot; class=&quot;headerlink&quot; title=&quot;GCN&quot;&gt;&lt;/a&gt;GCN&lt;/h2&gt;&lt;script type=&quot;math/tex; mode=display&quot;&gt;Agg(\{h_v^l | v \in N(u) \}) = 
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Paper Readings</title>
