@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.zzzdavid.tech/Readings/</loc>
+    
+    <lastmod>2020-11-06T09:04:55.569Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/loop_opt/</loc>
     
-    <lastmod>2020-11-04T05:54:08.519Z</lastmod>
+    <lastmod>2020-11-06T07:52:30.219Z</lastmod>
     
   </url>
   
@@ -19,13 +26,6 @@
     <loc>https://www.zzzdavid.tech/GraphNN/</loc>
     
     <lastmod>2020-10-31T09:50:39.078Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/Readings/</loc>
-    
-    <lastmod>2020-10-28T21:18:40.292Z</lastmod>
     
   </url>
   
