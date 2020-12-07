@@ -7904,6 +7904,30 @@ body.compensate-for-scrollbar {
   src: local("Noto Sans Bold Italic"), url(../fonts/NotoSans-BoldItalic.ttf) format("truetype"); }
 
 @font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Noto Sans"), url(../fonts/PTSans-Regular.ttf) format("truetype"); }
+
+@font-face {
+  font-family: 'PT Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local("PT Sans Italic"), url(../fonts/PTSans-Italic.ttf) format("truetype"); }
+
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local("PT Sans Bold"), url(../fonts/PTSans-Bold.ttf) format("truetype"); }
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: local("PT Sans Bold Italic"), url(../fonts/PT-BoldItalic.ttf) format("truetype"); }
+
+@font-face {
   font-family: 'Code Saver';
   font-style: normal;
   font-weight: 400;
@@ -8040,10 +8064,10 @@ code {
 
 acronym,
 abbr {
-  border-bottom: 1px dotted #5d686f; }
+  border-bottom: 1px dotted #474545; }
 
 blockquote {
-  border-left: 3px solid #5d686f;
+  border-left: 3px solid #474545;
   padding: 0 15px;
   font-style: italic;
   margin: 1.5em 0 0; }
@@ -8136,7 +8160,7 @@ blockquote {
       font-size: 1.6rem;
       line-height: 1.9em;
       font-weight: 400;
-      color: #5d686f; }
+      color: #474545; }
 
 @media only screen and (max-width: 767px) {
   #about #about-card {
@@ -9231,7 +9255,7 @@ blockquote {
   display: none; }
 
 .archive .archive-title {
-  color: #5d686f; }
+  color: #474545; }
   .archive .archive-title:hover {
     text-decoration: underline; }
 
@@ -9239,7 +9263,7 @@ blockquote {
   list-style: none; }
   .archive .archive-posts .archive-post .archive-post-title {
     margin-left: 10px;
-    color: #5d686f; }
+    color: #474545; }
     .archive .archive-posts .archive-post .archive-post-title:hover {
       text-decoration: underline; }
   .archive .archive-posts .archive-post .archive-post-date {
@@ -9484,7 +9508,7 @@ figure.highlight,
   width: 100%;
   border: none;
   outline: none;
-  color: #5d686f;
+  color: #474545;
   font-weight: 300; }
   .form-control:hover, .form-control:focus {
     outline: none; }
@@ -9683,7 +9707,7 @@ a.fancybox {
   color: #9eabb3; }
 
 .media-content {
-  color: #5d686f; }
+  color: #474545; }
 
 .modal-container {
   position: fixed;
@@ -9722,7 +9746,7 @@ a.fancybox {
     position: absolute;
     top: 9px;
     right: 15px;
-    color: #5d686f;
+    color: #474545;
     cursor: pointer; }
 
 .overlay {
@@ -9787,8 +9811,8 @@ a.fancybox {
   .post .post-content {
     text-rendering: optimizelegibility;
     letter-spacing: -0.3px;
-    font-family: "Noto Sans";
-    color: #5d686f;
+    font-family: "PT Sans";
+    color: #474545;
     margin-top: 20px;
     font-weight: 400;
     overflow: hidden;
@@ -9880,7 +9904,7 @@ a.fancybox {
     float: right;
     margin: 1.5em 0 1.5em 35px; }
   .pullquote.blur {
-    background-color: #eef0f1; }
+    background-color: #d0cfcf; }
 
 .post-header .post-title {
   margin: 0;
@@ -10073,8 +10097,8 @@ a.fancybox {
   .postShorten .postShorten-content {
     text-rendering: optimizelegibility;
     letter-spacing: -0.3px;
-    font-family: "Noto Sans";
-    color: #5d686f;
+    font-family: "PT Sans";
+    color: #474545;
     font-weight: 400;
     overflow: hidden;
     -webkit-hypens: auto;
@@ -10184,7 +10208,7 @@ a.fancybox {
   top: 15px;
   right: 15px;
   font-size: 20px;
-  color: #5d686f;
+  color: #474545;
   cursor: pointer; }
 
 @media only screen and (max-width: 767px) {
@@ -10336,7 +10360,7 @@ a.tag--small,
   text-decoration: underline !important; }
 
 .text-color-base {
-  color: #5d686f !important; }
+  color: #474545 !important; }
 
 .text-color-light {
   color: #9eabb3 !important; }
@@ -10491,7 +10515,7 @@ a.tag--small,
     position: absolute;
     top: 15px;
     left: 15px;
-    color: #5d686f; }
+    color: #474545; }
   #algolia-search-modal .media-content {
     font-size: 0.95em; }
   #algolia-search-modal .search-input {
@@ -10509,7 +10533,7 @@ a.tag--small,
     margin-top: 0; }
   #algolia-search-modal .results-count {
     line-height: 50px;
-    color: #5d686f; }
+    color: #474545; }
   #algolia-search-modal .searchby-algolia {
     position: absolute;
     top: 15px;
