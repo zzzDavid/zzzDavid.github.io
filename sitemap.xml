@@ -2,30 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
-    
-    <lastmod>2020-12-07T09:55:20.650Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
-    
-    <lastmod>2020-12-07T09:55:09.744Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/Readings/</loc>
     
-    <lastmod>2020-11-30T07:38:10.819Z</lastmod>
+    <lastmod>2020-12-08T10:36:35.203Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://www.zzzdavid.tech/GraphNN/</loc>
     
-    <lastmod>2020-10-31T09:50:39.078Z</lastmod>
+    <lastmod>2020-12-08T08:43:24.793Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
+    
+    <lastmod>2020-12-08T08:43:18.326Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
+    
+    <lastmod>2020-12-07T09:55:20.650Z</lastmod>
     
   </url>
   
