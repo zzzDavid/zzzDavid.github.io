@@ -507,14 +507,11 @@ x_{N} & y_{N} & z_{N} & t_{N} & b_{N}
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/NoC/"
-                    data-tooltip="FPGA Network-on-Chip"
-                    aria-label="PREVIOUS: FPGA Network-on-Chip"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -524,9 +521,9 @@ x_{N} & y_{N} & z_{N} & t_{N} & b_{N}
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/GraphNN/"
-                    data-tooltip="Graph Neural Networks"
-                    aria-label="NEXT: Graph Neural Networks"
+                    href="/loop_opt/"
+                    data-tooltip="Loop Optimization in HLS"
+                    aria-label="NEXT: Loop Optimization in HLS"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -621,14 +618,11 @@ x_{N} & y_{N} & z_{N} & t_{N} & b_{N}
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/NoC/"
-                    data-tooltip="FPGA Network-on-Chip"
-                    aria-label="PREVIOUS: FPGA Network-on-Chip"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -638,9 +632,9 @@ x_{N} & y_{N} & z_{N} & t_{N} & b_{N}
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/GraphNN/"
-                    data-tooltip="Graph Neural Networks"
-                    aria-label="NEXT: Graph Neural Networks"
+                    href="/loop_opt/"
+                    data-tooltip="Loop Optimization in HLS"
+                    aria-label="NEXT: Loop Optimization in HLS"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -816,5 +810,20 @@ x_{N} & y_{N} & z_{N} & t_{N} & b_{N}
 
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
 </html>

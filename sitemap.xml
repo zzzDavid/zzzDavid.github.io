@@ -2,16 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.zzzdavid.tech/Waterloo/</loc>
+    <loc>https://www.zzzdavid.tech/Matrix/</loc>
     
-    <lastmod>2020-12-23T02:17:39.806Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/GumbelSoftmax/</loc>
-    
-    <lastmod>2020-12-22T09:01:21.073Z</lastmod>
+    <lastmod>2020-12-23T02:25:53.004Z</lastmod>
     
   </url>
   
@@ -19,20 +12,6 @@
     <loc>https://www.zzzdavid.tech/Readings/</loc>
     
     <lastmod>2020-12-21T09:59:18.970Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/NoC/</loc>
-    
-    <lastmod>2020-12-18T13:04:56.225Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/GraphNN/</loc>
-    
-    <lastmod>2020-12-08T08:43:24.793Z</lastmod>
     
   </url>
   
@@ -51,13 +30,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/pruning/</loc>
-    
-    <lastmod>2020-08-05T09:24:31.155Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/Goodbye-to-All-That/</loc>
     
     <lastmod>2020-07-02T03:40:13.926Z</lastmod>
@@ -68,13 +40,6 @@
     <loc>https://www.zzzdavid.tech/NAS/</loc>
     
     <lastmod>2020-06-22T02:29:01.672Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/Matrix/</loc>
-    
-    <lastmod>2020-06-05T01:26:32.282Z</lastmod>
     
   </url>
   

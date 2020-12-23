@@ -331,9 +331,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/GraphNN/"
-                    data-tooltip="Graph Neural Networks"
-                    aria-label="PREVIOUS: Graph Neural Networks"
+                    href="/Readings/"
+                    data-tooltip="Paper Readings"
+                    aria-label="PREVIOUS: Paper Readings"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -345,9 +345,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/pruning/"
-                    data-tooltip="On Convolution Network Pruning"
-                    aria-label="NEXT: On Convolution Network Pruning"
+                    href="/HeteroCL/"
+                    data-tooltip="On HeteroCL"
+                    aria-label="NEXT: On HeteroCL"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -445,9 +445,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/GraphNN/"
-                    data-tooltip="Graph Neural Networks"
-                    aria-label="PREVIOUS: Graph Neural Networks"
+                    href="/Readings/"
+                    data-tooltip="Paper Readings"
+                    aria-label="PREVIOUS: Paper Readings"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -459,9 +459,9 @@
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/pruning/"
-                    data-tooltip="On Convolution Network Pruning"
-                    aria-label="NEXT: On Convolution Network Pruning"
+                    href="/HeteroCL/"
+                    data-tooltip="On HeteroCL"
+                    aria-label="NEXT: On HeteroCL"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -637,5 +637,20 @@
 
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
 </html>

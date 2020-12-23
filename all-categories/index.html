@@ -256,15 +256,7 @@
             
         
             
-                <div><a href="#posts-list-Reading" class="category-anchor" data-category="reading" data-parent-categories="">Reading</a></div>
-            
-        
-            
                 <div><a href="#posts-list-Readings" class="category-anchor" data-category="readings" data-parent-categories="">Readings</a></div>
-            
-        
-            
-                <div><a href="#posts-list-Research" class="category-anchor" data-category="research" data-parent-categories="">Research</a></div>
             
         
             
@@ -279,19 +271,11 @@
             
         
             
-                    <div id="posts-list-Reading" class="archive " data-category="reading" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Reading/">Reading (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/NoC/">FPGA Network-on-Chip</a><span class="archive-post-date"> - Dec 18, 2020</span></li></ul></div>
-            
-        
-            
                     <div id="posts-list-Readings" class="archive " data-category="readings" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Readings/">Readings (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/Readings/">Paper Readings</a><span class="archive-post-date"> - Dec 06, 2020</span></li></ul></div>
             
         
             
-                    <div id="posts-list-Research" class="archive " data-category="research" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Research/">Research (1)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/GumbelSoftmax/">Gumbel-Softmax</a><span class="archive-post-date"> - Dec 21, 2020</span></li></ul></div>
-            
-        
-            
-                    <div id="posts-list-Tutorial" class="archive " data-category="tutorial" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Tutorial/">Tutorial (6)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/GraphNN/">Graph Neural Networks</a><span class="archive-post-date"> - Oct 31, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/loop_opt/">Loop Optimization in HLS</a><span class="archive-post-date"> - Oct 31, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/pruning/">On Convolution Network Pruning</a><span class="archive-post-date"> - Aug 05, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/HeteroCL/">On HeteroCL</a><span class="archive-post-date"> - Jun 05, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/NAS/">Neural Architecture Search, Basic Concepts, Paper Summary and Implementations</a><span class="archive-post-date"> - May 14, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/Matrix/">Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know</a><span class="archive-post-date"> - Feb 10, 2020</span></li></ul></div>
+                    <div id="posts-list-Tutorial" class="archive " data-category="tutorial" data-parent-categories=""><h4 class="archive-title text-xlarge"><a class="link-unstyled" href="/categories/Tutorial/">Tutorial (4)</a></h4><ul class="archive-posts"><li class="archive-post"><a class="archive-post-title" href="/loop_opt/">Loop Optimization in HLS</a><span class="archive-post-date"> - Oct 31, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/HeteroCL/">On HeteroCL</a><span class="archive-post-date"> - Jun 05, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/NAS/">Neural Architecture Search, Basic Concepts, Paper Summary and Implementations</a><span class="archive-post-date"> - May 14, 2020</span></li><li class="archive-post"><a class="archive-post-title" href="/Matrix/">Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know</a><span class="archive-post-date"> - Feb 10, 2020</span></li></ul></div>
             
         
     </section>
@@ -355,5 +339,20 @@
 
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</body>
 </html>
