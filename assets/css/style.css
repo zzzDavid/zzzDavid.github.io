@@ -10924,16 +10924,163 @@ figure.highlight,
   figure.highlight.php .code .title,
   .codeblock.php .code .title {
     color: #795da3; }
-  figure.highlight.python .code .decorator,
-  figure.highlight.python .code .title,
-  figure.highlight.python .code .meta,
-  .codeblock.python .code .decorator,
-  .codeblock.python .code .title,
-  .codeblock.python .code .meta {
-    color: #795da3; }
-  figure.highlight.python .code .number,
-  .codeblock.python .code .number {
-    color: #0086b3; }
+  figure.highlight.python .code .comment,
+  .codeblock.python .code .comment {
+    color: #5b626f;
+    font-style: italic; }
+  figure.highlight.python .code .entity.name.type,
+  .codeblock.python .code .entity.name.type {
+    color: #e5c17c; }
+  figure.highlight.python .code .entity.other.inherited-class,
+  .codeblock.python .code .entity.other.inherited-class {
+    color: #97c378; }
+  figure.highlight.python .code .keyword,
+  .codeblock.python .code .keyword {
+    color: #c679dd; }
+  figure.highlight.python .code .keyword.control,
+  .codeblock.python .code .keyword.control {
+    color: #c679dd; }
+  figure.highlight.python .code .keyword.operator,
+  .codeblock.python .code .keyword.operator {
+    color: #abb2c0; }
+  figure.highlight.python .code .keyword.other.special-method,
+  .codeblock.python .code .keyword.other.special-method {
+    color: #61aeef; }
+  figure.highlight.python .code .keyword.other.unit,
+  .codeblock.python .code .keyword.other.unit {
+    color: #d29b67; }
+  figure.highlight.python .code .storage,
+  .codeblock.python .code .storage {
+    color: #c679dd; }
+  figure.highlight.python .code .constant,
+  .codeblock.python .code .constant {
+    color: #d29b67; }
+  figure.highlight.python .code .constant.character.escape,
+  .codeblock.python .code .constant.character.escape {
+    color: #57b6c2; }
+  figure.highlight.python .code .constant.numeric,
+  .codeblock.python .code .constant.numeric {
+    color: #d29b67; }
+  figure.highlight.python .code .constant.other.color,
+  .codeblock.python .code .constant.other.color {
+    color: #57b6c2; }
+  figure.highlight.python .code .constant.other.symbol,
+  .codeblock.python .code .constant.other.symbol {
+    color: #57b6c2; }
+  figure.highlight.python .code .variable,
+  .codeblock.python .code .variable {
+    color: #df6a73; }
+  figure.highlight.python .code .variable.interpolation,
+  .codeblock.python .code .variable.interpolation {
+    color: #be4f44; }
+  figure.highlight.python .code .variable.parameter.function,
+  .codeblock.python .code .variable.parameter.function {
+    color: #abb2c0; }
+  figure.highlight.python .code .invalid.illegal,
+  .codeblock.python .code .invalid.illegal {
+    background-color: #df6a73;
+    color: #272b33; }
+  figure.highlight.python .code .string,
+  .codeblock.python .code .string {
+    color: #97c378; }
+  figure.highlight.python .code .string.regexp,
+  .codeblock.python .code .string.regexp {
+    color: #57b6c2; }
+  figure.highlight.python .code .string.regexp .source.ruby.embedded,
+  .codeblock.python .code .string.regexp .source.ruby.embedded {
+    color: #ff8000; }
+  figure.highlight.python .code .string.other.link,
+  .codeblock.python .code .string.other.link {
+    color: #df6a73; }
+  figure.highlight.python .code .punctuation.definition.comment,
+  .codeblock.python .code .punctuation.definition.comment {
+    color: #5b626f; }
+  figure.highlight.python .code .punctuation.definition.parameters,
+  figure.highlight.python .code .punctuation.definition.array,
+  .codeblock.python .code .punctuation.definition.parameters,
+  .codeblock.python .code .punctuation.definition.array {
+    color: #abb2c0; }
+  figure.highlight.python .code .punctuation.definition.heading,
+  figure.highlight.python .code .punctuation.definition.identity,
+  .codeblock.python .code .punctuation.definition.heading,
+  .codeblock.python .code .punctuation.definition.identity {
+    color: #61aeef; }
+  figure.highlight.python .code .punctuation.definition.bold,
+  .codeblock.python .code .punctuation.definition.bold {
+    color: #e5c17c;
+    font-weight: bold; }
+  figure.highlight.python .code .punctuation.definition.italic,
+  .codeblock.python .code .punctuation.definition.italic {
+    color: #c679dd;
+    font-style: italic; }
+  figure.highlight.python .code .punctuation.section.embedded,
+  .codeblock.python .code .punctuation.section.embedded {
+    color: #be4f44; }
+  figure.highlight.python .code .support.class,
+  .codeblock.python .code .support.class {
+    color: #e5c17c; }
+  figure.highlight.python .code .support.function,
+  .codeblock.python .code .support.function {
+    color: #57b6c2; }
+  figure.highlight.python .code .support.function.any-method,
+  .codeblock.python .code .support.function.any-method {
+    color: #61aeef; }
+  figure.highlight.python .code .entity.name.function,
+  .codeblock.python .code .entity.name.function {
+    color: #61aeef; }
+  figure.highlight.python .code .entity.name.class,
+  figure.highlight.python .code .entity.name.type.class,
+  .codeblock.python .code .entity.name.class,
+  .codeblock.python .code .entity.name.type.class {
+    color: #e5c17c; }
+  figure.highlight.python .code .entity.name.section,
+  .codeblock.python .code .entity.name.section {
+    color: #61aeef; }
+  figure.highlight.python .code .entity.name.tag,
+  .codeblock.python .code .entity.name.tag {
+    color: #df6a73; }
+  figure.highlight.python .code .entity.other.attribute-name,
+  .codeblock.python .code .entity.other.attribute-name {
+    color: #d29b67; }
+  figure.highlight.python .code .entity.other.attribute-name.id,
+  .codeblock.python .code .entity.other.attribute-name.id {
+    color: #61aeef; }
+  figure.highlight.python .code .meta.class,
+  .codeblock.python .code .meta.class {
+    color: #e5c17c; }
+  figure.highlight.python .code .meta.link,
+  .codeblock.python .code .meta.link {
+    color: #d29b67; }
+  figure.highlight.python .code .meta.require,
+  .codeblock.python .code .meta.require {
+    color: #61aeef; }
+  figure.highlight.python .code .meta.selector,
+  .codeblock.python .code .meta.selector {
+    color: #c679dd; }
+  figure.highlight.python .code .meta.separator,
+  .codeblock.python .code .meta.separator {
+    background-color: #373b41;
+    color: #abb2c0; }
+  figure.highlight.python .code .meta.tag,
+  .codeblock.python .code .meta.tag {
+    color: #abb2c0; }
+  figure.highlight.python .code .none,
+  .codeblock.python .code .none {
+    color: #abb2c0; }
+  figure.highlight.python .code .markup.bold,
+  .codeblock.python .code .markup.bold {
+    color: #d29b67;
+    font-weight: bold; }
+  figure.highlight.python .code .markup.changed,
+  .codeblock.python .code .markup.changed {
+    color: #c679dd; }
+  figure.highlight.python .code .markup.deleted,
+  .codeblock.python .code .markup.deleted {
+    color: #df6a73; }
+  figure.highlight.python .code .markup.italic,
+  .codeblock.python .code .markup.italic {
+    color: #c679dd;
+    font-style: italic; }
   figure.highlight.ruby .code .parent,
   figure.highlight.ruby .code .title,
   .codeblock.ruby .code .parent,
