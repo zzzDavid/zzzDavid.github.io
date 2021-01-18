@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.zzzdavid.tech/GumbelSoftmax/</loc>
+    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
     
-    <lastmod>2021-01-16T22:09:06.864Z</lastmod>
+    <lastmod>2021-01-18T13:51:51.099Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://www.zzzdavid.tech/Readings/</loc>
     
-    <lastmod>2021-01-15T11:50:16.005Z</lastmod>
+    <lastmod>2021-01-16T23:54:07.527Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/GumbelSoftmax/</loc>
+    
+    <lastmod>2021-01-16T23:03:56.177Z</lastmod>
     
   </url>
   
@@ -33,13 +40,6 @@
     <loc>https://www.zzzdavid.tech/loop_opt/</loc>
     
     <lastmod>2020-12-08T08:43:18.326Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
-    
-    <lastmod>2020-12-07T09:55:20.650Z</lastmod>
     
   </url>
   
