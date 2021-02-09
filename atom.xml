@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.zzzdavid.tech/"/>
-  <updated>2021-01-16T23:03:56.177Z</updated>
+  <updated>2021-02-09T15:22:54.845Z</updated>
   <id>https://www.zzzdavid.tech/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Introduction to SystemC</title>
+    <link href="https://www.zzzdavid.tech/SystemC/"/>
+    <id>https://www.zzzdavid.tech/SystemC/</id>
+    <published>2021-02-08T05:45:23.000Z</published>
+    <updated>2021-02-09T15:22:54.845Z</updated>
+    
+    <content type="html"><![CDATA[<!-- excerpt --><blockquote><p>Loosely speaking, SystemC allows a user to write a set of C++ functions (processes) that are executed under control of a scheduler in an order that mimics the pasasge of simulated time and that are synchronized and communicate in a way that is useful for modeling electronic systems containing hardware and embedded software.</p></blockquote><p>The <em>module</em> is the basic buidling block of a system. A module can contain the following:</p><ul><li>Ports</li><li>Exports</li><li>Channels</li><li>Processes</li><li>Events</li><li>Instances of other modules</li><li>Other data members and functions</li></ul><p>They are all implemented as C++ classes. The base class of them is <code>sc_object</code>.</p><h2 id="Concepts"><a href="#Concepts" class="headerlink" title="Concepts"></a>Concepts</h2><h4 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h4><p>At the core of SystemC is a simulation engine containing a process scheduler. Processes are executed in response to the notification of events. Events are notified at specific points in simulated time. </p><h4 id="Elaboration-and-simulation"><a href="#Elaboration-and-simulation" class="headerlink" title="Elaboration and simulation"></a>Elaboration and simulation</h4><p>The execution of SystemC application consists of elaboration and simulation.<br>During elaboration, the module hierarchy is created, followed by simulation, during which the scheduler runs. </p><h4 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h4><p>The kernel is the part of SystemC class library implementation that provides the core functionality for elaboration and the scheduler.</p><h4 id="Processes"><a href="#Processes" class="headerlink" title="Processes"></a>Processes</h4><p>Processes are C++ functions registered with kernel. Processes are used to perform computations and hence to model the functionality of a system. They can be created statically during elaboration or dynamically during simulation.</p><h4 id="Sensitivity"><a href="#Sensitivity" class="headerlink" title="Sensitivity"></a>Sensitivity</h4><p>The sensitivity of a process identifies the set of events that would cause the scheduler to execute that process should those events be notified. Both <em>static</em> and <em>dynamic</em> sensitivity are provided. Static sensitivity is created at the time the process instance is created. Dynamic sensitivity is created during the execution of the process’s associated function. </p><h4 id="Channels-and-interfaces"><a href="#Channels-and-interfaces" class="headerlink" title="Channels and interfaces"></a>Channels and interfaces</h4><p>Interfaces are abstract classes that declare a set of pure virtual functions. These virtual functions are <em>implemented</em> by Channel. In other words, a channel is said to implement an interface if it defines all of the methods declared in that interface.<br>Channels serve to encapsulate the mechanism through which processes communicate and hence to model the communication aspects or protocols of a system. It can be used for inter-module communication or inter-process communication within a module.<br>Since the methods of a interface are virtual functions, they are typically called through an interface. A channel may implement more than one interface, and a single interface may be implemented by more than one channel.</p><h4 id="Ports-and-exports"><a href="#Ports-and-exports" class="headerlink" title="Ports and exports"></a>Ports and exports</h4><p>A port specifies that a particular interface is required by a module, whereas an export spefices that a particular interface is provided by a module.<br>Ports and exports forward method calls from the processes within a module to channels, to which those ports and exports are bound. Ports can only forward method calls <em>up</em> or <em>out</em> of a module, whereas exports can only forward method calls <em>down</em> or <em>into</em> a module.</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;SystemC is a system-level modeling language, often applied to high-level synthesis.&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Research" scheme="https://www.zzzdavid.tech/categories/Research/"/>
+    
+      <category term="Tutorial" scheme="https://www.zzzdavid.tech/categories/Research/Tutorial/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Gumbel-Softmax</title>
