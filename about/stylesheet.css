@@ -1,0 +1,58 @@
+body {
+    background-color: rgb(255, 255, 255);
+}
+heading {
+    color: rgb(0,0,0);
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 180%;
+}
+
+subheading {
+    color: rgb(0,0,0);
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 170%; 
+}  
+p {
+    color: rgb(0, 0, 0);
+    font-family: optima;
+    font-size: 120%;
+  }
+
+a {
+    color: rgb(15, 155, 236);
+    font-family: optima;
+    font-size: 100%;
+  }
+
+name {
+      font-family:  optima;
+      font-size: 200%
+  }
+  .circle_image {
+    width: 80%;
+    border-radius: 80%;
+}
+
+papertitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 140%
+}
+
+strong{
+    font-family: optima;
+    font-size: 100%;
+}
+strong-red{
+    font-family: optima;
+    font-size: 100%;
+    color: red;
+}
+em{
+    font-family: optima;
+    font-size: 100%;
+}
+
+large{
+    font-family: 'Cormorant Garamond';
+    font-size: 120%;
+}
