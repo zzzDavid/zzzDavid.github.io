@@ -669,9 +669,9 @@ mjx-container + br {
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/fccm/"
-                    data-tooltip="Voluteering at FCCM 2022"
-                    aria-label="PREVIOUS: Voluteering at FCCM 2022"
+                    href="/cvpr22/"
+                    data-tooltip="CVPR 2022 at New Orleans"
+                    aria-label="PREVIOUS: CVPR 2022 at New Orleans"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -788,9 +788,9 @@ mjx-container + br {
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/fccm/"
-                    data-tooltip="Voluteering at FCCM 2022"
-                    aria-label="PREVIOUS: Voluteering at FCCM 2022"
+                    href="/cvpr22/"
+                    data-tooltip="CVPR 2022 at New Orleans"
+                    aria-label="PREVIOUS: CVPR 2022 at New Orleans"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -982,5 +982,20 @@ mjx-container + br {
 
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

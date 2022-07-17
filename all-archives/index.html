@@ -525,24 +525,6 @@ mjx-container + br {
                 
                     </ul>
                 
-                <ul class="archive-posts archive-month" data-date="202205">
-                    <h5 class="archive-title">
-                        <a class="link-unstyled" href="/archives/2022/05">May</a>
-                    </h5>
-                
-            
-            <li class="archive-post archive-day" data-date="20220530">
-                <a class="archive-post-title" href="/fccm/">Voluteering at FCCM 2022</a>
-                <span class="archive-post-date"> - may 30, 2022</span>
-            </li>
-        
-            
-            
-            
-            
-                
-                    </ul>
-                
                 <ul class="archive-posts archive-month" data-date="202203">
                     <h5 class="archive-title">
                         <a class="link-unstyled" href="/archives/2022/03">March</a>
@@ -776,5 +758,20 @@ mjx-container + br {
 
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
 </html>

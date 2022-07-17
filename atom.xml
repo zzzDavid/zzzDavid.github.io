@@ -37,26 +37,6 @@
   </entry>
   
   <entry>
-    <title>Voluteering at FCCM 2022</title>
-    <link href="https://www.zzzdavid.tech/fccm/"/>
-    <id>https://www.zzzdavid.tech/fccm/</id>
-    <published>2022-05-30T04:00:00.000Z</published>
-    <updated>2022-07-17T07:31:40.574Z</updated>
-    
-    <content type="html"><![CDATA[<!-- excerpt --><p>The IEEE Symposium on Field-Programmable Custom Computing Machine (FCCM) is a top conference in the FPGA field. I’m fortunate to be part of it this year as a volunteer.</p><h2 id="Conference-Format"><a href="#Conference-Format" class="headerlink" title="Conference Format"></a>Conference Format</h2><p>The official conference website is <a href="https://www.fccm.org" target="_blank" rel="noopener">here</a>. There are two days for the main conference and two days of workshop and tutorials. The entire conference is hybrid: some presenters are in-person, and some are virtual. This is the first hybrid conference in the FPGA community since the pandemic. </p><div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657861947/fccm22/5bb4ef862f785b85130a93838f17ba4a.jpg_widbqq.webp" alt="Verizon Center at Cornell Tech"><span class="caption">Verizon Center at Cornell Tech</span></div><div class="figure fig-50" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657861703/fccm22/full_hc676_1652795459_3_excytt.jpg" alt="The event space for the main conference"><span class="caption">The event space for the main conference</span></div><div class="figure fig-50" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657861705/fccm22/IMG_9785_wb9buw.jpg" alt="The gallery for posters"><span class="caption">The gallery for posters</span></div><p>FCCM22 has about 200 attendees, and 50% of the total are in-person attendees. The entire event takes place at the Verizon Center of Cornell Tech Campus. The first floor has a large event space for the main conference and the demo night. On the second floor are classrooms for tutorial, workshops, and an open-space gallery for posters.</p><h2 id="Interesting-Work"><a href="#Interesting-Work" class="headerlink" title="Interesting Work"></a>Interesting Work</h2><p>There are quite a few interesting papers presented at the conference, and many of them are relevant to my research area. I’m most excited for new tools for easier hardware specialization. Right now, I’m working on an MLIR dialect and tool-flow to generate hardware design and program them from high-level programming language. I’m interested in compiler, high-level synthesis (HLS), FPGA placement and routing optimization, and new applications on FPGA. Here I cover a few papers that I find relevant and interesting.</p><h3 id="Resource-sharing-in-dataflow-circuits"><a href="#Resource-sharing-in-dataflow-circuits" class="headerlink" title="Resource sharing in dataflow circuits"></a>Resource sharing in dataflow circuits</h3><h3 id="The-Best-Paper-Award"><a href="#The-Best-Paper-Award" class="headerlink" title="The Best Paper Award"></a>The Best Paper Award</h3><h2 id="The-Work-Behind-the-Scene"><a href="#The-Work-Behind-the-Scene" class="headerlink" title="The Work Behind the Scene"></a>The Work Behind the Scene</h2><h2 id="Demo-Night"><a href="#Demo-Night" class="headerlink" title="Demo Night"></a>Demo Night</h2>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Cornell Tech on Roosevelt Island, NYC, May 15–18, 2022.&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Conference Journal" scheme="https://www.zzzdavid.tech/categories/Conference-Journal/"/>
-    
-    
-  </entry>
-  
-  <entry>
     <title>Efficient Path Profiling</title>
     <link href="https://www.zzzdavid.tech/profiling/"/>
     <id>https://www.zzzdavid.tech/profiling/</id>
