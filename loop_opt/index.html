@@ -50,7 +50,7 @@
     
     <!--STYLES-->
     
-<link rel="stylesheet" href="/assets/css/style-e4sxt4zegll0vpdspblthdvt4glzua56uexfurpgd07cuxymcmohsufd2v9o.min.css">
+<link rel="stylesheet" href="/assets/css/style-gnt9tweu0kevbjdmcgyuv3xdydz3rxe1wankbxqu4x2ndohgc3uoeigmvr1r.min.css">
 
     <!--STYLES END-->
     
@@ -60,6 +60,7 @@
     
         
     
+    <script async src="https://api.countapi.xyz/hit/zzzdavid.tech.:PATHNAME:/visits?callback=websiteVisits"></script>
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -558,8 +559,11 @@ mjx-container + br {
 
 
         </div>
-    </div> 
-    <div id="post-footer" class="post-footer main-content-wrap"> 
+    </div>
+    <div id="view_count_container" class="post-footer main-content-wrap">
+        This page has been visited <span id="view_count_text"> </span> times
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
         
             <div class="post-actions-wrap">
@@ -664,18 +668,18 @@ mjx-container + br {
 </div>
             
         
-        <span id="visits">Visits: <font class="count">--<font></span>
-        <span id="pageviews">Pageviews: <font class="count">--<font></span> 
     </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
 </article>
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
         Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
     </span>
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database.js"></script>
-    <script src="source/_js/custom.js"></script>
 </footer>
 
             </div>
@@ -856,7 +860,7 @@ mjx-container + br {
 <div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
         <!--SCRIPTS-->
 
-<script src="/assets/js/script-hgo3sexnrjwum1trv1uehq5rlwgaszygvgrzvmqh6zgkyledtpzwtvrmnpwe.min.js"></script>
+<script src="/assets/js/script-lv5pbfbw8j6a5ed6fpfmxwlvbunblujnpbpad2qt5ukfast05y0vq8hd7wjg.min.js"></script>
 
 <!--SCRIPTS END-->
 
@@ -883,20 +887,5 @@ mjx-container + br {
 
 
 
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</body>
+    </body>
 </html>

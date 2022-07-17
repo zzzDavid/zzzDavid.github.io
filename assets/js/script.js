@@ -16993,42 +16993,7 @@ return jQuery;
     resizer.run();
   });
 })(jQuery);
-;$(function () {
-    // Initialize Firebase
-    // var config = {
-    //     apiKey: "{your apiKey}",
-    //     authDomain: "{your authDomain}",
-    //     databaseURL: "{your databaseURL}",
-    // };
-    var firebaseConfig = {
-        apiKey: "AIzaSyA0QDIbAgWcGi8yHe0ciZmG6xO0nGBdbN8",
-        authDomain: "blog-niansong.firebaseapp.com",
-        projectId: "blog-niansong",
-        storageBucket: "blog-niansong.appspot.com",
-        messagingSenderId: "215119379338",
-        appId: "1:215119379338:web:5dff101fdd40137e27a673",
-        measurementId: "G-P40KRT5SZ3"
-      };
-    firebase.initializeApp(firebaseConfig);
-
-    var database = firebase.database();
-    var oriUrl = window.location.host;
-    var curUrl = oriUrl + window.location.pathname;
-    function readVisits(url, selector) {
-    var db_key = decodeURI(url.replace(new RegExp('\\/|\\.', 'g'), "_"));
-        database.ref(db_key).once("value").then(function (result) {
-            var count = parseInt(result.val() || 0) + 1;
-            database.ref(db_key).set(count);
-            if (selector.length > 0) {
-                selector.html(count);
-            };
-        });
-    }
-    readVisits(oriUrl, $("#visits .count"));
-    if (curUrl && curUrl != "_") {
-        readVisits("page/" + curUrl, $("#pageviews .count"));
-    }
-});;(function($) {
+;(function($) {
   'use strict';
 
   // Run fancybox feature
