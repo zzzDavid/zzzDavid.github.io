@@ -1,0 +1,956 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>3D Scene Understanding - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\n3D DatasetsData Representations\nMultiview images: multiple 2D images of the same object from different angles.\nDepth map\nVoxel: volumetric occupancy\nPoint cloud\nPolygon mesh\nFunctions as implicit representation\n\nScanNet Dataset\nScene: Indoor\n\n\nScanNet is a richly-annotated RGB-D video dataset. It has camera poses information, surface reconstruction, sementic segmentation labels.\nData Formats*.ply Reconstructed surface mesh fileThis is binary PLY format mesh with +Z axis in upright orientation.\n*.sens RGB-D sensor streamThis is binary format with per-frame color, depth, camera pose and other data.\n*.segs.json Surface mesh segmentation file1234567891011121314&#123;  \"params\": &#123;  // segmentation parameters   \"kThresh\": \"0.0001\",   \"segMinVerts\": \"20\",   \"minPoints\": \"750\",   \"maxPoints\": \"30000\",   \"thinThresh\": \"0.05\",   \"flatThresh\": \"0.001\",   \"minLength\": \"0.02\",   \"maxLength\": \"1\"  &#125;,  \"sceneId\": \"...\",  // id of segmented scene  \"segIndices\": [1,1,1,1,3,3,15,15,15,15],  // per-vertex seg label&#125;\nUsageCheck SpatioTemporalSegmentation/lib/pc_utils.py.\nTo load a mesh file:123456789from plyfile import PlyDatadef load_ply(self, index):    filepath = self.data_root / self.data_paths[index]    plydata = PlyData.read(filepath)    data = plydata.elements[0].data    coords = np.array([data['x'], data['y'], data['z']], dtype=np.float32).T    feats = np.array([data['red'], data['green'], data['blue']], dtype=np.float32).T    labels = np.array(data['label'], dtype=np.int32)    return coords, feats, labels, None\n\nToolsMinkowski Engine\nThe Minkowski Engine is an auto-differentiation library for sparse tensors. It supports all standard network layers such as convolution, pooling, unpooling, and broadcasting operations for sparse tensors.\n\n3D voxel feature maps are often sparse. Minkowski Engine generalizes the definition of 3D sparse convolution and provide implementation support for it. The sparse convolution is defined as:\n\\mathbf{x}_{\\mathbf{u}}^{\\text {out }}=\\sum_{\\mathbf{i} \\in \\mathcal{N}^{D}\\left(\\mathbf{u}, \\mathcal{C}^{\\text {in }}\\right)} W_{\\mathbf{i}} \\mathbf{x}_{\\mathbf{u}+\\mathbf{i}}^{\\text {in }} \\text { for } \\mathbf{u} \\in \\mathcal{C}^{\\text {out }}This definition does not limit the shape of the kernel.\n\n$\\mathbf{u}$ is the current convolution center.\n$\\mathcal{N}^D(\\mathbf{u}, \\mathcal{C}^{in})$ is a set of offsets that define the shape of a kernel, centered at $\\mathbf{u}$.\n$\\mathcal{C}^{in}$, $\\mathcal{C}^{out}$ are predefined input and output coordinates of sparse tensors.\n\nMinkowski Engine uses COO format (Coordinate list) to store sparse tensors, meaning that, it stores a list of non-zero coordinates and corresponding features:\n\\mathbf{C}=\\left[\\begin{array}{cccc}\nx_{1}^{1} & x_{1}^{2} & \\cdots & x_{1}^{D} \\\\\n\\vdots & \\vdots & \\ddots & \\vdots \\\\\nx_{N}^{1} & x_{N}^{2} & \\cdots & x_{N}^{D}\n\\end{array}\\right], \\mathbf{F}=\\left[\\begin{array}{c}\n\\mathbf{f}_{1}^{T} \\\\\n\\vdots \\\\\n\\mathbf{f}_{N}^{T}\n\\end{array}\\right]ConceptsCoordinate ManagerBecause the feature map is sparse, we need to dynamically find neighbors between non-zero elements. Minkowski Engine has a mechanism called coordinate manager that caches and reuses calcualted neighbor coordinates. When a MinkowskiEngine.SparseTensor is initialized, a coordinate manager is also created. The coordinate manager can be accessed with MinkowskiEngine.SparseTensor.coords_man, and it can be shared with a new sparse tensor by providing it as an argument during initialization.\nChannelThe channel number in 3D context is the length of the feature vector.\n\nPaper DigestsPointContrast: Unsupervised Pre-Training for 3D Point Cloud Understanding\nAuthors: Saining Xie, Jiatao Gu, Demin Guo, Charles R. Qi, Leonidas Guibas, Or Litany\nVenue: ECCV 2020\nInstitution: Facebook AI &amp; Stanford\n\nMotivationTo design a full pipeline for 3D unsupervised pretraining: view generation methods, downstream task compatible backbone, contrastive loss design. Previous work (pretraining on ShapeNet) doesn’t work because of two reasons: source &amp; target data domain gap and lack of point-level representation.\nMethodologyPointContrast Pipeline: contrasting at point-level\n\nGiven point cloud $\\mathbf{x}$, generate two views $\\mathbf{x^1}$ and $\\mathbf{x^2}$ that are aligned in the same world coordinates. \nCompute the correspndence mapping $M$ between these two views. If $(i,j)\\in M$ then points $x_i^1$ and $x_j^2$ are a matched pair.\nRandomly sample two geometric transformations $\\mathbf{T_1}$, $\\mathbf{T_2}$ (translation, rotation, scaling), and apply each to the paired points.\nCompute output point feature $\\mathbf{f^1}=NN(\\mathbf{T_1}(\\mathbf{x^1}))$ and $\\mathbf{f^2}=NN(\\mathbf{T_1}(\\mathbf{x^2}))$.\nBackprop to update NN with point-wise contrastive loss.\n\nContrastive Loss DesignThe intuition of contrastive loss is to seperate negative pairs and pull together positive pairs as much as possible.\n \nHardest-Contrastive Loss \n\\mathcal{L}_{c}=\\sum_{(i, j) \\in \\mathcal{P}}\\left\\{\\left[d\\left(\\mathbf{f}_{i}, \\mathbf{f}_{j}\\right)-m_{p}\\right]_{+}^{2} /|\\mathcal{P}|+0.5\\left[m_{n}-\\min _{k \\in \\mathcal{N}} d\\left(\\mathbf{f}_{i}, \\mathbf{f}_{k}\\right)\\right]_{+}^{2} /\\left|\\mathcal{N}_{i}\\right|+0.5\\left[m_{n}-\\min _{k \\in \\mathcal{N}} d\\left(\\mathbf{f}_{j}, \\mathbf{f}_{k}\\right)\\right]_{+}^{2} /\\left|\\mathcal{N}_{j}\\right|\\right\\}\n$\\mathbf{f_i}$, $\\mathbf{f_j}$ are the features of matched points.\n$d()$: Euclidean distance.\n$m_p$ and $m_n$ are positive/negative margins, they are hyperparameters.\n$\\mathcal{N}$ is a randomly sampled set of non-matched (negative) points.hardest sample means the closest point in the $\\mathcal{L2}$ normalized feature space. Because the closest negative point in the feature space is the hardest to separate. \n\n \nPointInfoNCE Loss \n\\mathcal{L}_{c}=-\\sum_{(i, j) \\in \\mathcal{P}} \\log \\frac{\\exp \\left(\\mathbf{f}_{i} \\cdot \\mathbf{f}_{j} / \\tau\\right)}{\\sum_{(\\cdot, k) \\in \\mathcal{P}} \\exp \\left(\\mathbf{f}_{i} \\cdot \\mathbf{f}_{k} / \\tau\\right)}PointInfoNCE is derived from InfoNCE. InfoNCE treat contrastive learning as classification problem, thus implemented with cross-entropy loss.\n\n$\\tau$, annealing temperature, $\\tau \\rightarrow \\infty$ the output distribution goes “flat”, i.e. positive pair become less distinguishable. $\\tau \\rightarrow 0$ the output distribution goes sharp, i.e. positive pair becomes more distinguishable.\n\nBackbone Design\n\nConclusionsWhy Pretraining with ShapeNet dataset is not useful?\nDomain gap between source and target dataset: alignment, scene context …\nPoint-level representation matters: local geometric feature is critical for 3D tasksPointInfoNCE Loss outperforms Hardest-Contrastive LossThe advantages of fully-convolutional design\nDon’t have to crop objects out from scene context as done in previous works.\nEnables “point-level metric learning”.\n\nQuestions and AnswersWhat is “view” and how is it generated?”View is partial point cloud seen from different viewpoints. We can generate two views by cropping them from a complete point cloud. “Aligning two views in the same world coordinates” means to register them, i.e., find the common matched points.\nHow do we know the mapping between output features?The SRUNet’s output point cloud has the exact same coordinates with its input (just like segmentation). So we can use the input points’ mapping to map features in the output sparse tensors.\nResourcesPaper Lists3D-PointCloud GitHub Repo\nFriendly link3D related: View things from another dimension - Posted by Tianchen\nTODO\nMy website’s syntax highlight theme sucks, I need to fix it\n","dateCreated":"2020-12-21T13:45:23-05:00","dateModified":"2022-07-05T11:14:33-04:00","datePublished":"2020-12-21T13:45:23-05:00","description":"Deep learning methods for 3D scene understanding, particularly focused unsupervised methods.","headline":"3D Scene Understanding","image":[null,"https://res.cloudinary.com/dxzx2bxch/image/upload/v1609487426/mynd-workshop-central-park-rocks-2-3D-laser-scanning-point-cloud-new-york_uhycxv.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/3D/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/3D/","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1609487426/mynd-workshop-central-park-rocks-2-3D-laser-scanning-point-cloud-new-york_uhycxv.jpg"}</script>
+    <meta name="description" content="Deep learning methods for 3D scene understanding, particularly focused unsupervised methods.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="3D Scene Understanding">
+<meta property="og:url" content="https://www.zzzdavid.tech/3D/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="Deep learning methods for 3D scene understanding, particularly focused unsupervised methods.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1glxt6kwfzdj30me0hfqnt.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608727638/posts/Screen_Shot_2020-12-23_at_20.46.34_nwui76.png">
+<meta property="article:published_time" content="2020-12-21T18:45:23.000Z">
+<meta property="article:modified_time" content="2022-07-05T15:14:33.193Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/0081Kckwgy1glxt6kwfzdj30me0hfqnt.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1609487426/mynd-workshop-central-park-rocks-2-3D-laser-scanning-point-cloud-new-york_uhycxv.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1609487426/mynd-workshop-central-park-rocks-2-3D-laser-scanning-point-cloud-new-york_uhycxv.jpg"/>
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-7mrjlfrq6g5o2w0eliztyxj0cgqjyuovwvf6jadh3zaml6lykqqymvoxjsow.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-left
+                    "
+             style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1609487426/mynd-workshop-central-park-rocks-2-3D-laser-scanning-point-cloud-new-york_uhycxv.jpg');"
+             data-behavior="5">
+            
+                <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            3D Scene Understanding
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-21T13:45:23-05:00">
+	
+		    Dec 21, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Readings/">Readings</a>, <a class="category-link" href="/categories/Readings/Research/">Research</a>
+
+
+    
+</div>
+
+    
+</div>
+
+            
+        </div>
+
+            <div id="main" data-behavior="5"
+                 class="hasCover
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+<h1 id="3D-Datasets"><a href="#3D-Datasets" class="headerlink" title="3D Datasets"></a>3D Datasets</h1><h2 id="Data-Representations"><a href="#Data-Representations" class="headerlink" title="Data Representations"></a>Data Representations</h2><ol>
+<li>Multiview images: multiple 2D images of the same object from different angles.</li>
+<li>Depth map</li>
+<li>Voxel: volumetric occupancy</li>
+<li>Point cloud</li>
+<li>Polygon mesh</li>
+<li>Functions as implicit representation</li>
+</ol>
+<h2 id="ScanNet-Dataset"><a href="#ScanNet-Dataset" class="headerlink" title="ScanNet Dataset"></a>ScanNet Dataset</h2><ul>
+<li>Scene: Indoor</li>
+</ul>
+<div class="figure center" style="width:100%;"><img class="fig-img" src="https://tva1.sinaimg.cn/large/0081Kckwgy1glxt6kwfzdj30me0hfqnt.jpg" style="width:100%;"alt=""></div>
+<p>ScanNet is a richly-annotated RGB-D video dataset. It has camera poses information, surface reconstruction, sementic segmentation labels.</p>
+<h3 id="Data-Formats"><a href="#Data-Formats" class="headerlink" title="Data Formats"></a>Data Formats</h3><h4 id="ply-Reconstructed-surface-mesh-file"><a href="#ply-Reconstructed-surface-mesh-file" class="headerlink" title="*.ply Reconstructed surface mesh file"></a><code>*.ply</code> Reconstructed surface mesh file</h4><p>This is binary PLY format mesh with +Z axis in upright orientation.</p>
+<h4 id="sens-RGB-D-sensor-stream"><a href="#sens-RGB-D-sensor-stream" class="headerlink" title="*.sens RGB-D sensor stream"></a><code>*.sens</code> RGB-D sensor stream</h4><p>This is binary format with per-frame color, depth, camera pose and other data.</p>
+<h4 id="segs-json-Surface-mesh-segmentation-file"><a href="#segs-json-Surface-mesh-segmentation-file" class="headerlink" title="*.segs.json Surface mesh segmentation file"></a><code>*.segs.json</code> Surface mesh segmentation file</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"params"</span>: &#123;  <span class="comment">// segmentation parameters</span></span><br><span class="line">   <span class="string">"kThresh"</span>: <span class="string">"0.0001"</span>,</span><br><span class="line">   <span class="string">"segMinVerts"</span>: <span class="string">"20"</span>,</span><br><span class="line">   <span class="string">"minPoints"</span>: <span class="string">"750"</span>,</span><br><span class="line">   <span class="string">"maxPoints"</span>: <span class="string">"30000"</span>,</span><br><span class="line">   <span class="string">"thinThresh"</span>: <span class="string">"0.05"</span>,</span><br><span class="line">   <span class="string">"flatThresh"</span>: <span class="string">"0.001"</span>,</span><br><span class="line">   <span class="string">"minLength"</span>: <span class="string">"0.02"</span>,</span><br><span class="line">   <span class="string">"maxLength"</span>: <span class="string">"1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"sceneId"</span>: <span class="string">"..."</span>,  <span class="comment">// id of segmented scene</span></span><br><span class="line">  <span class="string">"segIndices"</span>: [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">15</span>,<span class="number">15</span>,<span class="number">15</span>,<span class="number">15</span>],  <span class="comment">// per-vertex seg label</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><p>Check <a href="https://github.com/chrischoy/SpatioTemporalSegmentation/blob/master/lib/pc_utils.py" target="_blank" rel="noopener">SpatioTemporalSegmentation/lib/pc_utils.py</a>.</p>
+<p>To load a mesh file:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> plyfile <span class="keyword">import</span> PlyData</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_ply</span><span class="params">(self, index)</span>:</span></span><br><span class="line">    filepath = self.data_root / self.data_paths[index]</span><br><span class="line">    plydata = PlyData.read(filepath)</span><br><span class="line">    data = plydata.elements[<span class="number">0</span>].data</span><br><span class="line">    coords = np.array([data[<span class="string">'x'</span>], data[<span class="string">'y'</span>], data[<span class="string">'z'</span>]], dtype=np.float32).T</span><br><span class="line">    feats = np.array([data[<span class="string">'red'</span>], data[<span class="string">'green'</span>], data[<span class="string">'blue'</span>]], dtype=np.float32).T</span><br><span class="line">    labels = np.array(data[<span class="string">'label'</span>], dtype=np.int32)</span><br><span class="line">    <span class="keyword">return</span> coords, feats, labels, <span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h1><h2 id="Minkowski-Engine"><a href="#Minkowski-Engine" class="headerlink" title="Minkowski Engine"></a>Minkowski Engine</h2><blockquote>
+<p>The Minkowski Engine is an auto-differentiation library for sparse tensors. It supports all standard network layers such as convolution, pooling, unpooling, and broadcasting operations for sparse tensors.</p>
+</blockquote>
+<p>3D voxel feature maps are often sparse. Minkowski Engine generalizes the definition of 3D sparse convolution and provide implementation support for it. The sparse convolution is defined as:</p>
+<script type="math/tex; mode=display">\mathbf{x}_{\mathbf{u}}^{\text {out }}=\sum_{\mathbf{i} \in \mathcal{N}^{D}\left(\mathbf{u}, \mathcal{C}^{\text {in }}\right)} W_{\mathbf{i}} \mathbf{x}_{\mathbf{u}+\mathbf{i}}^{\text {in }} \text { for } \mathbf{u} \in \mathcal{C}^{\text {out }}</script><p>This definition does not limit the shape of the kernel.</p>
+<ul>
+<li>$\mathbf{u}$ is the current convolution center.</li>
+<li>$\mathcal{N}^D(\mathbf{u}, \mathcal{C}^{in})$ is a set of offsets that define the shape of a kernel, centered at $\mathbf{u}$.</li>
+<li>$\mathcal{C}^{in}$, $\mathcal{C}^{out}$ are predefined input and output coordinates of sparse tensors.</li>
+</ul>
+<p>Minkowski Engine uses COO format (Coordinate list) to store sparse tensors, meaning that, it stores a list of non-zero coordinates and corresponding features:</p>
+<script type="math/tex; mode=display">\mathbf{C}=\left[\begin{array}{cccc}
+x_{1}^{1} & x_{1}^{2} & \cdots & x_{1}^{D} \\
+\vdots & \vdots & \ddots & \vdots \\
+x_{N}^{1} & x_{N}^{2} & \cdots & x_{N}^{D}
+\end{array}\right], \mathbf{F}=\left[\begin{array}{c}
+\mathbf{f}_{1}^{T} \\
+\vdots \\
+\mathbf{f}_{N}^{T}
+\end{array}\right]</script><h3 id="Concepts"><a href="#Concepts" class="headerlink" title="Concepts"></a>Concepts</h3><p><strong>Coordinate Manager</strong><br>Because the feature map is sparse, we need to dynamically find neighbors between non-zero elements. Minkowski Engine has a mechanism called coordinate manager that caches and reuses calcualted neighbor coordinates. When a <code>MinkowskiEngine.SparseTensor</code> is initialized, a coordinate manager is also created. The coordinate manager can be accessed with <code>MinkowskiEngine.SparseTensor.coords_man</code>, and it can be shared with a new sparse tensor by providing it as an argument during initialization.</p>
+<p><strong>Channel</strong><br>The channel number in 3D context is the length of the feature vector.</p>
+<hr>
+<h1 id="Paper-Digests"><a href="#Paper-Digests" class="headerlink" title="Paper Digests"></a>Paper Digests</h1><h2 id="PointContrast-Unsupervised-Pre-Training-for-3D-Point-Cloud-Understanding"><a href="#PointContrast-Unsupervised-Pre-Training-for-3D-Point-Cloud-Understanding" class="headerlink" title="PointContrast: Unsupervised Pre-Training for 3D Point Cloud Understanding"></a><a href="https://arxiv.org/abs/2007.10985" target="_blank" rel="noopener">PointContrast: Unsupervised Pre-Training for 3D Point Cloud Understanding</a></h2><ul>
+<li>Authors: Saining Xie, Jiatao Gu, Demin Guo, Charles R. Qi, Leonidas Guibas, Or Litany</li>
+<li>Venue: ECCV 2020</li>
+<li>Institution: Facebook AI &amp; Stanford</li>
+</ul>
+<h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h3><p>To design a full pipeline for 3D unsupervised pretraining: view generation methods, downstream task compatible backbone, contrastive loss design. Previous work (pretraining on ShapeNet) doesn’t work because of two reasons: source &amp; target data domain gap and lack of point-level representation.</p>
+<h3 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h3><p><strong>PointContrast Pipeline: contrasting at point-level</strong></p>
+<ol>
+<li>Given point cloud $\mathbf{x}$, generate two views $\mathbf{x^1}$ and $\mathbf{x^2}$ that are aligned in the same world coordinates. </li>
+<li>Compute the correspndence mapping $M$ between these two views. If $(i,j)\in M$ then points $x_i^1$ and $x_j^2$ are a matched pair.</li>
+<li>Randomly sample two geometric transformations $\mathbf{T_1}$, $\mathbf{T_2}$ (translation, rotation, scaling), and apply each to the paired points.</li>
+<li>Compute output point feature $\mathbf{f^1}=NN(\mathbf{T_1}(\mathbf{x^1}))$ and $\mathbf{f^2}=NN(\mathbf{T_1}(\mathbf{x^2}))$.</li>
+<li>Backprop to update NN with point-wise contrastive loss.</li>
+</ol>
+<p><strong>Contrastive Loss Design</strong><br>The intuition of contrastive loss is to seperate negative pairs and pull together positive pairs as much as possible.</p>
+<span class="highlight-text green"> 
+Hardest-Contrastive Loss </span>
+<script type="math/tex; mode=display">\mathcal{L}_{c}=\sum_{(i, j) \in \mathcal{P}}\left\{\left[d\left(\mathbf{f}_{i}, \mathbf{f}_{j}\right)-m_{p}\right]_{+}^{2} /|\mathcal{P}|+0.5\left[m_{n}-\min _{k \in \mathcal{N}} d\left(\mathbf{f}_{i}, \mathbf{f}_{k}\right)\right]_{+}^{2} /\left|\mathcal{N}_{i}\right|+0.5\left[m_{n}-\min _{k \in \mathcal{N}} d\left(\mathbf{f}_{j}, \mathbf{f}_{k}\right)\right]_{+}^{2} /\left|\mathcal{N}_{j}\right|\right\}</script><ul>
+<li>$\mathbf{f_i}$, $\mathbf{f_j}$ are the features of matched points.</li>
+<li>$d()$: Euclidean distance.</li>
+<li>$m_p$ and $m_n$ are positive/negative margins, they are hyperparameters.</li>
+<li>$\mathcal{N}$ is a randomly sampled set of non-matched (negative) points.<br><strong>hardest sample</strong> means the closest point in the $\mathcal{L2}$ normalized <em>feature space</em>. Because the closest negative point in the feature space is the hardest to separate. </li>
+</ul>
+<span class="highlight-text green"> 
+PointInfoNCE Loss </span>
+<script type="math/tex; mode=display">\mathcal{L}_{c}=-\sum_{(i, j) \in \mathcal{P}} \log \frac{\exp \left(\mathbf{f}_{i} \cdot \mathbf{f}_{j} / \tau\right)}{\sum_{(\cdot, k) \in \mathcal{P}} \exp \left(\mathbf{f}_{i} \cdot \mathbf{f}_{k} / \tau\right)}</script><p>PointInfoNCE is derived from InfoNCE. InfoNCE treat contrastive learning as classification problem, thus implemented with cross-entropy loss.</p>
+<ul>
+<li>$\tau$, annealing temperature, $\tau \rightarrow \infty$ the output distribution goes “flat”, i.e. positive pair become less distinguishable. $\tau \rightarrow 0$ the output distribution goes sharp, i.e. positive pair becomes more distinguishable.</li>
+</ul>
+<p><strong>Backbone Design</strong></p>
+<div class="figure center" style="width:100%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608727638/posts/Screen_Shot_2020-12-23_at_20.46.34_nwui76.png" style="width:100%;"alt=""></div>
+<h3 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h3><h4 id="Why-Pretraining-with-ShapeNet-dataset-is-not-useful"><a href="#Why-Pretraining-with-ShapeNet-dataset-is-not-useful" class="headerlink" title="Why Pretraining with ShapeNet dataset is not useful?"></a>Why Pretraining with ShapeNet dataset is not useful?</h4><ul>
+<li>Domain gap between source and target dataset: alignment, scene context …</li>
+<li><strong>Point-level representation matters</strong>: local geometric feature is critical for 3D tasks<h4 id="PointInfoNCE-Loss-outperforms-Hardest-Contrastive-Loss"><a href="#PointInfoNCE-Loss-outperforms-Hardest-Contrastive-Loss" class="headerlink" title="PointInfoNCE Loss outperforms Hardest-Contrastive Loss"></a>PointInfoNCE Loss outperforms Hardest-Contrastive Loss</h4><h4 id="The-advantages-of-fully-convolutional-design"><a href="#The-advantages-of-fully-convolutional-design" class="headerlink" title="The advantages of fully-convolutional design"></a>The advantages of fully-convolutional design</h4></li>
+<li>Don’t have to crop objects out from scene context as done in previous works.</li>
+<li>Enables “point-level metric learning”.</li>
+</ul>
+<h3 id="Questions-and-Answers"><a href="#Questions-and-Answers" class="headerlink" title="Questions and Answers"></a>Questions and Answers</h3><p><strong>What is “view” and how is it generated?”</strong><br>View is partial point cloud seen from different viewpoints. We can generate two views by cropping them from a complete point cloud. “Aligning two views in the same world coordinates” means to register them, i.e., find the common matched points.</p>
+<p><strong>How do we know the mapping between output features?</strong><br>The SRUNet’s output point cloud has the exact same coordinates with its input (just like segmentation). So we can use the input points’ mapping to map features in the output sparse tensors.</p>
+<h1 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h1><h2 id="Paper-Lists"><a href="#Paper-Lists" class="headerlink" title="Paper Lists"></a>Paper Lists</h2><p><a href="https://github.com/zhulf0804/3D-PointCloud" target="_blank" rel="noopener">3D-PointCloud GitHub Repo</a></p>
+<h2 id="Friendly-link"><a href="#Friendly-link" class="headerlink" title="Friendly link"></a>Friendly link</h2><p><a href="http://a-suozhang.xyz/2020/11/29/3d/" target="_blank" rel="noopener">3D related: View things from another dimension - Posted by Tianchen</a></p>
+<h1 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h1><ul>
+<li>My website’s syntax highlight theme sucks, I need to fix it</li>
+</ul>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/SystemC/"
+                    data-tooltip="Introduction to SystemC"
+                    aria-label="PREVIOUS: Introduction to SystemC"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/GumbelSoftmax/"
+                    data-tooltip="Gumbel-Softmax"
+                    aria-label="NEXT: Gumbel-Softmax"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/3D/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/3D/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/SystemC/"
+                    data-tooltip="Introduction to SystemC"
+                    aria-label="PREVIOUS: Introduction to SystemC"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/GumbelSoftmax/"
+                    data-tooltip="Gumbel-Softmax"
+                    aria-label="NEXT: Gumbel-Softmax"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/3D/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/3D/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/3D/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/3D/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ebmyu99d5oyr6t7uspehxhl2tteqi6brihfbdwmwrkqn6pllps5nttzl401q.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/3D/';
+              
+            this.page.identifier = '3D/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
