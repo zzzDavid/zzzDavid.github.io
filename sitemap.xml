@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.zzzdavid.tech/fccm/</loc>
+    
+    <lastmod>2022-07-15T16:24:40.784Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/vnc/</loc>
     
     <lastmod>2022-07-12T19:18:40.745Z</lastmod>
@@ -16,13 +23,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
-    
-    <lastmod>2022-07-05T15:14:33.197Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/all-tags/index.html</loc>
     
     <lastmod>2022-07-05T15:14:33.197Z</lastmod>
@@ -31,6 +31,13 @@
   
   <url>
     <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
+    
+    <lastmod>2022-07-05T15:14:33.197Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
     
     <lastmod>2022-07-05T15:14:33.197Z</lastmod>
     
@@ -58,7 +65,7 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
+    <loc>https://www.zzzdavid.tech/NAS/</loc>
     
     <lastmod>2022-07-05T15:14:33.194Z</lastmod>
     
@@ -72,7 +79,7 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/NAS/</loc>
+    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
     
     <lastmod>2022-07-05T15:14:33.194Z</lastmod>
     

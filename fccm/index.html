@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
-    <title>Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know - Niansong Zhang</title><meta name="robots" content="noindex">
+    <title>Voluteering at FCCM 2022 - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
         <meta name="keywords" content="Niansong Zhang,Niansong,">
@@ -17,21 +17,21 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nEigenvalue and EigenvectorsFirst thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:\n\nLet’s say that multiplication by $\\mathit{A}$ transforms $\\mathbf{x}$ into $\\mathbf{b}$ and transforms $\\mathbf{u}$ into the zero vector. \n\nWe can think of matrix $\\mathit{A}$ as an object that “acts” on a vector $\\mathbf{x}$ by multiplication to produce a new vector $\\mathbf{b}$. Here, matrix $\\mathit{A}$ is a correspondence rule that assigns each vector in $\\mathbb{R}^3$ a vector $A(\\mathbf{x})$ in $\\mathbb{R}^2$. You can call it a mapping, or a function.\nEvery matrix transformation is a linear transformation, because: $A(\\mathbf{u} + \\mathbf{v}) = A(\\mathbf{u}) + A(\\mathbf{v})$ $A(c\\mathbf{u}) = cA(\\mathbf{u})$\n\nLet’s move to eigenvalues and eigenvectors. the word eigen origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\\mathit{A}$ is usually square. In essence, a eigenvector $\\mathbf{v}$ of a linear tranformation $\\mathit{A}$ is a nonzero vector that, when $\\mathit{A}$ is applied to it, it does not change the direction. Applying $\\mathit{A}$ to the vector $\\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:\n\\mathit{A} ( \\mathbf{v} ) = \\lambda \\mathbf{v}A only scales vector v, without changing its direction\nA Personal NoteWell today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. \n","dateCreated":"2020-02-10T23:41:18-05:00","dateModified":"2022-07-05T11:14:33-04:00","datePublished":"2020-02-10T23:41:18-05:00","description":"Because Matrix is pretty cool","headline":"Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/Matrix/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/Matrix/","keywords":"Math","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"}</script>
-    <meta name="description" content="Because Matrix is pretty cool">
-<meta name="keywords" content="Math">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nThe IEEE Symposium on Field-Programmable Custom Computing Machine (FCCM) is a top conference in the FPGA field. I’m fortunate to be part of it this year as a volunteer.\nConference FormatThe official conference website is here. There are two days for the main conference and two days of workshop and tutorials. The entire conference is hybrid: some presenters are in-person, and some are virtual. This is the first hybrid conference in the FPGA community since the pandemic. \nVerizon Center at Cornell Tech\nThe event space for the main conference\nThe gallery for posters\nFCCM22 has about 200 attendees, and 50% of the total are in-person attendees. The entire event takes place at the Verizon Center of Cornell Tech Campus. The first floor has a large event space for the main conference and the demo night. On the second floor are classrooms for tutorial, workshops, and an open-space gallery for posters.\nInteresting WorkThere are quite a few interesting papers presented at the conference, and many of them are relevant to my research area. I’m most excited for new tools for easier hardware specialization. Right now, I’m working on an MLIR dialect and tool-flow to generate hardware design and program them from high-level programming language. I’m interested in compiler, high-level synthesis (HLS), FPGA placement and routing optimization, and new applications on FPGA. Here I cover a few papers that I find relevant and interesting.\nResource sharing in dataflow circuitsThe Best Paper AwardThe Work Behind the SceneDemo Night","dateCreated":"2022-05-30T00:00:00-04:00","dateModified":"2022-07-15T12:24:40-04:00","datePublished":"2022-05-30T00:00:00-04:00","description":"Cornell Tech on Roosevelt Island, NYC, May 15–18, 2022.","headline":"Voluteering at FCCM 2022","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1657859625/fccm22/cornelltech_aerial_1575x900_som_lucasblair_077jpg_xx0jpj.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/fccm/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/fccm/","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1657859625/fccm22/cornelltech_aerial_1575x900_som_lucasblair_077jpg_xx0jpj.jpg"}</script>
+    <meta name="description" content="Cornell Tech on Roosevelt Island, NYC, May 15–18, 2022.">
+<meta name="keywords" content="Niansong Zhang,Niansong">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know">
-<meta property="og:url" content="https:&#x2F;&#x2F;www.zzzdavid.tech&#x2F;Matrix&#x2F;index.html">
+<meta property="og:title" content="Voluteering at FCCM 2022">
+<meta property="og:url" content="https:&#x2F;&#x2F;www.zzzdavid.tech&#x2F;fccm&#x2F;index.html">
 <meta property="og:site_name" content="Niansong Zhang">
-<meta property="og:description" content="Because Matrix is pretty cool">
+<meta property="og:description" content="Cornell Tech on Roosevelt Island, NYC, May 15–18, 2022.">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583091229&#x2F;posts&#x2F;transform_aceidd.png">
-<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583092580&#x2F;posts&#x2F;Screen_Shot_2020-03-02_at_03.56.05_bprarw.png">
-<meta property="og:updated_time" content="2022-07-05T15:14:33.194Z">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dxzx2bxch&#x2F;image&#x2F;upload&#x2F;v1657861947&#x2F;fccm22&#x2F;5bb4ef862f785b85130a93838f17ba4a.jpg_widbqq.webp">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dxzx2bxch&#x2F;image&#x2F;upload&#x2F;v1657861703&#x2F;fccm22&#x2F;full_hc676_1652795459_3_excytt.jpg">
+<meta property="og:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dxzx2bxch&#x2F;image&#x2F;upload&#x2F;v1657861705&#x2F;fccm22&#x2F;IMG_9785_wb9buw.jpg">
+<meta property="og:updated_time" content="2022-07-15T16:24:40.784Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dx7aiyb0q&#x2F;image&#x2F;upload&#x2F;v1583089234&#x2F;posts&#x2F;linear_gn5htn.png">
+<meta name="twitter:image" content="https:&#x2F;&#x2F;res.cloudinary.com&#x2F;dxzx2bxch&#x2F;image&#x2F;upload&#x2F;v1657861947&#x2F;fccm22&#x2F;5bb4ef862f785b85130a93838f17ba4a.jpg_widbqq.webp">
     
     
         
@@ -40,12 +40,9 @@
         <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
     
     
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583048842/posts/matrix_wcc1lx.jpg"/>
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657859625/fccm22/cornelltech_aerial_1575x900_som_lucasblair_077jpg_xx0jpj.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657859625/fccm22/cornelltech_aerial_1575x900_som_lucasblair_077jpg_xx0jpj.jpg"/>
     
-    
-        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg"/>
     
     
     <!--STYLES-->
@@ -248,62 +245,51 @@
 </nav>
 
             
-        <div class="post-header-cover
-                    text-left
-                    "
-             style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583049961/posts/matrix2_re7ewn.jpg');"
-             data-behavior="5">
-            
-                <div class="post-header main-content-wrap text-left">
-    
-        <h1 class="post-title">
-            Matrices, Eigenvalue and Other Linear Algebra Stuff You Probably Should Know
-        </h1>
-    
-    
-        <div class="post-meta">
-    <time datetime="2020-02-10T23:41:18-05:00">
-	
-		    Feb 10, 2020
-    	
-    </time>
-    
-        <span>in </span>
-        
-    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
-
-
-    
-</div>
-
-    
-</div>
-
-            
-        </div>
-
             <div id="main" data-behavior="5"
-                 class="hasCover
+                 class="
                         hasCoverMetaIn
                         ">
                 
 <article class="post">
     
     
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Voluteering at FCCM 2022
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2022-05-30T00:00:00-04:00">
+	
+		    May 30, 2022
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Conference-Journal/">Conference Journal</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
-<h2 id="Eigenvalue-and-Eigenvectors"><a href="#Eigenvalue-and-Eigenvectors" class="headerlink" title="Eigenvalue and Eigenvectors"></a>Eigenvalue and Eigenvectors</h2><p>First thing you should know is that a Matrix can be seen as a linear tranformation. Let’s see an example:</p>
-<div class="figure center" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583089234/posts/linear_gn5htn.png" alt=""></a></div><div style="clear:both;"></div>
-<p>Let’s say that multiplication by $\mathit{A}$ transforms $\mathbf{x}$ into $\mathbf{b}$ and transforms $\mathbf{u}$ into the zero vector. </p>
-<div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583091229/posts/transform_aceidd.png" style="width:70%;"alt=""></div>
-<p>We can think of matrix $\mathit{A}$ as an object that “acts” on a vector $\mathbf{x}$ by multiplication to produce a new vector $\mathbf{b}$. Here, matrix $\mathit{A}$ is a correspondence rule that assigns each vector in $\mathbb{R}^3$ a vector $A(\mathbf{x})$ in $\mathbb{R}^2$. You can call it a <strong>mapping</strong>, or a <strong>function</strong>.</p>
-<div class="alert success"><p>Every matrix transformation is a linear transformation, because:<br> $A(\mathbf{u} + \mathbf{v}) = A(\mathbf{u}) + A(\mathbf{v})$<br> $A(c\mathbf{u}) = cA(\mathbf{u})$</p>
-</div>
-<p>Let’s move to eigenvalues and eigenvectors. the word <em>eigen</em> origins from German, meaning “characteristic”. When we talk about eigenvalues and eigenvectors, matrix $\mathit{A}$ is usually square. In essence, a <strong>eigenvector</strong> $\mathbf{v}$ of a linear tranformation $\mathit{A}$ is a nonzero vector that, when $\mathit{A}$ is applied to it, <span class="highlight-text red">it does not change the direction</span>. Applying $\mathit{A}$ to the vector $\mathbf{v}$ only scales it, i.e. changes its length. We can write this condition like this:</p>
-<script type="math/tex; mode=display">\mathit{A} ( \mathbf{v} ) = \lambda \mathbf{v}</script><div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1583092580/posts/Screen_Shot_2020-03-02_at_03.56.05_bprarw.png" style="width:70%;"alt="A only scales vector v, without changing its direction"><span class="caption">A only scales vector v, without changing its direction</span></div>
-<h2 id="A-Personal-Note"><a href="#A-Personal-Note" class="headerlink" title="A Personal Note"></a>A Personal Note</h2><p>Well today I was doing some reading about RNN compression, and I came across something called “circulant matrix”. The word “circulant” pulled me back to the hot and humid classroom in Guangzhou. Then I found that I don’t remember a thing about it. So I think I should write down what I have learnt in the engineering classes, plainly explain what they mean, why they are useful etc, for the purpose of reminding myself because I’m too forgetful, and also for my brother who is also studying in the field of engineering. To anyone who reads this post, I hope it would be helpful. </p>
-<!-- flag of hidden posts -->
+<p>The IEEE Symposium on Field-Programmable Custom Computing Machine (FCCM) is a top conference in the FPGA field. I’m fortunate to be part of it this year as a volunteer.</p>
+<h2 id="Conference-Format"><a href="#Conference-Format" class="headerlink" title="Conference Format"></a>Conference Format</h2><p>The official conference website is <a href="https://www.fccm.org" target="_blank" rel="noopener">here</a>. There are two days for the main conference and two days of workshop and tutorials. The entire conference is hybrid: some presenters are in-person, and some are virtual. This is the first hybrid conference in the FPGA community since the pandemic. </p>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657861947/fccm22/5bb4ef862f785b85130a93838f17ba4a.jpg_widbqq.webp" alt="Verizon Center at Cornell Tech"><span class="caption">Verizon Center at Cornell Tech</span></div>
+<div class="figure fig-50" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657861703/fccm22/full_hc676_1652795459_3_excytt.jpg" alt="The event space for the main conference"><span class="caption">The event space for the main conference</span></div>
+<div class="figure fig-50" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657861705/fccm22/IMG_9785_wb9buw.jpg" alt="The gallery for posters"><span class="caption">The gallery for posters</span></div>
+<p>FCCM22 has about 200 attendees, and 50% of the total are in-person attendees. The entire event takes place at the Verizon Center of Cornell Tech Campus. The first floor has a large event space for the main conference and the demo night. On the second floor are classrooms for tutorial, workshops, and an open-space gallery for posters.</p>
+<h2 id="Interesting-Work"><a href="#Interesting-Work" class="headerlink" title="Interesting Work"></a>Interesting Work</h2><p>There are quite a few interesting papers presented at the conference, and many of them are relevant to my research area. I’m most excited for new tools for easier hardware specialization. Right now, I’m working on an MLIR dialect and tool-flow to generate hardware design and program them from high-level programming language. I’m interested in compiler, high-level synthesis (HLS), FPGA placement and routing optimization, and new applications on FPGA. Here I cover a few papers that I find relevant and interesting.</p>
+<h3 id="Resource-sharing-in-dataflow-circuits"><a href="#Resource-sharing-in-dataflow-circuits" class="headerlink" title="Resource sharing in dataflow circuits"></a>Resource sharing in dataflow circuits</h3><h3 id="The-Best-Paper-Award"><a href="#The-Best-Paper-Award" class="headerlink" title="The Best Paper Award"></a>The Best Paper Award</h3><h2 id="The-Work-Behind-the-Scene"><a href="#The-Work-Behind-the-Scene" class="headerlink" title="The Work Behind the Scene"></a>The Work Behind the Scene</h2><h2 id="Demo-Night"><a href="#Demo-Night" class="headerlink" title="Demo Night"></a>Demo Night</h2>
             
 
 
@@ -311,35 +297,34 @@
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
-            <div class="post-footer-tags">
-                <span class="text-color-light text-small">TAGGED IN</span><br/>
-                
-    
-
-            </div>
-        
         
             <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a
-                        class="post-action-btn btn btn--disabled"
-                        aria-hidden="true"
-                    >
-                        
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/cvpr22/"
+                    data-tooltip="CVPR 2022 at New Orleans"
+                    aria-label="PREVIOUS: CVPR 2022 at New Orleans"
+                >
+                    
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
             </li>
             <li class="post-action">
                 
-                    <a
-                        class="post-action-btn btn btn--disabled"
-                        aria-hidden="true"
-                    >
-                        
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/profiling/"
+                    data-tooltip="Efficient Path Profiling"
+                    aria-label="NEXT: Efficient Path Profiling"
+                >
+                    
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
@@ -362,7 +347,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/Matrix/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/fccm/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -375,7 +360,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/Matrix/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/fccm/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -432,22 +417,28 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a
-                        class="post-action-btn btn btn--disabled"
-                        aria-hidden="true"
-                    >
-                        
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/cvpr22/"
+                    data-tooltip="CVPR 2022 at New Orleans"
+                    aria-label="PREVIOUS: CVPR 2022 at New Orleans"
+                >
+                    
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
             </li>
             <li class="post-action">
                 
-                    <a
-                        class="post-action-btn btn btn--disabled"
-                        aria-hidden="true"
-                    >
-                        
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/profiling/"
+                    data-tooltip="Efficient Path Profiling"
+                    aria-label="NEXT: Efficient Path Profiling"
+                >
+                    
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
@@ -470,7 +461,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/Matrix/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/fccm/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -483,7 +474,7 @@
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/Matrix/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/fccm/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -527,7 +518,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/Matrix/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/fccm/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -540,7 +531,7 @@
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/Matrix/"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/fccm/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -602,9 +593,9 @@
     
         <script>
           var disqus_config = function() {
-            this.page.url = 'https://www.zzzdavid.tech/Matrix/';
+            this.page.url = 'https://www.zzzdavid.tech/fccm/';
               
-            this.page.identifier = 'Matrix/';
+            this.page.identifier = 'fccm/';
               
           };
           (function() {

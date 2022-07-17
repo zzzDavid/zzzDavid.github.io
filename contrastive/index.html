@@ -17,7 +17,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nPaper DigestExploring Simple Siamese Representation LearningAuthors: Xinlei Chen, Kaiming HeAffiliation/Institution: FAIRVenue: Tech report, arXiv, Nov. 2020\nMotivationMethodologySiamese Architecture\n123456789101112131415# f: backbone + projection mlp# h: prediction mlpfor x in loader: # load a minibatch x with n samples   x1, x2 = aug(x), aug(x) # random augmentation   z1, z2 = f(x1), f(x2) # projections, n-by-d   p1, p2 = h(z1), h(z2) # predictions, n-by-d   L = D(p1, z2)/2 + D(p2, z1)/2 # loss   L.backward() # back-propagate   update(f, h) # SGD updatedef D(p, z): # negative cosine similarity   z = z.detach() # stop gradient   p = normalize(p, dim=1) # l2-normalize   z = normalize(z, dim=1) # l2-normalize   return -(p*z).sum(dim=1).mean()\nStop-gradientDiscussionWhy stop-gradient?\\mathcal{L}(\\theta, \\eta)=\\mathbb{E}_{x, \\mathcal{T}}\\left[\\left\\|\\mathcal{F}_{\\theta}(\\mathcal{T}(x))-\\eta_{x}\\right\\|_{2}^{2}\\right]\n$x$ is image\n$\\mathcal{F}$ is the encoder network parameterized by $\\theta$.\n$\\mathcal{T}$ is data augmentation.\n$\\eta_x$ stands for the representation of image $x$.\n$\\mathbb{E}[\\bullet]$ is the expectation over all images and all transformations.\n\nReferenceAndy’s Writing Room: Simple Siamese\n","dateCreated":"2020-12-23T00:00:00-05:00","dateModified":"2022-07-05T11:14:33-04:00","datePublished":"2020-12-23T00:00:00-05:00","description":"Contrastive Learning is a type of self-supervised method to find similar and dissimilar things and learn better representations.","headline":"Contrastive Learning","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/contrastive/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:zhangns@mail2.sysu.edu.cn"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/contrastive/"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nPaper DigestExploring Simple Siamese Representation LearningAuthors: Xinlei Chen, Kaiming HeAffiliation/Institution: FAIRVenue: Tech report, arXiv, Nov. 2020\nMotivationMethodologySiamese Architecture\n123456789101112131415# f: backbone + projection mlp# h: prediction mlpfor x in loader: # load a minibatch x with n samples   x1, x2 = aug(x), aug(x) # random augmentation   z1, z2 = f(x1), f(x2) # projections, n-by-d   p1, p2 = h(z1), h(z2) # predictions, n-by-d   L = D(p1, z2)/2 + D(p2, z1)/2 # loss   L.backward() # back-propagate   update(f, h) # SGD updatedef D(p, z): # negative cosine similarity   z = z.detach() # stop gradient   p = normalize(p, dim=1) # l2-normalize   z = normalize(z, dim=1) # l2-normalize   return -(p*z).sum(dim=1).mean()\nStop-gradientDiscussionWhy stop-gradient?\\mathcal{L}(\\theta, \\eta)=\\mathbb{E}_{x, \\mathcal{T}}\\left[\\left\\|\\mathcal{F}_{\\theta}(\\mathcal{T}(x))-\\eta_{x}\\right\\|_{2}^{2}\\right]\n$x$ is image\n$\\mathcal{F}$ is the encoder network parameterized by $\\theta$.\n$\\mathcal{T}$ is data augmentation.\n$\\eta_x$ stands for the representation of image $x$.\n$\\mathbb{E}[\\bullet]$ is the expectation over all images and all transformations.\n\nReferenceAndy’s Writing Room: Simple Siamese\n","dateCreated":"2020-12-23T00:00:00-05:00","dateModified":"2022-07-05T11:14:33-04:00","datePublished":"2020-12-23T00:00:00-05:00","description":"Contrastive Learning is a type of self-supervised method to find similar and dissimilar things and learn better representations.","headline":"Contrastive Learning","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/contrastive/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/contrastive/"}</script>
     <meta name="description" content="Contrastive Learning is a type of self-supervised method to find similar and dissimilar things and learn better representations.">
 <meta name="keywords" content="Niansong Zhang,Niansong">
 <meta property="og:type" content="blog">
@@ -78,8 +78,8 @@
         
             <a
                 class="header-right-picture "
-                href="/about"
-                aria-label="Open the link: /about"
+                href="/"
+                aria-label="Open the link: //"
             >
         
         
@@ -119,7 +119,7 @@
                 <li class="sidebar-button">
                     
                         <a  class="sidebar-button-link "
-                             href="/about/"
+                             href="/"
                             
                             title="About"
                         >
@@ -132,7 +132,7 @@
                 <li class="sidebar-button">
                     
                         <a  class="sidebar-button-link "
-                             href="/"
+                             href="/blog/"
                             
                             title="Home"
                         >
@@ -227,7 +227,7 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="mailto:zhangns@mail2.sysu.edu.cn" target="_blank" rel="noopener" title="Mail">
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
                     
                         <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">Mail</span>
