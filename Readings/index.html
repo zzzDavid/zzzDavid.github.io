@@ -1,0 +1,1103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>Paper Readings - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\n\nVirtualizing FPGAs in the CloudAuthors: Yue Zha, Jing LiVenue: ASPLOS 20Institution: University of Pennsylvania\nPoint-Voxel CNN for Efficient 3D Deep LearningAuthors: Zhijian Liu*, Haotian Tang*, Yujun Lin, Song HanVenue: NIPS 2019Institution: MIT &amp; SJTU\nBackground\nVoxel-based methods cannot scale to high resolution. Point-based methods have poor data locality (sparse data access).\n\nContributionPoint-Voxel CNN combines the best from both worldsPoint-Voxel Convolution: coarse voxelization\n\nNormalize: spatial locations (x,y,z) are normalized to [0,1] first.\nVoxelization: points that fall into the same voxel grid are averaged.\nConvolve: 3D convolution.\nDevoxelize: trilinear interpolation.\nFuse: add interpolated point to MLP output points.\n\n\nPVCNN represents the input data as point cloud to reduce memory consumption. Voxel branch can be coarse as detail information is preserved with point branch.\n\n\nPVCNN leverages voxel-based convolution to obtain contiguous memory access pattern. No convolution with point-cloud, no dynamic-kernel and KNN computation, so random memory access is avoided.\n\nQ&amp;A1. First of all, what is Voxel?Voxel is like the 3D equivalence of pixel. A voxel represents a single sample, or data point, on a regularly spaced, three-dimensional grid.   \n2. What are voxelization and devoxelization?\n3. What is Volumetric Convolution?[27] Daniel Maturana and Sebastian Scherer. VoxNet: A 3D Convolutional Neural Network for Real-Time Object Recognition. in IROS, 2015\nSection 3 gives a formal introduction of the volumetric convolution. We see that volumetric convolution is actually 3D convolution:\n\n\n\n\n4. Why point-based methods have sparse data access?\nNeighbor points are not stored contiguously in the point representation so indexing them requrest a nearest neighbor search.\nBecasue relative positions of neighbors are not fixed, these point-based models have to generate the convolution kernels dynamically based on different offsets.(Dynamic kernel is a special kind of method)\n\n5. Why random memory access causes bank conflict?[28] Onur Mutlu. DDR Access Illustration.\n6. Why voxel-based method consumes more memory than point-cloud based method? Doesn’t it have less information because some of the points are merged into one voxel?I’m not exactly sure about the answer right now. One guess is that during voxelization, the space where it doesn’t have any point is also voxelized. Maybe that’s why we could use sparse voxel.\nInteresting Facts\nThe computation cost and memory footprint of voxel-based models grow cubically with input resolution. \n\n\nSearching Efficient 3D Architectures with Sparse Point-Voxel Convolutionproject page | arxiv\nAuthors: Haotian Tang*, Zhijian Liu*, Shengyu Zhao, Yujun Lin, Ji Lin, Hanrui Wang, Song HanVenue: ECCV 2020Institution: MIT &amp; Tsinghua University\nBackground\nPrevious models for 3D segmentation is still memory-intensive, so they can’t affort high resolution.\n\nSmall objects often become indistinguishable because of aggressive downsampling or coarse voxelization.\n\n\nContributionsA new 3D module: SPConv (Sparse Point-Voxel Convolution)\n\nInput point-cloud is the same as before, but voxelization is sparse, i.e., it produces sparse voxel grid.p.s. The author also talked about implementing sparse voxelization with GPU Hash table.\n\nSparse convolutionFrom: Minkowski CNN: 4D Spatio-Temporal ConvNets.“Sparse convolution” is actually a stack of sparse residual blocks.\n\nDevoxelization is the same: trilinear interpolation.\n\n\n\n3D NAS with SPConv - SPVNAS\nDesign Space: fine-grained channel numbers, fixed kernel size.The design space is very much like OFA - elastic channel numbers, elastic depth. It also uses progressive shrinking (depth) to train supernet. Differences are:\n\nOFA has fixed input/output channel number for blocks, only the middle layer’s channel can change (by a expansion ratio). SPVNAS allows all channels to change.\nSPVNAS has a fixed 3x3x3 kernel size. This is because larger kernels are computationally expensive (cubic). Also sparse convolution brings significant overhead to build larger kernels.\n\n\nSearch method: single-objective Genetic Algorithm with MAC constraint. Candidates that don’t meet the constraint are discarded.\n\n\nQ&amp;A1. Won’t sparse PVConv cause random memory access?I suppose so. There must be random memory access while building the sparse kernel.\n2. Elaborate on sparse conv?From: Minkowski CNN: 4D Spatio-Temporal ConvNets.Also: Sparse convolutional neural networks\nInteresting Facts\nPoint-based methods (point cloud and rasterized voxel grids) waste up to 90% of their time on structuring the irregular data.\n\n\nOverwrite Quantization: Opportunistic Outlier Handling for Neural Network Accelerators\nUnpublished preprint\nAuthors: Ritchie Zhao, Christopher De Sa, Zhiru Zhang\nArXiv\n\nTL;DR: A quantization scheme where the outlier could overwrite its neighbor value, and a low-overhead hardware implementation of the idea.\nBasic Idea\nThe basic idea of OverQ is to let outlier number take the bits of its neighbor to store its value. \nOverQ is an opportunistic quantization scheme, meaning that $x_2$ will only overwrite $x_3$ only if $x_3$ is small. If $x_3$ is overwritten, its value is treated as zero. There are two types of OverQ: OverQ-Split and OverQ-Shift.\nTwo types of OverQ\nWe take dot product of two vectors as an example. Both methods use a flag bit to indicated whether it is overwritten. \nOverQ-SplitThe outlier is divided by two to save in both positions. Then the weight is copied. The dynamic range is extended from $[0,2^n-1]$ to $[0, 2^{n+1}-1]$ for UInt.\nOverQ-ShiftOverQ-Shift reserves one bit to indicate shift direction. Then the other bits can be used to store the extra LSB or MSB. This way it has $2 \\times n - 1$ bits. \nThere is an extra mode called zero-reuse: when the neighbor is zero, it uses the extra bits to store LSB for higher precision. For example:\n\nQ&amp;A1. Once you re-arrange the weight kernels, the output channels’ order is also going to change. Do we change them back? Or doesn’t it affect the convolution result in the downstream layer?I was wondering if channel reordering would change the hardware design, and now I suppose it wouldn’t. My idea of implementing this: suppose we have two conv layers, first we permute the conv kernels in the first layer to get desired output channel order. Then we must permute the channel order of the second conv layer’s kernels accordingly.  Then the hardware just runs the neural network as if it was never channel-reordered.\n\nAn overview of proxy-label approches for semi-supervised learning\nA blog post by Sebastian Ruder. link\n\n\nWhile unsupervised learning is still elusive, researchers have made a lot of progress in semi-supervised learning. This post focuses on a particular promising category of semi-supervised learning methods that assign proxy labels to unlabelled data, which are used as targets for learning.\n\nProxy labels are generated by the model itself or variants of it without any additional supervision. These labels can be considered as noisy or weak.\nThere are three categories of proxy-label learning:\n\nSelf-training: using a model’s own predictions as proxy labels.\nMulti-view learning: train models with different views of the data, then use its predictions as proxy label.\nSelf-ensembling: ensembles variations of a model’s own predictions and uses these as feedback for learning.\n\nSelf-trainingSelf-training uses the confident predictions as labels. There’s a pre-set confidence threshold. In every iteration, the model is trained on the labelled dataset, then make predictions on unlabelled data. Those predictions with confidence score over the threshold will be added to the labelled dataset.\nThe downside of self-training is that the model cannot correct its own mistakes. This effect is exacerbated if the domain of the unlabelled data is different from the labelled data.\nMulti-view trainingMulti-view training train multiple models with different views of the data. These views differs in many ways, such as the feature they use, the model architectures, or different parts of the dataset.\n\nCo-training: trian two identical models on two parts of the dataset, confident predictions of one model is added to the other’s training set.\nDemocratic Co-learning: train many different models on complete dataset, then use them to predict unlabelled data. If many models all make confident predictions on some data, it will be added to the training set.  \nTri-training with disagreement: three models selected with diversity are trained first in each iteration, and the unlabelled data which two models agree but one model disagrees is added to the training set.\nAsymmetric tri-training: test and unlabelled data is from different domain than labelled training data. To accommodate this change, one of the models is trained only on proxy labels and not on labelled data, and uses only this model to classify target domain examples at test time. Also three models share the same feature extractor.\nMulti-task tri-training: aims to relieve the training expense of tri-training. All models share parameters and trained with multi-task learning. To prevent mult-task tri-training reduced to self-training, we add an orthogonality constraint to the loss term to ensure the diversity of softmax layer’s input.\n\n\n\nSelf-ensemblingLike tri-training, self-ensembling methods also uses many variants of the model. But it does not require the diversity of the variants. Self-ensembling approaches mostly use a single model under different configurations. \n\nLadder networks: this method aims to make the model robust to noise. For unlabelled data, it first makes a prediction as the label, then add noise to the same data, and train the model with the prediction on clean data.\nVirtual Adversarial Training: If perturbing the original sample is not possible or desired, we can instead add the worst possible perturbation to the example in the feature space. This make the input an adversarial example. But this method does not require label, unlike adversarial training. To do so, first, an image is taken and an adversarial variant of it is created such that the KL-divergence between the model output for the original image and the adversarial image is maximized.\nPi model: ensembles the predicitons of one model under two different perturbation of the input data and two different dropout conditions. \nTemporal Ensembling: still one model architecture, but the model ensembles its prediction that is accumulated over timesteps (past predictions).\nMean teacher: still one model, the alternative edition has averaged-over-training parameters.  \n\nSemi-supervised Learning in Computer Vision\nblog post by Amit Chaudhary: link\n\nThis post is a nice visualization of the previous post. \n\n4D Spatio-Temporal ConvNets: Minkowski Convolutional Neural Network\nVenue: CVPR 2019 \nInstitution: Stanford University\nAuthors: Christopher Choy, JunYoung Gwak, Silvio Savarese\n\nCOO-format Sparse TensorCOO = Coordinate Format, also known as ‘ijv’ or ‘triplet’ format. Basically it uses three lists to store the sparse matrix: row, col, data. So data[i] is value at (row[i], col[i]).\nMinkowski engine extends the coordinates with two entries: time step $t_i$, and batch index $b_i$. So the sparse tensor is stored like this:\nC=\\left[\\begin{array}{ccccc}\nx_{1} & y_{1} & z_{1} & t_{1} & b_{1} \\\\\n& & \\vdots & & \\\\\nx_{N} & y_{N} & z_{N} & t_{N} & b_{N}\n\\end{array}\\right], F=\\left[\\begin{array}{c}\n\\mathbf{f}_{1}^{T} \\\\\n\\vdots \\\\\n\\mathbf{f}_{N}^{T}\n\\end{array}\\right]$\\mathbf{f_i}$ is the feature vector at the associated coordinate. \nGeneralized Sparse ConvolutionFor 3D space point-cloud data, the coordinates are no longer integers, and for 3D convolution, the kernel tensor’s shape may not be cubic. So we need a sparse convolution algorithm that is generalized for any kernel shape, any coordinates:\nx_u^{out}  = \\sum_{i \\in \\mathcal{N}^D(u, \\mathcal{C}^{in})}  W_i x_{u+i}^{in} ~ for ~ u \\in \\mathcal{C}^{out}\n$u$: D-dimensional coordinate\n$\\mathcal{N}^D$ is a set of offsets that define the shape of a kernel\n$\\mathcal{N}^D (u, \\mathcal{C}^{in})$ is the set of offsets from the center $u$, that exists in $\\mathcal{C}^{in}$\n$\\mathcal{C}^{in}$ (input coordinate) is not necessarily identical to $\\mathcal{C}^{out}$ (output coordinate).\n\n\nAXI HyperConnect: A Predictable, Hypervisor-levelk Interconnect for Hardware Accelerators in FPGA SoC\nVenue: DAC 2020\nInstitution: Department of Excellence in Robotics &amp; AI, Acuola Superiore Sant’Anna, Pisa, Italy\nAuthors: Francesco Restuccia, et al.\n\nIn this work, a new hypervisor-level hardware component named AXI HyperConnect is proposed. It allows interconnecting hardware accelerators to the same bus while ensuring isolation and predictability. \nBackground\n\nPS (Processing System) includes one or more processors.\nPS and FPGA access a DRAM contoller to reach a shared DRAM memory.\nThe AXI standard is simultaneous, bidirectional data exchange standard.\n\nThe integration phase of HyperconnectWe assume that the IP description is provided in an XML format such as the popular IP-XACT. Each hardware accelerator should implement an interface composed of an AXI control slave interface and an AXI master interface.\n\nEach AXI master port of hardware accelerator is connected to an input slave port of an AXI HyperConnect. \nThe master port of the AXI HyperConnect is connected to the FPGA-PS interface, while the hardware accelerator’s AXI slave ports are connected to the PS-FPGA interface.\nOnce all accelerators have been connected, the system integrator uses a synthesis tool (Vivado, Quartus) to synthesize the overall design.\nFinally the bitstream is generated. \n\nAXI HyperConnect Details\neFIFO (efficient FIFO)The eFIFO module is a buffered AXI interface. Each eFIFO module defines five independent FIFO queues, one for each AXI channel. Each of the queues is implemented as a proactive circular buffer (proactive means always ready to receive).\ndecoupling mechanism: when a hardware accelerator is decoupled, the AXI handshake signals on all the AXI channels are kept low, not allowing data exchange. \nTS (Transaction Supervisor)TS is the core module to control bandwidth and memory access management. TS implementation detials: “Is your bus arbiter really fair?”. TS does the following things:\n\nsplits read/write requests into sub-requests with nominal burst size and merges incoming data/write responses.\nA reservation mechanism: reserve a configurable budget of transaction for each input port that is periodically recharged (Time Division).\n\nEXBAR (Efficient Cross-bar)The EXBAR is a low-latency crossbar in charge of solving the conflicts of read/write requests. It implements round-robin artbitration with a fixed granularity of one trasaction per TS module in each round-cycle (thus the latency is predictable).\n\nCross-Modal Generalization: Learning in Low Resource Modalities via Meta-Alignment\nVenue: preprint for now \nInstitution: CMU, University of Tokyo\nAuthors: Paul Pu Liang, Peter Wu, Liu Ziyin, Louis-Philippe Morency, Ruslan Salakhutdinov\n\nOverview\nModalityInput spaces, the means that a concept is expressed, or a type of representation. e.g.: visual, acoustic, tactile, ligustic are different modalities.Key Research Question\n\nHow to generalize across modalities when using seperate encoders for source and target modalities?This problem statement differs from conventional meta-learning and domain adaptation in that the source and target modality do not share the same encoder.\nWhat is the minimal extra supervision required to learn new output concepts expressed in new input modalities?Goal/MotivationTo train models in high-resource source modality, and generalize models in low-resource (few labeled samples) target modality.\n\nKey ConceptsCross-modal generalizationA learning paradim to train a model that can(1) quickly perform new tasks in target modality(2) doing so while being trained on a different source modality\n\\underset{w}{\\arg \\max } \\mathcal{L}\\left[f_{w}\\right]:=\\underset{w}{\\arg \\max } \\underset{m, n \\sim p(m, n) \\atop x, y \\sim p_{m, n}(x, y)}{\\mathbb{E}} \\log \\left[\\frac{f_{w}(x, y, m, n)}{p(x, y \\mid m, n)}\\right]\nDADA: Differentiable Automatic Data Augmentation\nVenue: ECCV 2020\nIntitution: Peking University, Anyvision, Queesn University of Belfast, The University of Edinburgh\nAuthors: Yonggang Li, Guosheng Hu, Yongtao Wang, Timothy Hospedales, Neil M. Robertson, Yongxin Yang\n\nRelated works\nAutoAugmentAutoAugment is the pioneering work for automatic data argumentation. It uses Reinforcement Learning to solve an optimization problem: to maximze accuracy on validation dataset with selected augmentation scheme. It models the policy search problem as a sequence prediction problem, and uses an RNN controller to predict the policy. RL optimizes the controller parameters. Two parameters are optimized: the type of data augmentation, and the intensity of selected augmentation. AutoAugment is effective but very computationally expensive, searching augmentation scheme for single task on single dataset costs up to 5k GPU hours.\n\nPopulation Based Augmentation (PBA)PBA introduces efficient population based optimization, which was originally used in HPO (Hyperparameter Opimization). Note: probabily evolutionary strategy.\n\nFast AutoAugment (Fast AA)Fast AA and PBA are both proposed to solve the efficiency problem of AutoAugment. Fast AA models the augmentation selection problem as a density matching problem, and solve it through Bayesian Optimization.\n\n\n","dateCreated":"2020-12-06T13:45:23-05:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2020-12-06T13:45:23-05:00","description":"A reading diary to keep track of papers that I read.","headline":"Paper Readings","image":[null,"https://res.cloudinary.com/dxzx2bxch/image/upload/v1609485366/posts/alfons-morales-YLSwjSy7stw-unsplash_r1aciy.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/Readings/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/Readings/","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1609485366/posts/alfons-morales-YLSwjSy7stw-unsplash_r1aciy.jpg"}</script>
+    <meta name="description" content="A reading diary to keep track of papers that I read.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Paper Readings">
+<meta property="og:url" content="https://www.zzzdavid.tech/Readings/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="A reading diary to keep track of papers that I read.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603798938/posts/PVConv_mlop52.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603799433/posts/voxelization_pt0a7d.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603890830/posts/jriyCTU_mpc5ey.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603916779/posts/SPVNAS_wouksz.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604648821/posts/Screen_Shot_2020-11-06_at_15.46.53_rzp1ye.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604648835/posts/Screen_Shot_2020-11-06_at_15.47.10_alhk0m.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604648856/posts/Screen_Shot_2020-11-06_at_15.47.33_qgg5s1.png">
+<meta property="og:image" content="https://badges.frapsoft.com/os/v3/open-source.svg?v=103">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608259979/posts/Screen_Shot_2020-12-18_at_10.52.52_nd4ooc.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608261344/posts/Screen_Shot_2020-12-18_at_11.15.37_tnkcde.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608267116/posts/Screen_Shot_2020-12-18_at_12.51.22_lkjifj.png">
+<meta property="article:published_time" content="2020-12-06T18:45:23.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.147Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603798938/posts/PVConv_mlop52.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1609485366/posts/alfons-morales-YLSwjSy7stw-unsplash_r1aciy.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1609485366/posts/alfons-morales-YLSwjSy7stw-unsplash_r1aciy.jpg"/>
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-left
+                    "
+             style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1609485366/posts/alfons-morales-YLSwjSy7stw-unsplash_r1aciy.jpg');"
+             data-behavior="5">
+            
+                <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Paper Readings
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-12-06T13:45:23-05:00">
+	
+		    Dec 06, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Readings/">Readings</a>
+
+
+    
+</div>
+
+    
+</div>
+
+            
+        </div>
+
+            <div id="main" data-behavior="5"
+                 class="hasCover
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <!-- excerpt -->
+<!-- This is a blog post to remind myself of the papers that I read. I intend to keep the explanation short, simple, and straightforward. Just like explaining what it is to my 5-year-old self. -->
+<h2 id="Virtualizing-FPGAs-in-the-Cloud"><a href="#Virtualizing-FPGAs-in-the-Cloud" class="headerlink" title="Virtualizing FPGAs in the Cloud"></a>Virtualizing FPGAs in the Cloud</h2><p>Authors: Yue Zha, Jing Li<br>Venue: ASPLOS 20<br>Institution: University of Pennsylvania</p>
+<h2 id="Point-Voxel-CNN-for-Efficient-3D-Deep-Learning"><a href="#Point-Voxel-CNN-for-Efficient-3D-Deep-Learning" class="headerlink" title="Point-Voxel CNN for Efficient 3D Deep Learning"></a>Point-Voxel CNN for Efficient 3D Deep Learning</h2><p>Authors: Zhijian Liu*, Haotian Tang*, Yujun Lin, Song Han<br>Venue: NIPS 2019<br>Institution: MIT &amp; SJTU</p>
+<h4 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h4><ol>
+<li>Voxel-based methods cannot scale to high resolution. Point-based methods have poor data locality (sparse data access).</li>
+</ol>
+<h4 id="Contribution"><a href="#Contribution" class="headerlink" title="Contribution"></a>Contribution</h4><h5 id="Point-Voxel-CNN-combines-the-best-from-both-worlds"><a href="#Point-Voxel-CNN-combines-the-best-from-both-worlds" class="headerlink" title="Point-Voxel CNN combines the best from both worlds"></a>Point-Voxel CNN combines the best from both worlds</h5><p>Point-Voxel Convolution: coarse voxelization<br><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603798938/posts/PVConv_mlop52.png" /></p>
+<ol>
+<li><em>Normalize</em>: spatial locations (x,y,z) are normalized to [0,1] first.</li>
+<li><em>Voxelization</em>: points that fall into the same voxel grid are averaged.</li>
+<li><em>Convolve</em>: 3D convolution.</li>
+<li><em>Devoxelize</em>: trilinear interpolation.</li>
+<li><em>Fuse</em>: add interpolated point to MLP output points.</li>
+</ol>
+<ul>
+<li>PVCNN represents the input data as point cloud to reduce memory consumption. Voxel branch can be coarse as detail information is preserved with point branch.</li>
+</ul>
+<ul>
+<li>PVCNN leverages voxel-based convolution to obtain contiguous memory access pattern. No convolution with point-cloud, no dynamic-kernel and KNN computation, so random memory access is avoided.</li>
+</ul>
+<h4 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h4><h5 id="1-First-of-all-what-is-Voxel"><a href="#1-First-of-all-what-is-Voxel" class="headerlink" title="1. First of all, what is Voxel?"></a>1. First of all, what is Voxel?</h5><p>Voxel is like the 3D equivalence of pixel. A voxel represents a single sample, or data point, on a regularly spaced, three-dimensional grid.   </p>
+<h5 id="2-What-are-voxelization-and-devoxelization"><a href="#2-What-are-voxelization-and-devoxelization" class="headerlink" title="2. What are voxelization and devoxelization?"></a>2. What are voxelization and devoxelization?</h5><p><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603799433/posts/voxelization_pt0a7d.png" /></p>
+<h5 id="3-What-is-Volumetric-Convolution"><a href="#3-What-is-Volumetric-Convolution" class="headerlink" title="3. What is Volumetric Convolution?"></a>3. What is Volumetric Convolution?</h5><p>[27] <a href="http://www.ri.cmu.edu/pub_files/2015/9/voxnet_maturana_scherer_iros15.pdf" target="_blank" rel="noopener">Daniel Maturana and Sebastian Scherer. VoxNet: A 3D Convolutional Neural Network for Real-Time Object Recognition. in IROS, 2015</a></p>
+<p>Section 3 gives a formal introduction of the volumetric convolution. We see that volumetric convolution is actually 3D convolution:</p>
+<p align="center">
+<img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603890830/posts/jriyCTU_mpc5ey.png"/>
+</p>
+
+<h5 id="4-Why-point-based-methods-have-sparse-data-access"><a href="#4-Why-point-based-methods-have-sparse-data-access" class="headerlink" title="4. Why point-based methods have sparse data access?"></a>4. Why point-based methods have sparse data access?</h5><ol>
+<li>Neighbor points are not stored contiguously in the point representation so indexing them requrest a nearest neighbor search.</li>
+<li>Becasue relative positions of neighbors are not fixed, these point-based models have to generate the convolution kernels dynamically based on different offsets.<br>(Dynamic kernel is a special kind of method)</li>
+</ol>
+<h5 id="5-Why-random-memory-access-causes-bank-conflict"><a href="#5-Why-random-memory-access-causes-bank-conflict" class="headerlink" title="5. Why random memory access causes bank conflict?"></a>5. Why random memory access causes bank conflict?</h5><p>[28] <a href="https://course.ece.cmu.edu/~ece740/f11/lib/exe/fetch.php?media=wiki:lectures:onur-740-fall11-lecture25-mainmemory.pdf" target="_blank" rel="noopener">Onur Mutlu. DDR Access Illustration.</a></p>
+<h5 id="6-Why-voxel-based-method-consumes-more-memory-than-point-cloud-based-method-Doesn’t-it-have-less-information-because-some-of-the-points-are-merged-into-one-voxel"><a href="#6-Why-voxel-based-method-consumes-more-memory-than-point-cloud-based-method-Doesn’t-it-have-less-information-because-some-of-the-points-are-merged-into-one-voxel" class="headerlink" title="6. Why voxel-based method consumes more memory than point-cloud based method? Doesn’t it have less information because some of the points are merged into one voxel?"></a>6. Why voxel-based method consumes more memory than point-cloud based method? Doesn’t it have less information because some of the points are merged into one voxel?</h5><p>I’m not exactly sure about the answer right now. One guess is that during voxelization, the space where it doesn’t have any point is also voxelized. Maybe that’s why we could use sparse voxel.</p>
+<h4 id="Interesting-Facts"><a href="#Interesting-Facts" class="headerlink" title="Interesting Facts"></a>Interesting Facts</h4><ol>
+<li>The computation cost and memory footprint of voxel-based models grow <strong>cubically</strong> with input resolution. </li>
+</ol>
+<hr>
+<h2 id="Searching-Efficient-3D-Architectures-with-Sparse-Point-Voxel-Convolution"><a href="#Searching-Efficient-3D-Architectures-with-Sparse-Point-Voxel-Convolution" class="headerlink" title="Searching Efficient 3D Architectures with Sparse Point-Voxel Convolution"></a>Searching Efficient 3D Architectures with Sparse Point-Voxel Convolution</h2><p><a href="https://hanlab.mit.edu/projects/spvnas/" target="_blank" rel="noopener">project page</a> | <a href="https://arxiv.org/abs/2007.16100" target="_blank" rel="noopener">arxiv</a></p>
+<p>Authors: Haotian Tang*, Zhijian Liu*, Shengyu Zhao, Yujun Lin, Ji Lin, Hanrui Wang, Song Han<br>Venue: ECCV 2020<br>Institution: MIT &amp; Tsinghua University</p>
+<h4 id="Background-1"><a href="#Background-1" class="headerlink" title="Background"></a>Background</h4><ol>
+<li><p>Previous models for 3D segmentation is still memory-intensive, so they can’t affort high resolution.</p>
+</li>
+<li><p>Small objects often become indistinguishable because of aggressive downsampling or coarse voxelization.</p>
+</li>
+</ol>
+<h4 id="Contributions"><a href="#Contributions" class="headerlink" title="Contributions"></a>Contributions</h4><h5 id="A-new-3D-module-SPConv-Sparse-Point-Voxel-Convolution"><a href="#A-new-3D-module-SPConv-Sparse-Point-Voxel-Convolution" class="headerlink" title="A new 3D module: SPConv (Sparse Point-Voxel Convolution)"></a>A new 3D module: SPConv (Sparse Point-Voxel Convolution)</h5><p><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603916779/posts/SPVNAS_wouksz.png" /></p>
+<ol>
+<li><p>Input point-cloud is the same as before, but voxelization is sparse, i.e., it produces sparse voxel grid.<br>p.s. The author also talked about implementing sparse voxelization with GPU Hash table.</p>
+</li>
+<li><p>Sparse convolution<br>From: <a href="https://arxiv.org/pdf/1904.08755.pdf" target="_blank" rel="noopener">Minkowski CNN: 4D Spatio-Temporal ConvNets</a>.<br>“Sparse convolution” is actually a stack of sparse residual blocks.</p>
+</li>
+<li><p>Devoxelization is the same: trilinear interpolation.</p>
+</li>
+</ol>
+<hr>
+<h5 id="3D-NAS-with-SPConv-SPVNAS"><a href="#3D-NAS-with-SPConv-SPVNAS" class="headerlink" title="3D NAS with SPConv - SPVNAS"></a>3D NAS with SPConv - SPVNAS</h5><ol>
+<li><p>Design Space: <strong>fine-grained channel numbers</strong>, <strong>fixed kernel size</strong>.<br>The design space is very much like OFA - elastic channel numbers, elastic depth. It also uses progressive shrinking (depth) to train supernet. Differences are:</p>
+<ul>
+<li>OFA has fixed input/output channel number for blocks, only the middle layer’s channel can change (by a expansion ratio). <strong>SPVNAS allows all channels to change</strong>.</li>
+<li><strong>SPVNAS has a fixed 3x3x3 kernel size</strong>. This is because larger kernels are computationally expensive (cubic). Also sparse convolution brings significant overhead to build larger kernels.</li>
+</ul>
+</li>
+<li><p>Search method: single-objective Genetic Algorithm with MAC constraint. Candidates that don’t meet the constraint are discarded.</p>
+</li>
+</ol>
+<h4 id="Q-amp-A-1"><a href="#Q-amp-A-1" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h4><h5 id="1-Won’t-sparse-PVConv-cause-random-memory-access"><a href="#1-Won’t-sparse-PVConv-cause-random-memory-access" class="headerlink" title="1. Won’t sparse PVConv cause random memory access?"></a>1. Won’t sparse PVConv cause random memory access?</h5><p>I suppose so. There must be random memory access while building the sparse kernel.</p>
+<h5 id="2-Elaborate-on-sparse-conv"><a href="#2-Elaborate-on-sparse-conv" class="headerlink" title="2. Elaborate on sparse conv?"></a>2. Elaborate on sparse conv?</h5><p>From: <a href="https://arxiv.org/pdf/1904.08755.pdf" target="_blank" rel="noopener">Minkowski CNN: 4D Spatio-Temporal ConvNets</a>.<br>Also: <a href="https://arxiv.org/abs/1505.02890" target="_blank" rel="noopener">Sparse convolutional neural networks</a></p>
+<h4 id="Interesting-Facts-1"><a href="#Interesting-Facts-1" class="headerlink" title="Interesting Facts"></a>Interesting Facts</h4><ol>
+<li>Point-based methods (point cloud and rasterized voxel grids) waste up to 90% of their time on structuring the irregular data.</li>
+</ol>
+<hr>
+<h2 id="Overwrite-Quantization-Opportunistic-Outlier-Handling-for-Neural-Network-Accelerators"><a href="#Overwrite-Quantization-Opportunistic-Outlier-Handling-for-Neural-Network-Accelerators" class="headerlink" title="Overwrite Quantization: Opportunistic Outlier Handling for Neural Network Accelerators"></a>Overwrite Quantization: Opportunistic Outlier Handling for Neural Network Accelerators</h2><ul>
+<li>Unpublished preprint</li>
+<li>Authors: Ritchie Zhao, Christopher De Sa, Zhiru Zhang</li>
+<li><a href="https://arxiv.org/abs/1910.06909" target="_blank" rel="noopener">ArXiv</a></li>
+</ul>
+<p><strong>TL;DR</strong>: A quantization scheme where the outlier could overwrite its neighbor value, and a low-overhead hardware implementation of the idea.</p>
+<h4 id="Basic-Idea"><a href="#Basic-Idea" class="headerlink" title="Basic Idea"></a>Basic Idea</h4><div class="figure fig-50" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604648821/posts/Screen_Shot_2020-11-06_at_15.46.53_rzp1ye.png" alt=""></div>
+<p>The basic idea of OverQ is to let outlier number take the bits of its neighbor to store its value. </p>
+<p>OverQ is an <em>opportunistic</em> quantization scheme, meaning that $x_2$ will only overwrite $x_3$ only if $x_3$ is small. If $x_3$ is overwritten, its value is treated as zero. There are two types of OverQ: OverQ-Split and OverQ-Shift.</p>
+<h4 id="Two-types-of-OverQ"><a href="#Two-types-of-OverQ" class="headerlink" title="Two types of OverQ"></a>Two types of OverQ</h4><div class="figure " style="width:100%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604648835/posts/Screen_Shot_2020-11-06_at_15.47.10_alhk0m.png" style="width:100%;"alt=""></div>
+<p>We take dot product of two vectors as an example. Both methods use a flag bit to indicated whether it is overwritten. </p>
+<h5 id="OverQ-Split"><a href="#OverQ-Split" class="headerlink" title="OverQ-Split"></a>OverQ-Split</h5><p>The outlier is divided by two to save in both positions. Then the weight is copied. The dynamic range is extended from $[0,2^n-1]$ to $[0, 2^{n+1}-1]$ for UInt.</p>
+<h5 id="OverQ-Shift"><a href="#OverQ-Shift" class="headerlink" title="OverQ-Shift"></a>OverQ-Shift</h5><p>OverQ-Shift reserves one bit to indicate shift direction. Then the other bits can be used to store the extra LSB or MSB. This way it has $2 \times n - 1$ bits. </p>
+<p>There is an extra mode called zero-reuse: when the neighbor is zero, it uses the extra bits to store LSB for higher precision. For example:</p>
+<div class="figure " style="width:100%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604648856/posts/Screen_Shot_2020-11-06_at_15.47.33_qgg5s1.png" style="width:100%;"alt=""></div>
+<h4 id="Q-amp-A-2"><a href="#Q-amp-A-2" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h4><h5 id="1-Once-you-re-arrange-the-weight-kernels-the-output-channels’-order-is-also-going-to-change-Do-we-change-them-back-Or-doesn’t-it-affect-the-convolution-result-in-the-downstream-layer"><a href="#1-Once-you-re-arrange-the-weight-kernels-the-output-channels’-order-is-also-going-to-change-Do-we-change-them-back-Or-doesn’t-it-affect-the-convolution-result-in-the-downstream-layer" class="headerlink" title="1. Once you re-arrange the weight kernels, the output channels’ order is also going to change. Do we change them back? Or doesn’t it affect the convolution result in the downstream layer?"></a>1. Once you re-arrange the weight kernels, the output channels’ order is also going to change. Do we change them back? Or doesn’t it affect the convolution result in the downstream layer?</h5><p>I was wondering if channel reordering would change the hardware design, and now I suppose it wouldn’t. My idea of implementing this: suppose we have two conv layers, first we permute the conv kernels in the first layer to get desired output channel order. Then we must permute the channel order of the second conv layer’s kernels accordingly.  Then the hardware just runs the neural network as if it was never channel-reordered.</p>
+<hr>
+<h2 id="An-overview-of-proxy-label-approches-for-semi-supervised-learning"><a href="#An-overview-of-proxy-label-approches-for-semi-supervised-learning" class="headerlink" title="An overview of proxy-label approches for semi-supervised learning"></a>An overview of proxy-label approches for semi-supervised learning</h2><ul>
+<li>A blog post by Sebastian Ruder. <a href="https://ruder.io/semi-supervised/" target="_blank" rel="noopener">link</a></li>
+</ul>
+<blockquote>
+<p>While unsupervised learning is still elusive, researchers have made a lot of progress in semi-supervised learning. This post focuses on a particular promising category of semi-supervised learning methods that assign proxy labels to unlabelled data, which are used as targets for learning.</p>
+</blockquote>
+<p>Proxy labels are generated by the model itself or variants of it without any additional supervision. These labels can be considered as <em>noisy</em> or <em>weak</em>.</p>
+<p>There are three categories of proxy-label learning:</p>
+<ul>
+<li><strong>Self-training</strong>: using a model’s own predictions as proxy labels.</li>
+<li><strong>Multi-view learning</strong>: train models with different <em>views</em> of the data, then use its predictions as proxy label.</li>
+<li><strong>Self-ensembling</strong>: ensembles variations of a model’s own predictions and uses these as feedback for learning.</li>
+</ul>
+<h3 id="Self-training"><a href="#Self-training" class="headerlink" title="Self-training"></a>Self-training</h3><p>Self-training uses the confident predictions as labels. There’s a pre-set confidence threshold. In every iteration, the model is trained on the labelled dataset, then make predictions on unlabelled data. Those predictions with confidence score over the threshold will be added to the labelled dataset.</p>
+<p>The downside of self-training is that the model cannot correct its own mistakes. This effect is exacerbated if the domain of the unlabelled data is different from the labelled data.</p>
+<h3 id="Multi-view-training"><a href="#Multi-view-training" class="headerlink" title="Multi-view training"></a>Multi-view training</h3><p>Multi-view training train multiple models with different <em>views</em> of the data. These <em>views</em> differs in many ways, such as the feature they use, the model architectures, or different parts of the dataset.</p>
+<ul>
+<li><strong>Co-training</strong>: trian two identical models on two parts of the dataset, confident predictions of one model is added to the other’s training set.</li>
+<li><strong>Democratic Co-learning</strong>: train many different models on complete dataset, then use them to predict unlabelled data. If many models all make confident predictions on some data, it will be added to the training set.  <ul>
+<li><strong>Tri-training with disagreement</strong>: three models selected with diversity are trained first in each iteration, and the unlabelled data which two models agree but one model disagrees is added to the training set.</li>
+<li><strong>Asymmetric tri-training</strong>: test and unlabelled data is from different domain than labelled training data. To accommodate this change, one of the models is trained only on proxy labels and not on labelled data, and uses only this model to classify target domain examples at test time. Also three models share the same feature extractor.</li>
+<li><strong>Multi-task tri-training</strong>: aims to relieve the training expense of tri-training. All models share parameters and trained with multi-task learning. To prevent mult-task tri-training reduced to self-training, we add an orthogonality constraint to the loss term to ensure the diversity of softmax layer’s input.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Self-ensembling"><a href="#Self-ensembling" class="headerlink" title="Self-ensembling"></a>Self-ensembling</h3><p>Like tri-training, self-ensembling methods also uses many variants of the model. But it does not require the diversity of the variants. Self-ensembling approaches mostly use a single model under different configurations. </p>
+<ul>
+<li><strong>Ladder networks</strong>: this method aims to make the model robust to noise. For unlabelled data, it first makes a prediction as the label, then add noise to the same data, and train the model with the prediction on clean data.</li>
+<li><strong>Virtual Adversarial Training</strong>: If perturbing the original sample is not possible or desired, we can instead add the <em>worst possible</em> perturbation to the example in the feature space. This make the input an adversarial example. But this method does not require label, unlike adversarial training. To do so, first, an image is taken and an adversarial variant of it is created such that the KL-divergence between the model output for the original image and the adversarial image is maximized.</li>
+<li><strong>Pi model</strong>: ensembles the predicitons of one model under two different perturbation of the input data and two different dropout conditions. </li>
+<li><strong>Temporal Ensembling</strong>: still one model architecture, but the model ensembles its prediction that is accumulated over timesteps (past predictions).</li>
+<li><strong>Mean teacher</strong>: still one model, the alternative edition has averaged-over-training parameters.  </li>
+</ul>
+<h2 id="Semi-supervised-Learning-in-Computer-Vision"><a href="#Semi-supervised-Learning-in-Computer-Vision" class="headerlink" title="Semi-supervised Learning in Computer Vision"></a>Semi-supervised Learning in Computer Vision</h2><ul>
+<li>blog post by Amit Chaudhary: <a href="https://amitness.com/2020/07/semi-supervised-learning/" target="_blank" rel="noopener">link</a></li>
+</ul>
+<p>This post is a nice visualization of the previous post. </p>
+<hr>
+<h2 id="4D-Spatio-Temporal-ConvNets-Minkowski-Convolutional-Neural-Network"><a href="#4D-Spatio-Temporal-ConvNets-Minkowski-Convolutional-Neural-Network" class="headerlink" title="4D Spatio-Temporal ConvNets: Minkowski Convolutional Neural Network"></a>4D Spatio-Temporal ConvNets: Minkowski Convolutional Neural Network</h2><ul>
+<li>Venue: CVPR 2019 </li>
+<li>Institution: Stanford University</li>
+<li>Authors: Christopher Choy, JunYoung Gwak, Silvio Savarese</li>
+</ul>
+<h3 id="COO-format-Sparse-Tensor"><a href="#COO-format-Sparse-Tensor" class="headerlink" title="COO-format Sparse Tensor"></a>COO-format Sparse Tensor</h3><p>COO = Coordinate Format, also known as ‘ijv’ or ‘triplet’ format. Basically it uses three lists to store the sparse matrix: row, col, data. So <code>data[i]</code> is value at <code>(row[i], col[i])</code>.</p>
+<p>Minkowski engine extends the coordinates with two entries: time step $t_i$, and batch index $b_i$. So the sparse tensor is stored like this:</p>
+<script type="math/tex; mode=display">C=\left[\begin{array}{ccccc}
+x_{1} & y_{1} & z_{1} & t_{1} & b_{1} \\
+& & \vdots & & \\
+x_{N} & y_{N} & z_{N} & t_{N} & b_{N}
+\end{array}\right], F=\left[\begin{array}{c}
+\mathbf{f}_{1}^{T} \\
+\vdots \\
+\mathbf{f}_{N}^{T}
+\end{array}\right]</script><p>$\mathbf{f_i}$ is the feature vector at the associated coordinate. </p>
+<h3 id="Generalized-Sparse-Convolution"><a href="#Generalized-Sparse-Convolution" class="headerlink" title="Generalized Sparse Convolution"></a>Generalized Sparse Convolution</h3><p>For 3D space point-cloud data, the coordinates are no longer integers, and for 3D convolution, the kernel tensor’s shape may not be cubic. So we need a sparse convolution algorithm that is generalized for any kernel shape, any coordinates:</p>
+<script type="math/tex; mode=display">x_u^{out}  = \sum_{i \in \mathcal{N}^D(u, \mathcal{C}^{in})}  W_i x_{u+i}^{in} ~ for ~ u \in \mathcal{C}^{out}</script><ul>
+<li>$u$: D-dimensional coordinate</li>
+<li>$\mathcal{N}^D$ is a set of offsets that define the shape of a kernel</li>
+<li>$\mathcal{N}^D (u, \mathcal{C}^{in})$ is the set of offsets from the center $u$, that exists in $\mathcal{C}^{in}$</li>
+<li>$\mathcal{C}^{in}$ (input coordinate) is not necessarily identical to $\mathcal{C}^{out}$ (output coordinate).</li>
+</ul>
+<hr>
+<h2 id="AXI-HyperConnect-A-Predictable-Hypervisor-levelk-Interconnect-for-Hardware-Accelerators-in-FPGA-SoC"><a href="#AXI-HyperConnect-A-Predictable-Hypervisor-levelk-Interconnect-for-Hardware-Accelerators-in-FPGA-SoC" class="headerlink" title="AXI HyperConnect: A Predictable, Hypervisor-levelk Interconnect for Hardware Accelerators in FPGA SoC"></a>AXI HyperConnect: A Predictable, Hypervisor-levelk Interconnect for Hardware Accelerators in FPGA SoC</h2><ul>
+<li>Venue: DAC 2020</li>
+<li>Institution: Department of Excellence in Robotics &amp; AI, Acuola Superiore Sant’Anna, Pisa, Italy</li>
+<li>Authors: Francesco Restuccia, <em>et al.</em><br><a href="https://github.com/ellerbrock/open-source-badges/" target="_blank" rel="noopener"><img src="https://badges.frapsoft.com/os/v3/open-source.svg?v=103" alt="Open Source Love"></a></li>
+</ul>
+<p>In this work, a new hypervisor-level hardware component named AXI HyperConnect is proposed. It allows interconnecting hardware accelerators to the same bus while ensuring <em>isolation</em> and <em>predictability</em>. </p>
+<h3 id="Background-2"><a href="#Background-2" class="headerlink" title="Background"></a>Background</h3><div class="figure center" style="width:90%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608259979/posts/Screen_Shot_2020-12-18_at_10.52.52_nd4ooc.png" style="width:90%;"alt=""></div>
+<ul>
+<li>PS (Processing System) includes one or more processors.</li>
+<li>PS and FPGA access a DRAM contoller to reach a shared DRAM memory.</li>
+<li>The AXI standard is simultaneous, bidirectional data exchange standard.</li>
+</ul>
+<h3 id="The-integration-phase-of-Hyperconnect"><a href="#The-integration-phase-of-Hyperconnect" class="headerlink" title="The integration phase of Hyperconnect"></a>The integration phase of Hyperconnect</h3><p>We assume that the IP description is provided in an XML format such as the popular IP-XACT. Each hardware accelerator should implement an interface composed of an AXI control slave interface and an AXI master interface.</p>
+<ol>
+<li>Each AXI master port of hardware accelerator is connected to an input slave port of an AXI HyperConnect. </li>
+<li>The master port of the AXI HyperConnect is connected to the FPGA-PS interface, while the hardware accelerator’s AXI slave ports are connected to the PS-FPGA interface.</li>
+<li>Once all accelerators have been connected, the system integrator uses a synthesis tool (Vivado, Quartus) to synthesize the overall design.</li>
+<li>Finally the bitstream is generated. </li>
+</ol>
+<h3 id="AXI-HyperConnect-Details"><a href="#AXI-HyperConnect-Details" class="headerlink" title="AXI HyperConnect Details"></a>AXI HyperConnect Details</h3><div class="figure center" style="width:90%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608261344/posts/Screen_Shot_2020-12-18_at_11.15.37_tnkcde.png" style="width:90%;"alt=""></div>
+<h4 id="eFIFO-efficient-FIFO"><a href="#eFIFO-efficient-FIFO" class="headerlink" title="eFIFO (efficient FIFO)"></a>eFIFO (efficient FIFO)</h4><p>The eFIFO module is a buffered AXI interface. Each eFIFO module defines five independent FIFO queues, one for each AXI channel. Each of the queues is implemented as a <strong>proactive circular buffer</strong> (proactive means always ready to receive).</p>
+<p><strong>decoupling mechanism</strong>: when a hardware accelerator is decoupled, the AXI handshake signals on all the AXI channels are kept low, not allowing data exchange. </p>
+<h4 id="TS-Transaction-Supervisor"><a href="#TS-Transaction-Supervisor" class="headerlink" title="TS (Transaction Supervisor)"></a>TS (Transaction Supervisor)</h4><p>TS is the core module to control bandwidth and memory access management. TS implementation detials: <a href="https://dl.acm.org/doi/fullHtml/10.1145/3358183" target="_blank" rel="noopener">“Is your bus arbiter really fair?”</a>. TS does the following things:</p>
+<ul>
+<li>splits read/write requests into sub-requests with nominal burst size and merges incoming data/write responses.</li>
+<li>A reservation mechanism: reserve a configurable budget of transaction for each input port that is periodically recharged (Time Division).</li>
+</ul>
+<h4 id="EXBAR-Efficient-Cross-bar"><a href="#EXBAR-Efficient-Cross-bar" class="headerlink" title="EXBAR (Efficient Cross-bar)"></a>EXBAR (Efficient Cross-bar)</h4><p>The EXBAR is a low-latency crossbar in charge of solving the conflicts of read/write requests. It implements round-robin artbitration with a <em>fixed</em> granularity of one trasaction per TS module in each round-cycle (thus the latency is predictable).</p>
+<hr>
+<h2 id="Cross-Modal-Generalization-Learning-in-Low-Resource-Modalities-via-Meta-Alignment"><a href="#Cross-Modal-Generalization-Learning-in-Low-Resource-Modalities-via-Meta-Alignment" class="headerlink" title="Cross-Modal Generalization: Learning in Low Resource Modalities via Meta-Alignment"></a>Cross-Modal Generalization: Learning in Low Resource Modalities via Meta-Alignment</h2><ul>
+<li>Venue: <em>preprint for now</em> </li>
+<li>Institution: CMU, University of Tokyo</li>
+<li>Authors: Paul Pu Liang, Peter Wu, Liu Ziyin, Louis-Philippe Morency, Ruslan Salakhutdinov</li>
+</ul>
+<h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><div class="figure center" style="width:80%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608267116/posts/Screen_Shot_2020-12-18_at_12.51.22_lkjifj.png" style="width:80%;"alt=""></div>
+<p><strong>Modality</strong><br>Input spaces, the means that a concept is expressed, or a type of representation. e.g.: visual, acoustic, tactile, ligustic are different modalities.<br><strong>Key Research Question</strong></p>
+<ol>
+<li>How to generalize across modalities when using seperate encoders for source and target modalities?<br>This problem statement differs from conventional meta-learning and domain adaptation in that <em>the source and target modality do not share the same encoder</em>.</li>
+<li>What is the minimal extra supervision required to learn new output concepts expressed in new input modalities?<br><strong>Goal/Motivation</strong><br>To train models in high-resource source modality, and generalize models in low-resource (few labeled samples) target modality.</li>
+</ol>
+<h3 id="Key-Concepts"><a href="#Key-Concepts" class="headerlink" title="Key Concepts"></a>Key Concepts</h3><h4 id="Cross-modal-generalization"><a href="#Cross-modal-generalization" class="headerlink" title="Cross-modal generalization"></a>Cross-modal generalization</h4><p>A learning paradim to train a model that can<br>(1) quickly perform new tasks in target modality<br>(2) doing so while being trained on a different source modality</p>
+<script type="math/tex; mode=display">\underset{w}{\arg \max } \mathcal{L}\left[f_{w}\right]:=\underset{w}{\arg \max } \underset{m, n \sim p(m, n) \atop x, y \sim p_{m, n}(x, y)}{\mathbb{E}} \log \left[\frac{f_{w}(x, y, m, n)}{p(x, y \mid m, n)}\right]</script><hr>
+<h2 id="DADA-Differentiable-Automatic-Data-Augmentation"><a href="#DADA-Differentiable-Automatic-Data-Augmentation" class="headerlink" title="DADA: Differentiable Automatic Data Augmentation"></a><a href="https://arxiv.org/pdf/2003.03780.pdf" target="_blank" rel="noopener">DADA: Differentiable Automatic Data Augmentation</a></h2><ul>
+<li>Venue: ECCV 2020</li>
+<li>Intitution: Peking University, Anyvision, Queesn University of Belfast, The University of Edinburgh</li>
+<li>Authors: Yonggang Li, Guosheng Hu, Yongtao Wang, Timothy Hospedales, Neil M. Robertson, Yongxin Yang</li>
+</ul>
+<h3 id="Related-works"><a href="#Related-works" class="headerlink" title="Related works"></a>Related works</h3><ol>
+<li><p>AutoAugment<br>AutoAugment is the pioneering work for automatic data argumentation. It uses Reinforcement Learning to solve an optimization problem: to maximze accuracy on validation dataset with selected augmentation scheme. It models the policy search problem as a sequence prediction problem, and uses an RNN controller to predict the policy. RL optimizes the controller parameters. Two parameters are optimized: the type of data augmentation, and the intensity of selected augmentation. AutoAugment is effective but very computationally expensive, searching augmentation scheme for single task on single dataset costs up to 5k GPU hours.</p>
+</li>
+<li><p>Population Based Augmentation (PBA)<br>PBA introduces efficient population based optimization, which was originally used in HPO (Hyperparameter Opimization). Note: probabily evolutionary strategy.</p>
+</li>
+<li><p>Fast AutoAugment (Fast AA)<br>Fast AA and PBA are both proposed to solve the efficiency problem of AutoAugment. Fast AA models the augmentation selection problem as a <em>density matching</em> problem, and solve it through Bayesian Optimization.</p>
+</li>
+</ol>
+<hr>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/GumbelSoftmax/"
+                    data-tooltip="Gumbel-Softmax"
+                    aria-label="PREVIOUS: Gumbel-Softmax"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/loop_opt/"
+                    data-tooltip="Loop Optimization in HLS"
+                    aria-label="NEXT: Loop Optimization in HLS"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/Readings/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/Readings/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/GumbelSoftmax/"
+                    data-tooltip="Gumbel-Softmax"
+                    aria-label="PREVIOUS: Gumbel-Softmax"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/loop_opt/"
+                    data-tooltip="Loop Optimization in HLS"
+                    aria-label="NEXT: Loop Optimization in HLS"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/Readings/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/Readings/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/Readings/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/Readings/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/Readings/';
+              
+            this.page.identifier = 'Readings/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

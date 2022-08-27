@@ -1,0 +1,1030 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>Neural Architecture Search, Basic Concepts, Paper Summary and Implementations - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\n\nOverviewNeural Architecture Search, or NAS, can be seen as a subtask of AutoML. It tries to automate the designing process of neural network architectures. An architecture search space can be seen as a Directed Asyclic Graph (DAG), and each possible architecture is a subgraph. We denote the search space as $A$, the subgraph $a$, the searched neural network $N(a,w)$. The goals of NAS are often two-fold: \n\nWeight Optimization\n\nw_a = \\underset{w}{\\operatorname{argmin}}(Loss_{train}(N(a,w)))\nArchitecture Optimization\n\na^* = \\underset{a\\in A}{\\operatorname{argmax}}(Accuracy_{val}(N(a,w)))The constraints are diverse: such as computation (FLOPS), speed (latency), or even energy consumption and memory usage.\nSurveysNeural Architecture Search: A Survey\nAuthors: Thomas Elsken, Jan Hendrik Metzen, Frank Hutter\nInstitution: Bosch Center for AI, University of Freiburg\narXiv: https://arxiv.org/abs/1808.05377\n\n\nNAS methods encompasses three sub-tasks: designing search space, select search strategy, and use proper estimation strategy.\nSearch SpaceThe search space defines what architectures are discoverable during search. Search space designs can be largely classified into global search space and cell-based search space.\n\nGlobal: chain-structured, chain-structured with skip, segment-based\nCell-based\n\nGlobal Search Space\nChain-Structured Search SpaceThe simplist form of search space. Parameters include: the number of layers, the type of layers, hyperparameters of the layers, e.g., number of filters, kernel sizes and strides for convolutional layer.\nChain-Structured with SkipsObviously the idea comes from ResNet, DenseNet or Xception. The branching can be described with layer’s inputs as a function \ng_i (L_{i-1}^{out}, ..., L_0^{out})Taking existing architectures for example, for chain-structured net, g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out}. For ResNet, g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out} + L_j^{out}, (j < i-1). For DenseNet, g_i (L_{i-1}^{out}, ..., L_0^{out}) = concat(L_{i-1}^{out},...,L_0^{out})\nSegment-basedSegment-based method is considered as a global search space design, but with another level of granularity: segment, or block. \nMnas Search Space\nTaking Mnas as an example, the network layers are grouped into a many blocks. The skeleton constructed with blocks is predefined. Inside each block, there are a variable number of repeated layers. Blocks are not necessarily the the same, the layer amount and operations can be different.\nCell-based StructureCell-based architecture is a lot like the segment-based one. However, instead of searching the topology/hyperparameters of each block, cell-based approach defines several types of cells, then connects repeated cells in a pre-defined manner. In such ways, the search space is further downsized.\nIllustration of the cell search space\n(Zoph, 2018) defined two types of cell: normal cell or reduction cell. Normal cell preserves dimensionality while reduction cell reduces spatial dimensions. \nThe problem of cell-based structure is that the macro-architecture, i.e. the structure based on cells, are still manually designed. (Liu, 2018b) tried to overcome macro-architecture engineering by introducing hierarchical search space. \nSearch StrategyReinforcement Learning StrategyDifferent RL approaches differ in how they represent the agent’s policy and how they optimize it. \n\nArchitecture generation: agent’s action\nSearch space: action space\nEvaluation: agent’s reward is based on an estimate of the performance.\n\nAgent’s Policy:\n\nRNN policy: sequentially sample a string that encodes the architecture\n…\n\nTraining method:\n\nREINFORCE policy gradient algorithm\nProximal Policy Optimization\nQ-learning\n\nNeron-Evolutionary StrategyNeuro-evolutionary methods differ in how they sample parents, udpate populations, and generate offsprings.\n\nIn the context of NAS, mutations are local operations, such as adding or removing a layer, altering the hyperparameters of a layer, adding skip connections.\nGradient-based Optimization(Liu, 2019b) proposed a continuous relaxation to enable direct gradient-based optimization: instead of fixing a single operation o_i to be executed at a specific layer, the authors compute a convex combination from a set of operations {o_1, ..., o_m}. Given a layer input $x$, the layer output $y$ is computed as y = \\sum_{i=1}^m \\alpha_i o_i(x), (\\alpha_i \\geq 0, \\sum_{i=1}^m \\alpha_i = 1)\nPerformance Estimation StrategyOverview of different methods for speeding up performance estimation in NAS\n\nLower Fidelity The bias in the estimation is the gap between the full evaluation. This may not be problematic as only relative ranking is considered. But when the gap is large, the relative ranking may not be stable.\n\nLearning Curve Extrapolation or Surrogate Model Using early learning curve of architecture information to extrapolate performance. \n\nNetwork MorphismNo inherent search space upper bound. However, strict netwrok morphisms can only make architectures larger, therefore leading to redundancy. \n\nOne-ShotTraining only one supernet, so only validation is needed at evaluation stage. The supernet restricts the search space, and may be limited by GPU memory. \n\nENAS learns a RNN controller that samples architectures from the search space and trains the one-shot model based on approximate gradients obtained through REINFORCE.\nDARTS jointly optimize all weights with a continuous relaxation of the search space. \nSNAS optimizes a distribution over the candidate operations. The authors employ the concrete distribution and reparameterization to relax the discrete distribution and make it differentiable. \nProxyless NAS “binarizes” the weights, maksing out all but one edge per operation to overcome the necessity of keeping the entire supernet model in GPU memory.\n\n\n\n\nIt is currently not well understood which biases they introduce into the search if the sampling of distribution of architectures is optimized along with the one-shot model instead of fixing it. For example, an initial bias in exploring certain parts of the search space more than others might lead to the weights of the one-shot model being better adapted for these architectures, which in turn would reinforce the bias of the search to these parts in the search space. This might result in premature convergence of NAS or little correlation between the one-shot and true performance of an architecture.\n\nFuture Directions\nApplying NAS to less explored domains, such as image restoration, semantic segmentation, transfer learning, machine translation, GAN, or sensor fusion. \nDevelop MAS methos for multi-task problems, and for multi-objective problems, such as latency and power optimization.\nUniversal NAS on different tasks. More general and flexible search space design. \nDeveloping benchmarks.\n\nWhile NAS has achieved impressive performance, so far it provides little insights into why specific architectures work well and how similar the architectures derived in indepen- dent runs would be. Identifying common motifs, providing an understanding why those motifs are important for high performance, and investigating if these motifs generalize over different problems would be desirable.\nPaper SummaryMnasNet: Platform-Aware Neural Architecture Search for Mobile\nAuthors: Mingxing Tan, Bo Chen et al.\nYear: \nIntitution: Google\narXiv: https://arxiv.org/pdf/1807.11626.pdf\n\nOnce-For-All: Train One Network and Specialize It For Efficient Deployment\nAuthors: Han Cai, Chuang Gan, Tianzhe Wang, Zhekai Zhang, Song Han\nVenue: ICLR 2020\nInstitution: MIT\narXiv: https://arxiv.org/abs/1908.09791\nCode: https://github.com/mit-han-lab/once-for-all\n\nMotivationDesigning a once-for-all network that flexibly supports different depths, widths, kernel sizes, and resolutions without retraining. \nContributions\nThe model training stage and architecture search stage is decoupled.\nA progressive shrinking method to trian the supernet\n\nBlack Box Search Space Profiling for Accelerator-Aware Neural Architecture Search\nAuthors: Shulin Zeng, Hanbo Sun, Yu Xing, Xuefei Ning, Yi Shan, Xiaoming Chen, Yu Wang, Huazhong Yang\nVenue: 2020 ASP-DAC\nInstitution: Tsinghua University, and Institute of Computing Technology, Chinese Academy of Sciences\nXplore: https://ieeexplore.ieee.org/document/9045179\n\nMotivation\nDesigning a suitable search space for DNN accelerators is still challenging.\nEvaluating latency across platforms with various architectures and compilers is hard because we don’t have prior knowlege of the hardware &amp; compiler.\n\nContribution\nA black-box search space tuning method for Instruction Set Architecture (ISA) accelerators.\nA layer-adaptive latency correction method.\n\nThe Complete NAS WorkflowEntire NAS workflow\nThe magic happens in “Basenet Pool” and “Policy-aware Latency”, where the authors constructs a automatic search space design method. “Policy-aware Latency LUT” stands for an improved latency profiling method. Previous works use standalone block latency to build a LUT, ignoring inter-layer latency influences. Such influences are caused by compiler policies, such as “layer fusion” that combines layers to shorten latency. This new latency profiling method aims to take inter-layer latency dependencies into account without knowing the underlying compiler or hardware.\nHow to Optimize Search Space?Search Space Optimization\nSSBN: stands for Search Space Base Network. Based on a specific net from the Search Space, change at most one block at a time to get a SSBN. Because the original Search Space can be regarded as linear combination of SSBNs, this reduces complexity without harming degree of freedom.\nGenerating Basenet Pool: there are currently 3 types of mainstream hand-designed blocks: VGG, Res, and MobileNet-based. For each type the authors construct a Specified Network (SN), and obtain its SSBNs. All SSBNs together are the Basenet Pool.\nSelecting Search Space: for each group of SSBNs, the authors design a cost function combining accuracy and latency. For each group of SSBNs, their costs are first calculated. After that, they are sorted in ascending w.r.t. the cost. A threshold defined by the user selects a range ofSSBNs that goes into the new search space. The new search space is much smaller.\nHow to Correct Block Latency?The authors design two methods for latency correction. The first one uses overall network latency measurements to calculate the difference between standalone and actual block latency. The second one is a refinement of the first. It takes other block’s latency into account, thus more fine-grained.\nL_{BNblock}(n,l) = L_{BN}(n,l) - L_{SN} + L_{SNblock}(l)\n$L_{BNblock}(n,l)$ is the block latency we want to know. \n$n$ is the type of block. $l$ is the index of layer.\n$L_{SNblock}(l)$ is the standalone layer latency.\n$L_{SN}$ is the overal latency of the network.\n$L_{BN}(n,l)$ is the overall latency where the target block is substituted.\n\nL_{CNblock}(n,l) = \\frac{1}{L} \\sum_{(n',l' \\in CN)} L_{BNblock}(n, l, n')This one is difficult to understand.\n$L$ is the number of layers (or blocks) in the network. The authors first create $L$ networks preserving the target block but the rest are all one particular type. Then within each of these “Specified Network”, our target block’s latency is measured with method 1. At last, the block latency measurements are averaged to get the estimated “candidate network (CN)” block latency.","dateCreated":"2020-05-14T17:27:00-04:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2020-05-14T17:27:00-04:00","description":"Knowledge and methods for Neural Architecture Search and Automated Deep Learning.","headline":"Neural Architecture Search, Basic Concepts, Paper Summary and Implementations","image":["https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg","https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/NAS/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/NAS/","keywords":"AI","thumbnailUrl":"https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"}</script>
+    <meta name="description" content="Knowledge and methods for Neural Architecture Search and Automated Deep Learning.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Neural Architecture Search, Basic Concepts, Paper Summary and Implementations">
+<meta property="og:url" content="https://www.zzzdavid.tech/NAS/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="Knowledge and methods for Neural Architecture Search and Automated Deep Learning.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589450934/posts/Screen_Shot_2020-05-14_at_18.08.16_amj1pu.png">
+<meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589455315/posts/searchspace_v83k9c.png">
+<meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589509162/posts/Screen_Shot_2020-05-15_at_10.17.01_neskhw.png">
+<meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589510150/posts/Screen_Shot_2020-05-15_at_10.35.39_dl207b.png">
+<meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589528317/posts/evo_u31wss.png">
+<meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589529265/posts/Screen_Shot_2020-05-15_at_15.54.14_wmhqux.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1591263877/Screen_Shot_2020-06-04_at_17.41.54_fqqxq2.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1591263876/Screen_Shot_2020-06-04_at_17.42.16_uij13m.png">
+<meta property="article:published_time" content="2020-05-14T21:27:00.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.147Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589450934/posts/Screen_Shot_2020-05-14_at_18.08.16_amj1pu.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg"/>
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-left
+                    "
+             style="background-image:url('https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589448824/posts/network_fbyvyk.jpg');"
+             data-behavior="5">
+            
+                <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Neural Architecture Search, Basic Concepts, Paper Summary and Implementations
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-05-14T17:27:00-04:00">
+	
+		    May 14, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+            
+        </div>
+
+            <div id="main" data-behavior="5"
+                 class="hasCover
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <!-- excerpt -->
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-text">Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Surveys"><span class="toc-text">Surveys</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Neural-Architecture-Search-A-Survey"><span class="toc-text">Neural Architecture Search: A Survey</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Search-Space"><span class="toc-text">Search Space</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Chain-Structured-Search-Space"><span class="toc-text">Chain-Structured Search Space</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Chain-Structured-with-Skips"><span class="toc-text">Chain-Structured with Skips</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Segment-based"><span class="toc-text">Segment-based</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Cell-based-Structure"><span class="toc-text">Cell-based Structure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Search-Strategy"><span class="toc-text">Search Strategy</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Reinforcement-Learning-Strategy"><span class="toc-text">Reinforcement Learning Strategy</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Neron-Evolutionary-Strategy"><span class="toc-text">Neron-Evolutionary Strategy</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Gradient-based-Optimization"><span class="toc-text">Gradient-based Optimization</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Performance-Estimation-Strategy"><span class="toc-text">Performance Estimation Strategy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Future-Directions"><span class="toc-text">Future Directions</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Paper-Summary"><span class="toc-text">Paper Summary</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MnasNet-Platform-Aware-Neural-Architecture-Search-for-Mobile"><span class="toc-text">MnasNet: Platform-Aware Neural Architecture Search for Mobile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Once-For-All-Train-One-Network-and-Specialize-It-For-Efficient-Deployment"><span class="toc-text">Once-For-All: Train One Network and Specialize It For Efficient Deployment</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation"><span class="toc-text">Motivation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Contributions"><span class="toc-text">Contributions</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Black-Box-Search-Space-Profiling-for-Accelerator-Aware-Neural-Architecture-Search"><span class="toc-text">Black Box Search Space Profiling for Accelerator-Aware Neural Architecture Search</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation-1"><span class="toc-text">Motivation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Contribution"><span class="toc-text">Contribution</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#The-Complete-NAS-Workflow"><span class="toc-text">The Complete NAS Workflow</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#How-to-Optimize-Search-Space"><span class="toc-text">How to Optimize Search Space?</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#How-to-Correct-Block-Latency"><span class="toc-text">How to Correct Block Latency?</span></a></li></ol></li></ol></li></ol></li></ol>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>Neural Architecture Search, or NAS, can be seen as a subtask of AutoML. It tries to automate the designing process of neural network architectures. An architecture search space can be seen as a Directed Asyclic Graph (DAG), and each possible architecture is a subgraph. We denote the search space as $A$, the subgraph $a$, the searched neural network $N(a,w)$. The goals of NAS are often two-fold: </p>
+<ul>
+<li>Weight Optimization</li>
+</ul>
+<script type="math/tex; mode=display">w_a = \underset{w}{\operatorname{argmin}}(Loss_{train}(N(a,w)))</script><ul>
+<li>Architecture Optimization</li>
+</ul>
+<script type="math/tex; mode=display">a^* = \underset{a\in A}{\operatorname{argmax}}(Accuracy_{val}(N(a,w)))</script><p>The constraints are diverse: such as computation (FLOPS), speed (latency), or even energy consumption and memory usage.</p>
+<h2 id="Surveys"><a href="#Surveys" class="headerlink" title="Surveys"></a>Surveys</h2><h3 id="Neural-Architecture-Search-A-Survey"><a href="#Neural-Architecture-Search-A-Survey" class="headerlink" title="Neural Architecture Search: A Survey"></a>Neural Architecture Search: A Survey</h3><ul>
+<li>Authors: Thomas Elsken, Jan Hendrik Metzen, Frank Hutter</li>
+<li>Institution: Bosch Center for AI, University of Freiburg</li>
+<li>arXiv: <a href="https://arxiv.org/abs/1808.05377" target="_blank" rel="noopener">https://arxiv.org/abs/1808.05377</a></li>
+</ul>
+<div class="figure center" style="width:100%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589450934/posts/Screen_Shot_2020-05-14_at_18.08.16_amj1pu.png" style="width:100%;"alt=""></div>
+<p>NAS methods encompasses three sub-tasks: designing search space, select search strategy, and use proper estimation strategy.</p>
+<h4 id="Search-Space"><a href="#Search-Space" class="headerlink" title="Search Space"></a>Search Space</h4><p>The search space defines what architectures are discoverable during search. Search space designs can be largely classified into global search space and cell-based search space.</p>
+<ul>
+<li>Global: chain-structured, chain-structured with skip, segment-based</li>
+<li>Cell-based</li>
+</ul>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589455315/posts/searchspace_v83k9c.png" alt="Global Search Space"><span class="caption">Global Search Space</span></div>
+<h5 id="Chain-Structured-Search-Space"><a href="#Chain-Structured-Search-Space" class="headerlink" title="Chain-Structured Search Space"></a>Chain-Structured Search Space</h5><p>The simplist form of search space. Parameters include: the number of layers, the type of layers, hyperparameters of the layers, e.g., number of filters, kernel sizes and strides for convolutional layer.</p>
+<h5 id="Chain-Structured-with-Skips"><a href="#Chain-Structured-with-Skips" class="headerlink" title="Chain-Structured with Skips"></a>Chain-Structured with Skips</h5><p>Obviously the idea comes from ResNet, DenseNet or Xception. The branching can be described with layer’s inputs as a function </p>
+<script type="math/tex; mode=display">g_i (L_{i-1}^{out}, ..., L_0^{out})</script><p>Taking existing architectures for example, for chain-structured net, <script type="math/tex">g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out}</script>. For ResNet, <script type="math/tex">g_i (L_{i-1}^{out}, ..., L_0^{out}) = L_{i-1}^{out} + L_j^{out}, (j < i-1)</script>. For DenseNet, <script type="math/tex">g_i (L_{i-1}^{out}, ..., L_0^{out}) = concat(L_{i-1}^{out},...,L_0^{out})</script></p>
+<h5 id="Segment-based"><a href="#Segment-based" class="headerlink" title="Segment-based"></a>Segment-based</h5><p>Segment-based method is considered as a global search space design, but with another level of granularity: segment, or block. </p>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589509162/posts/Screen_Shot_2020-05-15_at_10.17.01_neskhw.png" alt="Mnas Search Space"><span class="caption">Mnas Search Space</span></div>
+<p>Taking Mnas as an example, the network layers are grouped into a many blocks. The skeleton constructed with blocks is predefined. Inside each block, there are a variable number of repeated layers. Blocks are not necessarily the the same, the layer amount and operations can be different.</p>
+<h4 id="Cell-based-Structure"><a href="#Cell-based-Structure" class="headerlink" title="Cell-based Structure"></a>Cell-based Structure</h4><p>Cell-based architecture is a lot like the segment-based one. However, instead of searching the topology/hyperparameters of each block, cell-based approach defines several types of cells, then connects repeated cells in a pre-defined manner. In such ways, the search space is further downsized.</p>
+<div class="figure center" style="width:80%;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589510150/posts/Screen_Shot_2020-05-15_at_10.35.39_dl207b.png" style="width:80%;"alt="Illustration of the cell search space"><span class="caption">Illustration of the cell search space</span></div>
+<p>(Zoph, 2018) defined two types of cell: <em>normal cell</em> or <em>reduction cell</em>. Normal cell preserves dimensionality while reduction cell reduces spatial dimensions. </p>
+<p>The problem of cell-based structure is that the macro-architecture, i.e. the structure based on cells, are still manually designed. (Liu, 2018b) tried to overcome macro-architecture engineering by introducing hierarchical search space. </p>
+<h4 id="Search-Strategy"><a href="#Search-Strategy" class="headerlink" title="Search Strategy"></a>Search Strategy</h4><h5 id="Reinforcement-Learning-Strategy"><a href="#Reinforcement-Learning-Strategy" class="headerlink" title="Reinforcement Learning Strategy"></a>Reinforcement Learning Strategy</h5><p>Different RL approaches differ in how they represent the agent’s policy and how they optimize it. </p>
+<ul>
+<li>Architecture generation: agent’s action</li>
+<li>Search space: action space</li>
+<li>Evaluation: agent’s reward is based on an estimate of the performance.</li>
+</ul>
+<p>Agent’s Policy:</p>
+<ul>
+<li>RNN policy: sequentially sample a string that encodes the architecture</li>
+<li>…</li>
+</ul>
+<p>Training method:</p>
+<ul>
+<li>REINFORCE policy gradient algorithm</li>
+<li>Proximal Policy Optimization</li>
+<li>Q-learning</li>
+</ul>
+<h5 id="Neron-Evolutionary-Strategy"><a href="#Neron-Evolutionary-Strategy" class="headerlink" title="Neron-Evolutionary Strategy"></a>Neron-Evolutionary Strategy</h5><p>Neuro-evolutionary methods differ in how they sample parents, udpate populations, and generate offsprings.</p>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589528317/posts/evo_u31wss.png" alt=""></div>
+<p>In the context of NAS, mutations are local operations, such as adding or removing a layer, altering the hyperparameters of a layer, adding skip connections.</p>
+<h5 id="Gradient-based-Optimization"><a href="#Gradient-based-Optimization" class="headerlink" title="Gradient-based Optimization"></a>Gradient-based Optimization</h5><p>(Liu, 2019b) proposed a <em>continuous relaxation</em> to enable direct gradient-based optimization: instead of fixing a single operation <script type="math/tex">o_i</script> to be executed at a specific layer, the authors compute a convex combination from a set of operations <script type="math/tex">{o_1, ..., o_m}</script>. Given a layer input $x$, the layer output $y$ is computed as <script type="math/tex">y = \sum_{i=1}^m \alpha_i o_i(x)</script>, <script type="math/tex">(\alpha_i \geq 0, \sum_{i=1}^m \alpha_i = 1)</script></p>
+<h4 id="Performance-Estimation-Strategy"><a href="#Performance-Estimation-Strategy" class="headerlink" title="Performance Estimation Strategy"></a>Performance Estimation Strategy</h4><div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dx7aiyb0q/image/upload/v1589529265/posts/Screen_Shot_2020-05-15_at_15.54.14_wmhqux.png" alt="Overview of different methods for speeding up performance estimation in NAS"><span class="caption">Overview of different methods for speeding up performance estimation in NAS</span></div>
+<ul>
+<li><p><strong>Lower Fidelity</strong><br> The bias in the estimation is the gap between the full evaluation. This may not be problematic as only relative ranking is considered. But when the gap is large, the relative ranking may not be stable.</p>
+</li>
+<li><p><strong>Learning Curve Extrapolation</strong> or <strong>Surrogate Model</strong><br> Using early learning curve of architecture information to extrapolate performance. </p>
+</li>
+<li><p><strong>Network Morphism</strong><br>No inherent search space upper bound. However, strict netwrok morphisms can only make architectures larger, therefore leading to redundancy. </p>
+</li>
+<li><p><strong>One-Shot</strong><br>Training only one supernet, so only validation is needed at evaluation stage. The supernet restricts the search space, and may be limited by GPU memory. </p>
+<ul>
+<li><strong>ENAS</strong> learns a RNN controller that samples architectures from the search space and trains the one-shot model based on approximate gradients obtained through REINFORCE.</li>
+<li><strong>DARTS</strong> jointly optimize all weights with a continuous relaxation of the search space. </li>
+<li><strong>SNAS</strong> optimizes a distribution over the candidate operations. The authors employ the concrete distribution and reparameterization to relax the discrete distribution and make it differentiable. </li>
+<li><strong>Proxyless NAS</strong> “binarizes” the weights, maksing out all but one edge per operation to overcome the necessity of keeping the entire supernet model in GPU memory.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>It is currently not well understood which biases they introduce into the search if the sampling of distribution of architectures is optimized along with the one-shot model instead of fixing it. For example, an initial bias in exploring certain parts of the search space more than others might lead to the weights of the one-shot model being better adapted for these architectures, which in turn would reinforce the bias of the search to these parts in the search space. <strong>This might result in premature convergence of NAS or little correlation between the one-shot and true performance of an architecture.</strong></p>
+</blockquote>
+<h4 id="Future-Directions"><a href="#Future-Directions" class="headerlink" title="Future Directions"></a>Future Directions</h4><ol>
+<li>Applying NAS to less explored domains, such as image restoration, semantic segmentation, transfer learning, machine translation, GAN, or sensor fusion. </li>
+<li>Develop MAS methos for multi-task problems, and for multi-objective problems, such as latency and power optimization.</li>
+<li>Universal NAS on different tasks. More general and flexible search space design. </li>
+<li>Developing benchmarks.</li>
+</ol>
+<p>While NAS has achieved impressive performance, so far it provides little insights into why specific architectures work well and how similar the architectures derived in indepen- dent runs would be. Identifying common motifs, providing an understanding why those motifs are important for high performance, and investigating if these motifs generalize over different problems would be desirable.</p>
+<h2 id="Paper-Summary"><a href="#Paper-Summary" class="headerlink" title="Paper Summary"></a>Paper Summary</h2><h3 id="MnasNet-Platform-Aware-Neural-Architecture-Search-for-Mobile"><a href="#MnasNet-Platform-Aware-Neural-Architecture-Search-for-Mobile" class="headerlink" title="MnasNet: Platform-Aware Neural Architecture Search for Mobile"></a>MnasNet: Platform-Aware Neural Architecture Search for Mobile</h3><ul>
+<li>Authors: Mingxing Tan, Bo Chen <em>et al.</em></li>
+<li>Year: </li>
+<li>Intitution: Google</li>
+<li>arXiv: <a href="https://arxiv.org/pdf/1807.11626.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1807.11626.pdf</a></li>
+</ul>
+<h3 id="Once-For-All-Train-One-Network-and-Specialize-It-For-Efficient-Deployment"><a href="#Once-For-All-Train-One-Network-and-Specialize-It-For-Efficient-Deployment" class="headerlink" title="Once-For-All: Train One Network and Specialize It For Efficient Deployment"></a>Once-For-All: Train One Network and Specialize It For Efficient Deployment</h3><ul>
+<li>Authors: Han Cai, Chuang Gan, Tianzhe Wang, Zhekai Zhang, Song Han</li>
+<li>Venue: ICLR 2020</li>
+<li>Institution: MIT</li>
+<li>arXiv: <a href="https://arxiv.org/abs/1908.09791" target="_blank" rel="noopener">https://arxiv.org/abs/1908.09791</a></li>
+<li>Code: <a href="https://github.com/mit-han-lab/once-for-all" target="_blank" rel="noopener">https://github.com/mit-han-lab/once-for-all</a></li>
+</ul>
+<h4 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h4><p>Designing a <em>once-for-all</em> network that flexibly supports different depths, widths, kernel sizes, and resolutions without retraining. </p>
+<h4 id="Contributions"><a href="#Contributions" class="headerlink" title="Contributions"></a>Contributions</h4><ul>
+<li>The model training stage and architecture search stage is decoupled.</li>
+<li>A <strong>progressive shrinking</strong> method to trian the supernet</li>
+</ul>
+<h3 id="Black-Box-Search-Space-Profiling-for-Accelerator-Aware-Neural-Architecture-Search"><a href="#Black-Box-Search-Space-Profiling-for-Accelerator-Aware-Neural-Architecture-Search" class="headerlink" title="Black Box Search Space Profiling for Accelerator-Aware Neural Architecture Search"></a>Black Box Search Space Profiling for Accelerator-Aware Neural Architecture Search</h3><ul>
+<li>Authors: Shulin Zeng, Hanbo Sun, Yu Xing, Xuefei Ning, Yi Shan, Xiaoming Chen, Yu Wang, Huazhong Yang</li>
+<li>Venue: 2020 ASP-DAC</li>
+<li>Institution: Tsinghua University, and Institute of Computing Technology, Chinese Academy of Sciences</li>
+<li>Xplore: <a href="https://ieeexplore.ieee.org/document/9045179" target="_blank" rel="noopener">https://ieeexplore.ieee.org/document/9045179</a></li>
+</ul>
+<h4 id="Motivation-1"><a href="#Motivation-1" class="headerlink" title="Motivation"></a>Motivation</h4><ol>
+<li>Designing a suitable search space for DNN accelerators is still challenging.</li>
+<li>Evaluating latency across platforms with various architectures and compilers is hard because we don’t have prior knowlege of the hardware &amp; compiler.</li>
+</ol>
+<h4 id="Contribution"><a href="#Contribution" class="headerlink" title="Contribution"></a>Contribution</h4><ol>
+<li>A black-box search space tuning method for Instruction Set Architecture (ISA) accelerators.</li>
+<li>A layer-adaptive latency correction method.</li>
+</ol>
+<h5 id="The-Complete-NAS-Workflow"><a href="#The-Complete-NAS-Workflow" class="headerlink" title="The Complete NAS Workflow"></a>The Complete NAS Workflow</h5><div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1591263877/Screen_Shot_2020-06-04_at_17.41.54_fqqxq2.png" alt="Entire NAS workflow"><span class="caption">Entire NAS workflow</span></div>
+<p>The magic happens in “Basenet Pool” and “Policy-aware Latency”, where the authors constructs a automatic search space design method. “Policy-aware Latency LUT” stands for an improved latency profiling method. Previous works use standalone block latency to build a LUT, ignoring inter-layer latency influences. Such influences are caused by compiler policies, such as “layer fusion” that combines layers to shorten latency. This new latency profiling method aims to take inter-layer latency dependencies into account without knowing the underlying compiler or hardware.</p>
+<h5 id="How-to-Optimize-Search-Space"><a href="#How-to-Optimize-Search-Space" class="headerlink" title="How to Optimize Search Space?"></a>How to Optimize Search Space?</h5><div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1591263876/Screen_Shot_2020-06-04_at_17.42.16_uij13m.png" alt="Search Space Optimization"><span class="caption">Search Space Optimization</span></div>
+<p><strong>SSBN</strong>: stands for <strong>Search Space Base Network</strong>. Based on a specific net from the Search Space, change at most one block at a time to get a SSBN. Because the original Search Space can be regarded as linear combination of SSBNs, this reduces complexity without harming degree of freedom.</p>
+<p><strong>Generating Basenet Pool</strong>: there are currently 3 types of mainstream hand-designed blocks: VGG, Res, and MobileNet-based. For each type the authors construct a Specified Network (SN), and obtain its SSBNs. All SSBNs together are the Basenet Pool.</p>
+<p><strong>Selecting Search Space</strong>: for each group of SSBNs, the authors design a cost function combining <strong>accuracy</strong> and <strong>latency</strong>. For each group of SSBNs, their costs are first calculated. After that, they are sorted in ascending w.r.t. the cost. A threshold defined by the user selects a range of<br>SSBNs that goes into the new search space. The new search space is much smaller.</p>
+<h5 id="How-to-Correct-Block-Latency"><a href="#How-to-Correct-Block-Latency" class="headerlink" title="How to Correct Block Latency?"></a>How to Correct Block Latency?</h5><p>The authors design two methods for latency correction. The first one uses overall network latency measurements to calculate the difference between standalone and actual block latency. The second one is a refinement of the first. It takes other block’s latency into account, thus more fine-grained.</p>
+<script type="math/tex; mode=display">L_{BNblock}(n,l) = L_{BN}(n,l) - L_{SN} + L_{SNblock}(l)</script><ul>
+<li>$L_{BNblock}(n,l)$ is the block latency we want to know. </li>
+<li>$n$ is the type of block. $l$ is the index of layer.</li>
+<li>$L_{SNblock}(l)$ is the standalone layer latency.</li>
+<li>$L_{SN}$ is the overal latency of the network.</li>
+<li>$L_{BN}(n,l)$ is the overall latency where the target block is substituted.</li>
+</ul>
+<script type="math/tex; mode=display">L_{CNblock}(n,l) = \frac{1}{L} \sum_{(n',l' \in CN)} L_{BNblock}(n, l, n')</script><p>This one is difficult to understand.</p>
+<p>$L$ is the number of layers (or blocks) in the network. The authors first create $L$ networks preserving the target block but the rest are all one particular type. Then within each of these “Specified Network”, our target block’s latency is measured with method 1. At last, the block latency measurements are averaged to get the estimated “candidate network (CN)” block latency.</p>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/AI/" rel="tag">AI</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/HeteroCL/"
+                    data-tooltip="On HeteroCL"
+                    aria-label="PREVIOUS: On HeteroCL"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/Goodbye-to-All-That/"
+                    data-tooltip="Goodbye to All That"
+                    aria-label="NEXT: Goodbye to All That"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/NAS/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/NAS/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/HeteroCL/"
+                    data-tooltip="On HeteroCL"
+                    aria-label="PREVIOUS: On HeteroCL"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/Goodbye-to-All-That/"
+                    data-tooltip="Goodbye to All That"
+                    aria-label="NEXT: Goodbye to All That"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/NAS/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/NAS/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/NAS/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/NAS/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/NAS/';
+              
+            this.page.identifier = 'NAS/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

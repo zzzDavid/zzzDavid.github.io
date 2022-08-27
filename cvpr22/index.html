@@ -1,0 +1,1238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>CVPR 2022 at New Orleans - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nThe IEEE/CVF Computer Vision and Pattern Recognition Conference (CVPR) is a premier international conference held every year in the US. The 2022 CVPR is held in New Orleans, Louisiana, and I am fortunate enough to attend and present at the event. \nConference FormatThis year’s CVPR is a hyprid event. It’s the first CVPR happening in-person since the pandemic. The in-person conference lasts 6 days from June 19 to 24: Sunday to Monday are workshops, and Tuesday to Friday is the main conference. It’s a huge conference, even though it lasts about a week, there are lots of things happening in parallel. There are about 30 to 40 all-day workshops going in parallel, and three oral sessions going in parallel in the main conference. It’s impossible to go to everything, so everyone has to choose what they are most interested in. There’s an additional virtual poster session happens one-week after the main conference, and the in-person poster presenters are encouraged to sign up as well. \nThe Ernest N. Morial Convention Center\nThe event takes place at the Ernest N. Morial Convention Center at downtown New Orleans by the Mississippi river bank. It’s an enormous conference center, even 5,600 people looks sparse.\nFor the main conference paper presentation, there are two formats this year: oral and poster. Oral presentations has 5 minutes, and posters last for one morning or afternoon. The oral presenters also attend the poster sessions, so people have more chances to interact with the authors. \nSunday WorkshopsI jumped between a few workshops for keynotes and full paper presentations. Here I select a few papers and talks that are interesting to me and offer some thoughts and digestion.\nNAS WorkshopWorkshop link: link\nEvolving Search Space for Neural Architecture Search\nPaper link: cvf.com\nPublished in ICCV21, The University of Sydney\n\nNeural architecture search automates the process of handcrafting neural nets, but the quality of searched candidates are affected by the search space, which again is handcrafted. Plus, enlarging the search space does not produce better candidates, instead, it is unbeneficial or even detrimental to existing NAS methods. \nThis work proposes to evolve the search space by repeating two steps: 1) search an optimized space from the search space subset, 2) re-fill this subset from a larger pool of operations that haven’t been traversed. Their method yields better performance and lower FLOPs comparing against NAS methods without distillation and weight pruning.\nDynamic Neural Network WorkshopWorkshop link: link\nMore ConvNets in the 2020s: Scaling up Kernels Beyond 51x51 using Sparsity\nBy Prof. Atlas Wang, UT Autstin\nSlides: google drive\n\nWhy is transformer better than convolution on visual tasks? On the one hand, CNNs have inductive biases like local smoothness, hierarchical representations, translation invariance. Transformers don’t have these inductive bias, and that allows transformers to learn better representations. On the other, and perhaps more importantly, transformers have global reception field since day-one. ViT divides images into patches and trains global attention across patches.\nIs it possible to scale up convolution’s kernel size to have a large reception field? RepLKNet (Ding et al, 2022) shows that large kernels are effective for boosting CNN’s performance. However, applying RepLKNet’s reparameterization trick on ConvNeXT makes accuracy drop because local details are lost. The solution to scale convolution kernels beyond 51x51 is using sparsity. \nkernel decomposition\nThe recipe is: \n\nLarge kernel decomposition: decompose a MxM convolution to three parallel branches of convolution layers with kernel size MxN, NxM, and 5x5.\nDynamic feature sparsity: dynamically select a subset of kernel parameters in each train iteration (dropout is a random dynamic sparsity) by turning off kernel elements with large gradients.\nUse sparse groups: do step 2 by channel-wisely.\n\nQ&amp;A\n\nSince large convolution kernels give us large reception field, does that mean we don’t have to rely on stacking lots of layers to get global reception field?The answer is yes, they observe that CNNs with larger kernels requires less layers to achieve the same level of performance.\nHow regular is the sparse pattern?The sparse pattern is elementwise and not regular. But the sparse pattern eventually converges during training, and is fixed during inference.\n\nTowards Robust and Efficient Visual Systems via Dynamic Representations\nBy Xin Wang from Microsoft Research\nSlides: google drive\n\n\nWe need a new type of visual attention model to improve robustness\n\nTransformer’s self attention is not robust: e.g. when noise is added to the image. \nIt also doesn’t follow the human eye’s fixation (attention).\nHuman attention has two important features: recurrency and sparsity\nFormulating this idea in NN: feedforward nn with recurrency + a sparse reconstruction layer\nIn this formulation, self-attention is a special case.\nThe result NN is robust to noise, compression, weather. The attentiond visualization also aligns with human eye fixation (how hasn’t anyone thought this before?).\n\n\nSkipNet: dynamic routing – to change network architecture at runtime\n\nDifferent images have different complexity, they should not go through the same depth of feature extraction.\nEach layer has a gate to decide if the next layer should execute.\nUsing RL agent for the decision, with pretrained feature extractor.\n\n\nZero-shot knowledge generalization\n\nImagine “red elephant”. You have never seen one but you know what’s “red” and what’s “elephant”, so you can imagine that.\nProposes “task-aware feature embedding” \n\n\n\nTAFE generates layer weights according to task description\nScanNet Indoor Scene Understanding ChallengeWorkshop link: website\nTowards Data-Efficient and Continual Learning for 3D Scene Understanding\nProf. Gim Hee Lee from NUS\n\n\nData efficiency: using 2D image labels to train 3D bounding box detection on point cloud data.\nContinual learning: knowledge distillation and solving catastrophic forgetting issues.\nThree consistency losses for knowledge distillation: alignment-aware, class-aware, and size-aware losses.\nUse knowledge distillation to solve forgetting old classes.\nThe relevant paper is: Static-Dynamic Co-teaching for Class-Incremental 3D Object Detection, AAAI 22. link\n\n\n\nMonday WorkshopsEfficient Deep Learning for Computer Vision WorkshopHost: Bichen Wu, Research Scientist at MetaLink: website\nEfficient and Robust Fully-attentional NetworksFAN has more robust attention against noises\n\nBy Jiashi Feng, ByteDance\nCode: https://github.com/NVlabs/FAN\n\nThey first find that ViT is more robust than CNN against common image distortions: motion blur, noise, snow.Also, more Self-Attention (SA) blocks makes ViT more robust. Their work (FAN) is making ViT “fully attentional”, by adding a channel attention block in parallel with the last MLP in the self-attention block. \nResult: ~10% more robust on segmentation/detection than ViT baseline, comparable param size, and attention visualization focus more on the contour of interesting objects. The FAN paper also provides an explanation of how ViT is more robust: it optimizes the Information Bottleneck, and implicitly filters out image noise.\nTowards Compact and Tiny AI models on EdgeBy Prof. Yiran Chen, Duke University\n\nNAS for efficient searching\nsearch space shrinking (Zhang et al. AAAI 20)\nTopology-aware NAS\nGraph embedding for NN candidates (Cheng et al. AAAI 21).\n\n\nThey have a paper on predictor-based NAS for point cloud NN (Qi et al. 2017).\nEfficient 3D point-interact space, first and second-order point interaction. Reducing MAC and #param, baseline is KPConv. (WIP, arxiv)\nStructural sparsity: dynamic winners-take-all, a dropout technique to prune activations layerwise, low overhead on edge device. Mixed-precision with bit-level sparsity (H. Yang et. al, ICLR21), adding a LASSO on bitwidth during training.\nNext thing in NAS: interpretability. \n\nResearching Efficient Networks for Hardware that Does not Exist Yet: physics and economics of ML co-designŁukasz Lew, Google\n\nHis talk high-lights the importance of quantization, custom numeric formats and measuring the cost of a system.\nHow do data-centers choose ML accelerators? Performance/TCO (total cost ownership), basically  electric bill.\nGoogle’s metric: Joules/inference, Joules/training to a given accuracy\n\n\nQuantization saves energy, it’s economically inevitable.\nMixed Quantization, measuring the cost is difficult. \nACE: arithmetic computation effort. (Zhang et al. CVPR22) It approximates the logical complexity of MAC operations, and is independent of today’s hardware technology (hence, future-facing). It generalizes to custom numeric formats. \n\n\nInteresting facts (very useful for motivation slides as well):\nML hardware introduces more and more formats with their tradeoffs, like bfloat, NVIDIA’s multiple fp8 variants.\nWe are using 15% of the hardware because of the dark silicon (cooling issue). ML chips are limited by power efficiency.\nPay attention to bit-level sparsity, energy is only used when bits are flipped. \n\n\n\nThoughts\n\nChicken and egg problem:\nML hardware designers must use mostly exisiting ML models\nML model designers must use existing hardwareA promising area: custom numeric formats. \n\n\n\nProject Aria: Wearable Computing for Augmented RealityMeta Reality Lab\nProject Aria Glasses\nThere’s an Egocentric AI Gap for VR, AR &amp; Wearables. Lots of data available, but they are not egocentric. Project Aria is a glass for data collection, to fill this gap. Unique challenges working with egocentric data: scene diversity + limited compute resources, limited sensing rate, noise from motion, multiple reference frames (dynamic settings), personal and privacy requirements. \n\n\n\nYour browser doesn't support HTML5 Video :/\nProject Aria First-Person Perspective Demo Video\n\nTackling Model and Data Efficiency Challenges for Computer VisionBichenWu, Meta\n\nModel Efficiency: the FBNet Family v1 to v5\n\nV1: differentiable NAS\nV2: differentiable can’t handle very large search space. Memory efficiency: sharing the same feature map with a mask. \nV3: joint architecture-train recipe search. Optimizer type, lr, decay, dropout, mix-up raito, ema, …. They switched to predictor-based NAS with a performance predictor.\nV4: skipped, it’s an internal model.\nV5: unified, scalable, efficient NAS for perception NAS. Previous NAS methods are designed for single tasks, introducing multitask search. Disentangle the search process from downstream tasks, with a proxy multi-task dataset.  Simultaneously search for many tasks. New SOTA. (arxiv now)\n\n\nData Efficiency (less labeling)Cross-domain adaptive teacher. The question is: can we train a model once and transfer to a new domain without annotating new data? E.g. can a model trained to localize real-life objects recognize their cartoon version? Solution: a teacher model using a pseudo label in the target domain, and a student model trained with unsupervised loss from the teacher model. \n\n\nWhen Industrial Model Toolchain meets Xilinx FPGAJiahao Hu, Ruigao Gong, toolchain team, SenseTime Research1st award of LPCV challenge, FPGA track\nThis is a presentation for their solution of the LPCV challenge.\n\nSetting\nTask: COCO object detection\nHardware: Ultra96v2 + DPU overlay with Pynq\nModel: YOLOX-FPGA\n\n\nToolchain\nTraining framework: United Perception. United Perception is a training framework for multiple tasks. It also has plenty off-the-shelf training techniques.\nQuantization: MQBench for INT8 quantization\nMulti-platform deployment framework: NART (close source)\n\n\nTips and tricks\nTraining recipe: object365 dataset pretrain + distillation\nThey optimized the post processing process by havng a C implementation for NMS, signoid, and decoder, resulting in a 74% reduction in post processing time compared with Python implementation.\nUse multithreading for pre- and post-process, so the inference is pipelined.\n\n\n\nTheir training framework and inference code is open source:https://github.com/ModelTC/United-Perceptionhttps://github.com/ModelTC/LPCV2021_Winner_Solution\nThoughtsTheir compilation flow is onnx -&gt; xmodel -&gt; DPU instruction. This process happens in Vitis, and it seems that Vitis has a much better operator support on DPU now. \nThere’s a live question about deploying vision transformers on edge devices. Sensetime thinks it’s still a long way to go.\nEmbedded Vision WorkshopWorkshop link: website\nMAPLE-EDGE: A Runtime Latency Predictor for Embedded DevicesPaper link: cvpr\nMAPLE-Edge is an edge device-oriented extension to MAPLE, designed specifically to estimate the latency of neural network architectures on unseen embedded devices. MAPLE-Edge trains a LPM-based (Linear Probability Model) hardware-aware regression model that can effectively estimate architecture latency. To do this, it trains the LPM on a dense hardware descriptor made up of CPU performance counters, in conjunction with architecture-latency pairs. In the data collection stage, MAPLE-Edge uses an automated pipeline to convert models in NAS-Bench-201 to their optimized counterparts, deploy it to the corresponding target device, and profile inference.\nMAPLE-X:  Latency Prediction with Explicit Microprocessor Prior KnowledgeBaseline: meta-learning based latency prediction model (HELP). This seems interesting as well.Hypothesis: NN arch latency rankings are highly similar across devices.The setting is NAS. The prior knowledge is latencies measured on a source device. The goal is to predict latencies on a target device. With the hypothesis, we can only measure a few nn archs on the target device and assign the rest with a prior according to their ranking.\n\nMain ConferenceOpening Remark\n\n\n\n\nSome interesting statistics:\n\n8,161 paper submission, 2,064 are accepted.\n5,641 in-person attendees, 4340 virtual attendees.\nExponential growth of submissions.\nRebuttal effectively increases the chance of getting accepted.\n\nOur PresentationOur Poster Presentation\nI presented at the first poster session on Tuesday. Our work is about how to improve transformer’s generalization ability on 3D voxel data with a codebook self-attention and explicit geometric guidance. About 20 to 30 people stopped by during the poster session, and a few after the session.Here are some questions I got during the presentation: \n\nHow do you design the sparse pattern and choose the dilation? (asked most frequently)\nHow is w (the weight of the prototypes) generated?\nHave you considered learning the sparse pattern during training?\nCan we use this codebook design for generative models like color/material manipulation?\nVoxel size? Are you using MinkowskiEngine for implementation?\nHow long does it take to train a model?\nFuture plan for this project?\n\nPaper HighlightsHere I highlight a few papers that I find interesting or worth noting, and I categorize them into these groups: explanable vision, efficiency, and 3D scene understanding.\nExplanable VisionNLX-GPT: A Model for Natural Language Explanations in Vision and Vision-Language Tasks\nPresentation: Oral\nPaper: cvf\nInstitution: Vrije Universiteit Brussel\nPI: Nikos Deligiannis\n\n\nUse Vision-Language models to explain the decision-making process of a black box system via generating a natural language sentence. \nDeep Spectral Methods: A Surprisingly Strong Baseline for Unsupervised Semantic Segmentation and Localization\nPresentation: Oral\nPaper: cvf\nInstitution: University of Oxford\nPI: Andrea Vedaldi\n\nThis work combines self-supervised learning and traditional graph semantic theory on semantic segmentation and localization tasks. The result outperforms SOTA self-supervised models by a large margin. \n3D Scene UnderstandingStratified Transformer for 3D Point Cloud Segmentation\nPresentation: Poster\nPaper: cvf\nInstitution: CUHK, HKU, SmartMore, MPI Informatics, MIT\nPI: Jiaya Jia\n\n\nA stratified sampling strategy for point cloud transformers that densely samples local points and sparsely samples distant points. The results demonstrate better generalization ability. \nPoint Density-Aware Voxels for LiDAR 3D Object Detection\nPresentation: Poster\nPaper: cvf\nInstitution: University of Toronto\n\n\nA LiDar 3D object detecture architecture that takes point density variation into account during ROI pooling. It achieves the new SOTA on the Waymo Open Dataset.\nDomain Adaptation on Point Clouds via Geometry-Aware Implicits\nPresentation: Poster\nPaper: cvf\nInstitution: Zhejiang University, Stanford and Peiking University\nPIs: He Wang, Youyi Zheng, Leonidas Guibas\n\n\nPoint cloud data of the same object can have significant geometric variation when captured by different censors or using different procedures. This work proposes an unsupervised domain adaptation method leveraging the gemoetric implicits. \nEfficiencyIt’s All in the Teacher: Zero-Shot Quantization Brought Closer to the Teacher\nPresentation: Oral\nPaper: cvf\nInstitution: Yonsei University\nPI: Jinho Lee\n\nZero-shot quantization (or data-free quantization) is quantizing a neural network without access to any of its training data. This is done by taking information from the weights of a full-precision teacher network to compensate the performance drop of the quantized network.\nMiniViT: Compressing Vision Transformers with Weight Multiplexing\nPresentation: Poster\nPaper: arxiv\nInstitution: Microsoft\n\n\nViT has good performance but is computationally expensive. This work compresses ViT by multiplexing (sharing) weights of consecutive transformer blocks. \nScaling Up Your Kernels to 31x31: Revisiting Large Kernel Design in CNNs\nPresentation: Poster\nPaper: cvf\nInstitution: Tsinghua University, MEGVII\nPI: Guiguang Ding\n\n\nThis paper proposes RepLKNet to scale ConvNet kernels to 31x31 with reparameterization.\nA-ViT: Adaptive Tokens for Efficient Vision Transformer\nPresentation: Poster\nPaper: arxiv\nInstitution: NVIDIA\n\n\nLet ViT learns which image patches to preserve, discarding redundant spatial tokens to achieve higher efficiency. The loss is designed to balance the accuracy-efficiency trade-off. \nThe Ongoing Debate of ConvNet or TransformerA ConvNet for the 2020s\nPresentation: Oral\nPaper: cvf\nInstitution: Berkeley and FAIR\nPIs: Trevor Darrell, Saining Xie\n\n\nThis work is aimed to test the limit of a pure ConvNet. They gradually “modernize” a standard ResNet towards the design of a vision Transformer, and discover several key components that contribute to the performance difference:\n\nStage Compute Raio\nNon-overlapping Conv, “to pachify”\nUse depthwise convolution\nInverted bottleneck\nLarge kernel sizes\nReplacing ReLU with GELU\nFewer activation and normalization\nSubstitue BN with LN\nSeparate downsampling layer from basic block\n\nDemosCVPR features a huge demo event. Companies and sponsors showcase their product or research work with actual demos and give out gifts. Here are some pictures of the demos:\n\n\n\n\n\n\n\nTesla’s cyber truck is a lot larger than I imagined. \nStudent Activity: Speed MentoringStudents attending CVPR has a chance to participate “speed mentoring”. Each table sits around students with one empty seat, and mentors will rotate between tables. Mentors are professors and senior researchers from the industry. The students are free to ask about any questions. \nTesla AI EventCompanies would invite authors of relevant field to their exclusive events during CVPR. I was fortunate enough to be invited to Tesla’s AI event.\nElon connecting from the Giga factory in Austin\nElon Musk connected with the live audience and did an AMA. The head engineers at Tesla introduce their vision-first approach on self-driving. I also had a chance to test drive a prototype Tesla Modle 3 on New Orlean’s streets.\nSpecial Event at Mardi Gras World\n\n\nYour browser doesn't support HTML5 Video :/\nLive Performance at Mardi Gras World\n\nThis is CVPR’s reception event happening in parallel with Tesla’s event. I didn’t attend this event but here is a video from a friend who did. \nNew OrleansThe Streets and the Mississippi River\n\n\n\n\n\n\nNew Orleans is a beatiful city, and it’s much hotter and humid than I expected. During the day it’s about 38 degree with 70% humidity. During the conference I visited the French Quarter and walked along the Mississippi River. \nFood\n\n\n\n\n\n\n\n\nThe seafood in New Orleans is supreme. I especially enjoyed the seafood gumbo and the crawfish pasta. The Gus world-famous fried chicken is also delicious, make sure to try it if you are in New Orleans.","dateCreated":"2022-06-30T00:00:00-04:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2022-06-30T00:00:00-04:00","description":"My experience attending and presenting at CVPR22","headline":"CVPR 2022 at New Orleans","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1656967343/cvpr22/cvprlogo_simlna.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/cvpr22/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/cvpr22/","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1656967343/cvpr22/cvprlogo_simlna.jpg"}</script>
+    <meta name="description" content="My experience attending and presenting at CVPR22">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="CVPR 2022 at New Orleans">
+<meta property="og:url" content="https://www.zzzdavid.tech/cvpr22/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="My experience attending and presenting at CVPR22">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969032/cvpr22/convention_e1qj2j.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657130326/cvpr22/scaling.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657131056/cvpr22/tafe_k1cgm0.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657132082/cvpr22/Teaser_qbaubg.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657132811/cvpr22/IMG_0887_zeh5mf.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0926_q5awdl.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0927_acaebg.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0934_e8parp.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0932_nd3fza.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0934_e8parp.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157879/cvpr22/IMG_0968_fnxbyx.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657160992/cvpr22/Screen_Shot_2022-07-06_at_10.29.23_PM_vjg5sm.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657161408/cvpr22/stratified_p6d1oz.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657161715/cvpr22/Screen_Shot_2022-07-06_at_10.41.45_PM_jrzuam.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162223/cvpr22/Screen_Shot_2022-07-06_at_10.50.05_PM_eivgfc.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162435/cvpr22/Screen_Shot_2022-07-06_at_10.53.16_PM_grcmhy.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162583/cvpr22/Screen_Shot_2022-07-06_at_10.56.10_PM_xzgaiq.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162765/cvpr22/Screen_Shot_2022-07-06_at_10.59.11_PM_wrgahn.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657163017/cvpr22/Screen_Shot_2022-07-06_at_11.03.21_PM_kjpfjq.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157997/cvpr22/companies/IMG_0960_c6deos.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0956_jj6a3z.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0963_t7xaox.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0970_ogl7lg.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0955_kvmmd9.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0957_oji0vx.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_1011_pfk9j4.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158319/cvpr22/companies/IMG_0999_lfllkl.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0841_ihs8io.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0832_ybyhs0.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158829/cvpr22/new_orleans/IMG_0821_t5w6cm.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158635/cvpr22/new_orleans/IMG_0828_sbsuas.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158635/cvpr22/new_orleans/IMG_0826_mvjqoa.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0837_g6bd6c.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_1065_gypgo3.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969788/cvpr22/food/IMG_0846_rbjw4w.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0894_dbg5me.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_0773_oea7cl.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0910_wppska.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_0914_xexnrv.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_1062_wh3rpp.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0848_hdo91n.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969814/cvpr22/food/IMG_0793_wtltxh.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_1061_acuxwn.jpg">
+<meta property="article:published_time" content="2022-06-30T04:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.149Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969032/cvpr22/convention_e1qj2j.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656967343/cvpr22/cvprlogo_simlna.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656967343/cvpr22/cvprlogo_simlna.jpg"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            CVPR 2022 at New Orleans
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2022-06-30T00:00:00-04:00">
+	
+		    Jun 30, 2022
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Conference-Journal/">Conference Journal</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <!-- excerpt -->
+<p>The IEEE/CVF Computer Vision and Pattern Recognition Conference (CVPR) is a premier international conference held every year in the US. The 2022 CVPR is held in New Orleans, Louisiana, and I am fortunate enough to attend and present at the event. </p>
+<h2 id="Conference-Format"><a href="#Conference-Format" class="headerlink" title="Conference Format"></a>Conference Format</h2><p>This year’s CVPR is a hyprid event. It’s the first CVPR happening in-person since the pandemic. The in-person conference lasts 6 days from June 19 to 24: Sunday to Monday are workshops, and Tuesday to Friday is the main conference. It’s a huge conference, even though it lasts about a week, there are lots of things happening in parallel. There are about 30 to 40 all-day workshops going in parallel, and three oral sessions going in parallel in the main conference. It’s impossible to go to everything, so everyone has to choose what they are most interested in. There’s an additional virtual poster session happens one-week after the main conference, and the in-person poster presenters are encouraged to sign up as well. </p>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969032/cvpr22/convention_e1qj2j.jpg" alt="The Ernest N. Morial Convention Center"><span class="caption">The Ernest N. Morial Convention Center</span></div>
+<p>The event takes place at the Ernest N. Morial Convention Center at downtown New Orleans by the Mississippi river bank. It’s an enormous conference center, even 5,600 people looks sparse.</p>
+<p>For the main conference paper presentation, there are two formats this year: oral and poster. Oral presentations has 5 minutes, and posters last for one morning or afternoon. The oral presenters also attend the poster sessions, so people have more chances to interact with the authors. </p>
+<h2 id="Sunday-Workshops"><a href="#Sunday-Workshops" class="headerlink" title="Sunday Workshops"></a>Sunday Workshops</h2><p>I jumped between a few workshops for keynotes and full paper presentations. Here I select a few papers and talks that are interesting to me and offer some thoughts and digestion.</p>
+<h3 id="NAS-Workshop"><a href="#NAS-Workshop" class="headerlink" title="NAS Workshop"></a>NAS Workshop</h3><p>Workshop link: <a href="https://cvpr-nas.com" target="_blank" rel="noopener">link</a></p>
+<h4 id="Evolving-Search-Space-for-Neural-Architecture-Search"><a href="#Evolving-Search-Space-for-Neural-Architecture-Search" class="headerlink" title="Evolving Search Space for Neural Architecture Search"></a>Evolving Search Space for Neural Architecture Search</h4><ul>
+<li>Paper link: <a href="https://openaccess.thecvf.com/content/ICCV2021/papers/Ci_Evolving_Search_Space_for_Neural_Architecture_Search_ICCV_2021_paper.pdf" target="_blank" rel="noopener">cvf.com</a></li>
+<li>Published in ICCV21, The University of Sydney</li>
+</ul>
+<p>Neural architecture search automates the process of handcrafting neural nets, but the quality of searched candidates are affected by the search space, which again is handcrafted. Plus, enlarging the search space does not produce better candidates, instead, it is unbeneficial or even detrimental to existing NAS methods. </p>
+<p>This work proposes to evolve the search space by repeating two steps: 1) search an optimized space from the search space subset, 2) re-fill this subset from a larger pool of operations that haven’t been traversed. Their method yields better performance and lower FLOPs comparing against NAS methods without distillation and weight pruning.</p>
+<h3 id="Dynamic-Neural-Network-Workshop"><a href="#Dynamic-Neural-Network-Workshop" class="headerlink" title="Dynamic Neural Network Workshop"></a>Dynamic Neural Network Workshop</h3><p>Workshop link: <a href="https://sites.google.com/view/cvpr2022-dnetcv" target="_blank" rel="noopener">link</a></p>
+<h4 id="More-ConvNets-in-the-2020s-Scaling-up-Kernels-Beyond-51x51-using-Sparsity"><a href="#More-ConvNets-in-the-2020s-Scaling-up-Kernels-Beyond-51x51-using-Sparsity" class="headerlink" title="More ConvNets in the 2020s: Scaling up Kernels Beyond 51x51 using Sparsity"></a>More ConvNets in the 2020s: Scaling up Kernels Beyond 51x51 using Sparsity</h4><ul>
+<li>By Prof. Atlas Wang, UT Autstin</li>
+<li>Slides: <a href="https://drive.google.com/file/d/1eQE1bZUyHcmw-fD2MAA6HY4xVLNtlpMy/view" target="_blank" rel="noopener">google drive</a></li>
+</ul>
+<p>Why is transformer better than convolution on visual tasks? On the one hand, CNNs have inductive biases like local smoothness, hierarchical representations, translation invariance. Transformers don’t have these inductive bias, and that allows transformers to learn better representations. On the other, and perhaps more importantly, transformers have global reception field since day-one. ViT divides images into patches and trains global attention across patches.</p>
+<p>Is it possible to scale up convolution’s kernel size to have a large reception field? RepLKNet (Ding et al, 2022) shows that large kernels are effective for boosting CNN’s performance. However, applying RepLKNet’s reparameterization trick on ConvNeXT makes accuracy drop because local details are lost. The solution to scale convolution kernels beyond 51x51 is using sparsity. </p>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657130326/cvpr22/scaling.png" alt="kernel decomposition"><span class="caption">kernel decomposition</span></div>
+<p>The recipe is: </p>
+<ol>
+<li>Large kernel decomposition: decompose a <code>MxM</code> convolution to three parallel branches of convolution layers with kernel size <code>MxN</code>, <code>NxM</code>, and <code>5x5</code>.</li>
+<li>Dynamic feature sparsity: dynamically select a subset of kernel parameters in each train iteration (dropout is a random dynamic sparsity) by turning off kernel elements with large gradients.</li>
+<li>Use sparse groups: do step 2 by channel-wisely.</li>
+</ol>
+<p><strong>Q&amp;A</strong></p>
+<ol>
+<li>Since large convolution kernels give us large reception field, does that mean we don’t have to rely on stacking lots of layers to get global reception field?<br>The answer is yes, they observe that CNNs with larger kernels requires less layers to achieve the same level of performance.</li>
+<li>How regular is the sparse pattern?<br>The sparse pattern is elementwise and not regular. But the sparse pattern eventually converges during training, and is fixed during inference.</li>
+</ol>
+<h4 id="Towards-Robust-and-Efficient-Visual-Systems-via-Dynamic-Representations"><a href="#Towards-Robust-and-Efficient-Visual-Systems-via-Dynamic-Representations" class="headerlink" title="Towards Robust and Efficient Visual Systems via Dynamic Representations"></a>Towards Robust and Efficient Visual Systems via Dynamic Representations</h4><ul>
+<li>By Xin Wang from Microsoft Research</li>
+<li>Slides: <a href="https://drive.google.com/file/d/1iP3TzMHSGqGqEUJBLOC3IYDBiUhBDdge/view" target="_blank" rel="noopener">google drive</a></li>
+</ul>
+<ol>
+<li><p>We need a new type of visual attention model to improve robustness</p>
+<ul>
+<li>Transformer’s self attention is not robust: e.g. when noise is added to the image. </li>
+<li>It also doesn’t follow the human eye’s fixation (attention).</li>
+<li>Human attention has two important features: recurrency and sparsity</li>
+<li>Formulating this idea in NN: feedforward nn with recurrency + a sparse reconstruction layer</li>
+<li>In this formulation, self-attention is a special case.</li>
+<li>The result NN is robust to noise, compression, weather. The attentiond visualization also aligns with human eye fixation (how hasn’t anyone thought this before?).</li>
+</ul>
+</li>
+<li><p>SkipNet: dynamic routing – to change network architecture at runtime</p>
+<ul>
+<li>Different images have different complexity, they should not go through the same depth of feature extraction.</li>
+<li>Each layer has a gate to decide if the next layer should execute.</li>
+<li>Using RL agent for the decision, with pretrained feature extractor.</li>
+</ul>
+</li>
+<li><p>Zero-shot knowledge generalization</p>
+<ul>
+<li>Imagine “red elephant”. You have never seen one but you know what’s “red” and what’s “elephant”, so you can imagine that.</li>
+<li>Proposes “task-aware feature embedding” </li>
+</ul>
+</li>
+</ol>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657131056/cvpr22/tafe_k1cgm0.png" alt="TAFE generates layer weights according to task description"><span class="caption">TAFE generates layer weights according to task description</span></div>
+<h3 id="ScanNet-Indoor-Scene-Understanding-Challenge"><a href="#ScanNet-Indoor-Scene-Understanding-Challenge" class="headerlink" title="ScanNet Indoor Scene Understanding Challenge"></a>ScanNet Indoor Scene Understanding Challenge</h3><p>Workshop link: <a href="http://www.scan-net.org/cvpr2022workshop/" target="_blank" rel="noopener">website</a></p>
+<h4 id="Towards-Data-Efficient-and-Continual-Learning-for-3D-Scene-Understanding"><a href="#Towards-Data-Efficient-and-Continual-Learning-for-3D-Scene-Understanding" class="headerlink" title="Towards Data-Efficient and Continual Learning for 3D Scene Understanding"></a>Towards Data-Efficient and Continual Learning for 3D Scene Understanding</h4><ul>
+<li>Prof. Gim Hee Lee from NUS</li>
+</ul>
+<ol>
+<li>Data efficiency: using 2D image labels to train 3D bounding box detection on point cloud data.</li>
+<li>Continual learning: knowledge distillation and solving catastrophic forgetting issues.<ul>
+<li>Three consistency losses for knowledge distillation: alignment-aware, class-aware, and size-aware losses.</li>
+<li>Use knowledge distillation to solve forgetting old classes.</li>
+<li>The relevant paper is: Static-Dynamic Co-teaching for Class-Incremental 3D Object Detection, AAAI 22. <a href="https://arxiv.org/abs/2112.07241" target="_blank" rel="noopener">link</a></li>
+</ul>
+</li>
+</ol>
+<h2 id="Monday-Workshops"><a href="#Monday-Workshops" class="headerlink" title="Monday Workshops"></a>Monday Workshops</h2><h3 id="Efficient-Deep-Learning-for-Computer-Vision-Workshop"><a href="#Efficient-Deep-Learning-for-Computer-Vision-Workshop" class="headerlink" title="Efficient Deep Learning for Computer Vision Workshop"></a>Efficient Deep Learning for Computer Vision Workshop</h3><p>Host: Bichen Wu, Research Scientist at Meta<br>Link: <a href="https://sites.google.com/view/ecv2022/home?authuser=0" target="_blank" rel="noopener">website</a></p>
+<h4 id="Efficient-and-Robust-Fully-attentional-Networks"><a href="#Efficient-and-Robust-Fully-attentional-Networks" class="headerlink" title="Efficient and Robust Fully-attentional Networks"></a>Efficient and Robust Fully-attentional Networks</h4><div class="figure fig-50 right" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657132082/cvpr22/Teaser_qbaubg.png" alt="FAN has more robust attention against noises"><span class="caption">FAN has more robust attention against noises</span></div>
+<ul>
+<li>By Jiashi Feng, ByteDance</li>
+<li>Code: <a href="https://github.com/NVlabs/FAN" target="_blank" rel="noopener">https://github.com/NVlabs/FAN</a></li>
+</ul>
+<p>They first find that ViT is more robust than CNN against common image distortions: motion blur, noise, snow.<br>Also, more Self-Attention (SA) blocks makes ViT more robust. Their work (FAN) is making ViT “fully attentional”, by adding a channel attention block in parallel with the last MLP in the self-attention block. </p>
+<p>Result: ~10% more robust on segmentation/detection than ViT baseline, comparable param size, and attention visualization focus more on the contour of interesting objects. The FAN paper also provides an explanation of how ViT is more robust: it optimizes the <em>Information Bottleneck</em>, and implicitly filters out image noise.</p>
+<h4 id="Towards-Compact-and-Tiny-AI-models-on-Edge"><a href="#Towards-Compact-and-Tiny-AI-models-on-Edge" class="headerlink" title="Towards Compact and Tiny AI models on Edge"></a>Towards Compact and Tiny AI models on Edge</h4><p>By Prof. Yiran Chen, Duke University</p>
+<ul>
+<li>NAS for efficient searching<ul>
+<li>search space shrinking (Zhang et al. AAAI 20)</li>
+<li>Topology-aware NAS</li>
+<li>Graph embedding for NN candidates (Cheng et al. AAAI 21).</li>
+</ul>
+</li>
+<li>They have a paper on predictor-based NAS for point cloud NN (Qi et al. 2017).</li>
+<li>Efficient 3D point-interact space, first and second-order point interaction. Reducing MAC and #param, baseline is KPConv. (WIP, arxiv)</li>
+<li>Structural sparsity: dynamic winners-take-all, a dropout technique to prune activations layerwise, low overhead on edge device. Mixed-precision with bit-level sparsity (H. Yang et. al, ICLR21), adding a LASSO on bitwidth during training.</li>
+<li>Next thing in NAS: interpretability. </li>
+</ul>
+<h4 id="Researching-Efficient-Networks-for-Hardware-that-Does-not-Exist-Yet-physics-and-economics-of-ML-co-design"><a href="#Researching-Efficient-Networks-for-Hardware-that-Does-not-Exist-Yet-physics-and-economics-of-ML-co-design" class="headerlink" title="Researching Efficient Networks for Hardware that Does not Exist Yet: physics and economics of ML co-design"></a>Researching Efficient Networks for Hardware that Does not Exist Yet: physics and economics of ML co-design</h4><p><strong>Łukasz Lew, Google</strong></p>
+<ul>
+<li>His talk high-lights the importance of quantization, custom numeric formats and measuring the cost of a system.</li>
+<li>How do data-centers choose ML accelerators? Performance/TCO (total cost ownership), basically  electric bill.<ul>
+<li>Google’s metric: Joules/inference, Joules/training to a given accuracy</li>
+</ul>
+</li>
+<li>Quantization saves energy, it’s economically inevitable.</li>
+<li>Mixed Quantization, measuring the cost is difficult. <ul>
+<li>ACE: arithmetic computation effort. (Zhang et al. CVPR22) It approximates the logical complexity of MAC operations, and is independent of today’s hardware technology (hence, future-facing). It generalizes to custom numeric formats. </li>
+</ul>
+</li>
+<li>Interesting facts (very useful for motivation slides as well):<ul>
+<li>ML hardware introduces more and more formats with their tradeoffs, like bfloat, NVIDIA’s multiple fp8 variants.</li>
+<li>We are using 15% of the hardware because of the dark silicon (cooling issue). ML chips are limited by power efficiency.</li>
+<li>Pay attention to bit-level sparsity, energy is only used when bits are flipped. </li>
+</ul>
+</li>
+</ul>
+<p><strong>Thoughts</strong></p>
+<ul>
+<li>Chicken and egg problem:<ul>
+<li>ML hardware designers must use mostly exisiting ML models</li>
+<li>ML model designers must use existing hardware<br>A promising area: <strong>custom numeric formats</strong>. </li>
+</ul>
+</li>
+</ul>
+<h4 id="Project-Aria-Wearable-Computing-for-Augmented-Reality"><a href="#Project-Aria-Wearable-Computing-for-Augmented-Reality" class="headerlink" title="Project Aria: Wearable Computing for Augmented Reality"></a>Project Aria: Wearable Computing for Augmented Reality</h4><p><strong>Meta Reality Lab</strong></p>
+<div class="figure fig-100 left" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657132811/cvpr22/IMG_0887_zeh5mf.jpg" target="_blank" rel="noopener" title="Project Aria Glasses" data-caption="Project Aria Glasses" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657132811/cvpr22/IMG_0887_zeh5mf.jpg" alt="Project Aria Glasses"></a><span class="caption">Project Aria Glasses</span></div>
+<p>There’s an Egocentric AI Gap for VR, AR &amp; Wearables. Lots of data available, but they are not egocentric. Project Aria is a glass for data collection, to fill this gap. Unique challenges working with egocentric data: scene diversity + limited compute resources, limited sensing rate, noise from motion, multiple reference frames (dynamic settings), personal and privacy requirements. </p>
+<div class="figure center" style="width:100%"; >
+<video class="fig-video" controls alt="Project Aria First-Person Perspective Demo Video">
+<source src="https://res.cloudinary.com/dxzx2bxch/video/upload/v1657132802/cvpr22/aria_aciwly.mov" type="video/mp4">
+<p>Your browser doesn't support HTML5 Video :/</p></video>
+<span class="caption">Project Aria First-Person Perspective Demo Video</span>
+</div>
+<h4 id="Tackling-Model-and-Data-Efficiency-Challenges-for-Computer-Vision"><a href="#Tackling-Model-and-Data-Efficiency-Challenges-for-Computer-Vision" class="headerlink" title="Tackling Model and Data Efficiency Challenges for Computer Vision"></a>Tackling Model and Data Efficiency Challenges for Computer Vision</h4><p><strong>BichenWu, Meta</strong></p>
+<ol>
+<li><p>Model Efficiency: the FBNet Family v1 to v5</p>
+<ul>
+<li>V1: differentiable NAS</li>
+<li>V2: differentiable can’t handle very large search space. Memory efficiency: sharing the same feature map with a mask. </li>
+<li>V3: joint architecture-train recipe search. Optimizer type, lr, decay, dropout, mix-up raito, ema, …. They switched to predictor-based NAS with a performance predictor.</li>
+<li>V4: skipped, it’s an internal model.</li>
+<li>V5: unified, scalable, efficient NAS for perception NAS. Previous NAS methods are designed for single tasks, introducing multitask search. Disentangle the search process from downstream tasks, with a proxy multi-task dataset.  Simultaneously search for many tasks. New SOTA. (arxiv now)</li>
+</ul>
+</li>
+<li><p>Data Efficiency (less labeling)<br>Cross-domain adaptive teacher. The question is: can we train a model once and transfer to a new domain without annotating new data? E.g. can a model trained to localize real-life objects recognize their cartoon version? Solution: a teacher model using a pseudo label in the target domain, and a student model trained with unsupervised loss from the teacher model. </p>
+</li>
+</ol>
+<h4 id="When-Industrial-Model-Toolchain-meets-Xilinx-FPGA"><a href="#When-Industrial-Model-Toolchain-meets-Xilinx-FPGA" class="headerlink" title="When Industrial Model Toolchain meets Xilinx FPGA"></a>When Industrial Model Toolchain meets Xilinx FPGA</h4><p><strong>Jiahao Hu, Ruigao Gong, toolchain team, SenseTime Research</strong><br><strong>1st award of LPCV challenge, FPGA track</strong></p>
+<p>This is a presentation for their solution of the LPCV challenge.</p>
+<ol>
+<li>Setting<ul>
+<li>Task: COCO object detection</li>
+<li>Hardware: Ultra96v2 + DPU overlay with Pynq</li>
+<li>Model: YOLOX-FPGA</li>
+</ul>
+</li>
+<li>Toolchain<ul>
+<li>Training framework: United Perception. United Perception is a training framework for multiple tasks. It also has plenty off-the-shelf training techniques.</li>
+<li>Quantization: MQBench for INT8 quantization</li>
+<li>Multi-platform deployment framework: NART (close source)</li>
+</ul>
+</li>
+<li>Tips and tricks<ul>
+<li>Training recipe: object365 dataset pretrain + distillation</li>
+<li>They optimized the post processing process by havng a C implementation for NMS, signoid, and decoder, resulting in a 74% reduction in post processing time compared with Python implementation.</li>
+<li>Use multithreading for pre- and post-process, so the inference is pipelined.</li>
+</ul>
+</li>
+</ol>
+<p>Their training framework and inference code is open source:<br><a href="https://github.com/ModelTC/United-Perception" target="_blank" rel="noopener">https://github.com/ModelTC/United-Perception</a><br><a href="https://github.com/ModelTC/LPCV2021_Winner_Solution" target="_blank" rel="noopener">https://github.com/ModelTC/LPCV2021_Winner_Solution</a></p>
+<p><strong>Thoughts</strong><br>Their compilation flow is onnx -&gt; xmodel -&gt; DPU instruction. This process happens in Vitis, and it seems that Vitis has a much better operator support on DPU now. </p>
+<p>There’s a live question about deploying vision transformers on edge devices. Sensetime thinks it’s still a long way to go.</p>
+<h3 id="Embedded-Vision-Workshop"><a href="#Embedded-Vision-Workshop" class="headerlink" title="Embedded Vision Workshop"></a>Embedded Vision Workshop</h3><p>Workshop link: <a href="https://embeddedvisionworkshop.wordpress.com" target="_blank" rel="noopener">website</a></p>
+<h4 id="MAPLE-EDGE-A-Runtime-Latency-Predictor-for-Embedded-Devices"><a href="#MAPLE-EDGE-A-Runtime-Latency-Predictor-for-Embedded-Devices" class="headerlink" title="MAPLE-EDGE: A Runtime Latency Predictor for Embedded Devices"></a>MAPLE-EDGE: A Runtime Latency Predictor for Embedded Devices</h4><p>Paper link: <a href="https://openaccess.thecvf.com/content/CVPR2022W/EVW/papers/Nair_MAPLE-Edge_A_Runtime_Latency_Predictor_for_Edge_Devices_CVPRW_2022_paper.pdf" target="_blank" rel="noopener">cvpr</a></p>
+<p>MAPLE-Edge is an edge device-oriented extension to MAPLE, designed specifically to estimate the latency of neural network architectures on unseen embedded devices. MAPLE-Edge trains a LPM-based (Linear Probability Model) hardware-aware regression model that can effectively estimate architecture latency. To do this, it trains the LPM on a dense hardware descriptor made up of CPU performance counters, in conjunction with architecture-latency pairs. In the data collection stage, MAPLE-Edge uses an automated pipeline to convert models in NAS-Bench-201 to their optimized counterparts, deploy it to the corresponding target device, and profile inference.</p>
+<h4 id="MAPLE-X-Latency-Prediction-with-Explicit-Microprocessor-Prior-Knowledge"><a href="#MAPLE-X-Latency-Prediction-with-Explicit-Microprocessor-Prior-Knowledge" class="headerlink" title="MAPLE-X:  Latency Prediction with Explicit Microprocessor Prior Knowledge"></a>MAPLE-X:  Latency Prediction with Explicit Microprocessor Prior Knowledge</h4><p>Baseline: meta-learning based latency prediction model (HELP). This seems interesting as well.<br>Hypothesis: NN arch latency rankings are highly similar across devices.<br>The setting is NAS. The prior knowledge is latencies measured on a source device. The goal is to predict latencies on a target device. With the hypothesis, we can only measure a few nn archs on the target device and assign the rest with a prior according to their ranking.</p>
+<!-- Comment: I actually hoped that it was using some explicit knowledge about the processor hardware architecture… -->
+<h2 id="Main-Conference"><a href="#Main-Conference" class="headerlink" title="Main Conference"></a>Main Conference</h2><h3 id="Opening-Remark"><a href="#Opening-Remark" class="headerlink" title="Opening Remark"></a>Opening Remark</h3><div class="figure fig-100" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0926_q5awdl.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0926_q5awdl.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0927_acaebg.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0927_acaebg.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0934_e8parp.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0934_e8parp.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0932_nd3fza.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0932_nd3fza.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0934_e8parp.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157291/cvpr22/opening/IMG_0934_e8parp.jpg" alt=""></a></div>
+<p>Some interesting statistics:</p>
+<ol>
+<li>8,161 paper submission, 2,064 are accepted.</li>
+<li>5,641 in-person attendees, 4340 virtual attendees.</li>
+<li>Exponential growth of submissions.</li>
+<li>Rebuttal effectively increases the chance of getting accepted.</li>
+</ol>
+<h3 id="Our-Presentation"><a href="#Our-Presentation" class="headerlink" title="Our Presentation"></a>Our Presentation</h3><div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157879/cvpr22/IMG_0968_fnxbyx.jpg" alt="Our Poster Presentation"><span class="caption">Our Poster Presentation</span></div>
+<p>I presented at the first poster session on Tuesday. Our work is about how to improve transformer’s generalization ability on 3D voxel data with a codebook self-attention and explicit geometric guidance. About 20 to 30 people stopped by during the poster session, and a few after the session.<br>Here are some questions I got during the presentation: </p>
+<ol>
+<li>How do you design the sparse pattern and choose the dilation? (asked most frequently)</li>
+<li>How is <code>w</code> (the weight of the prototypes) generated?</li>
+<li>Have you considered learning the sparse pattern during training?</li>
+<li>Can we use this codebook design for generative models like color/material manipulation?</li>
+<li>Voxel size? Are you using MinkowskiEngine for implementation?</li>
+<li>How long does it take to train a model?</li>
+<li>Future plan for this project?</li>
+</ol>
+<h3 id="Paper-Highlights"><a href="#Paper-Highlights" class="headerlink" title="Paper Highlights"></a>Paper Highlights</h3><p>Here I highlight a few papers that I find interesting or worth noting, and I categorize them into these groups: explanable vision, efficiency, and 3D scene understanding.</p>
+<h3 id="Explanable-Vision"><a href="#Explanable-Vision" class="headerlink" title="Explanable Vision"></a>Explanable Vision</h3><h4 id="NLX-GPT-A-Model-for-Natural-Language-Explanations-in-Vision-and-Vision-Language-Tasks"><a href="#NLX-GPT-A-Model-for-Natural-Language-Explanations-in-Vision-and-Vision-Language-Tasks" class="headerlink" title="NLX-GPT: A Model for Natural Language Explanations in Vision and Vision-Language Tasks"></a>NLX-GPT: A Model for Natural Language Explanations in Vision and Vision-Language Tasks</h4><ul>
+<li>Presentation: Oral</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Sammani_NLX-GPT_A_Model_for_Natural_Language_Explanations_in_Vision_and_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: Vrije Universiteit Brussel</li>
+<li>PI: Nikos Deligiannis</li>
+</ul>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657160992/cvpr22/Screen_Shot_2022-07-06_at_10.29.23_PM_vjg5sm.png" alt=""></div>
+<p>Use Vision-Language models to explain the decision-making process of a black box system via generating a natural language sentence. </p>
+<h4 id="Deep-Spectral-Methods-A-Surprisingly-Strong-Baseline-for-Unsupervised-Semantic-Segmentation-and-Localization"><a href="#Deep-Spectral-Methods-A-Surprisingly-Strong-Baseline-for-Unsupervised-Semantic-Segmentation-and-Localization" class="headerlink" title="Deep Spectral Methods: A Surprisingly Strong Baseline for Unsupervised Semantic Segmentation and Localization"></a>Deep Spectral Methods: A Surprisingly Strong Baseline for Unsupervised Semantic Segmentation and Localization</h4><ul>
+<li>Presentation: Oral</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Melas-Kyriazi_Deep_Spectral_Methods_A_Surprisingly_Strong_Baseline_for_Unsupervised_Semantic_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: University of Oxford</li>
+<li>PI: Andrea Vedaldi</li>
+</ul>
+<p>This work combines self-supervised learning and traditional graph semantic theory on semantic segmentation and localization tasks. The result outperforms SOTA self-supervised models by a large margin. </p>
+<h3 id="3D-Scene-Understanding"><a href="#3D-Scene-Understanding" class="headerlink" title="3D Scene Understanding"></a>3D Scene Understanding</h3><h4 id="Stratified-Transformer-for-3D-Point-Cloud-Segmentation"><a href="#Stratified-Transformer-for-3D-Point-Cloud-Segmentation" class="headerlink" title="Stratified Transformer for 3D Point Cloud Segmentation"></a>Stratified Transformer for 3D Point Cloud Segmentation</h4><ul>
+<li>Presentation: Poster</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Lai_Stratified_Transformer_for_3D_Point_Cloud_Segmentation_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: CUHK, HKU, SmartMore, MPI Informatics, MIT</li>
+<li>PI: Jiaya Jia</li>
+</ul>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657161408/cvpr22/stratified_p6d1oz.png" alt=""></div>
+<p>A stratified sampling strategy for point cloud transformers that densely samples local points and sparsely samples distant points. The results demonstrate better generalization ability. </p>
+<h4 id="Point-Density-Aware-Voxels-for-LiDAR-3D-Object-Detection"><a href="#Point-Density-Aware-Voxels-for-LiDAR-3D-Object-Detection" class="headerlink" title="Point Density-Aware Voxels for LiDAR 3D Object Detection"></a>Point Density-Aware Voxels for LiDAR 3D Object Detection</h4><ul>
+<li>Presentation: Poster</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Hu_Point_Density-Aware_Voxels_for_LiDAR_3D_Object_Detection_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: University of Toronto</li>
+</ul>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657161715/cvpr22/Screen_Shot_2022-07-06_at_10.41.45_PM_jrzuam.png" alt=""></div>
+<p>A LiDar 3D object detecture architecture that takes point density variation into account during ROI pooling. It achieves the new SOTA on the Waymo Open Dataset.</p>
+<h4 id="Domain-Adaptation-on-Point-Clouds-via-Geometry-Aware-Implicits"><a href="#Domain-Adaptation-on-Point-Clouds-via-Geometry-Aware-Implicits" class="headerlink" title="Domain Adaptation on Point Clouds via Geometry-Aware Implicits"></a>Domain Adaptation on Point Clouds via Geometry-Aware Implicits</h4><ul>
+<li>Presentation: Poster</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Shen_Domain_Adaptation_on_Point_Clouds_via_Geometry-Aware_Implicits_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: Zhejiang University, Stanford and Peiking University</li>
+<li>PIs: He Wang, Youyi Zheng, Leonidas Guibas</li>
+</ul>
+<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162223/cvpr22/Screen_Shot_2022-07-06_at_10.50.05_PM_eivgfc.png" alt=""></div>
+<p>Point cloud data of the same object can have significant geometric variation when captured by different censors or using different procedures. This work proposes an unsupervised domain adaptation method leveraging the gemoetric implicits. </p>
+<h3 id="Efficiency"><a href="#Efficiency" class="headerlink" title="Efficiency"></a>Efficiency</h3><h4 id="It’s-All-in-the-Teacher-Zero-Shot-Quantization-Brought-Closer-to-the-Teacher"><a href="#It’s-All-in-the-Teacher-Zero-Shot-Quantization-Brought-Closer-to-the-Teacher" class="headerlink" title="It’s All in the Teacher: Zero-Shot Quantization Brought Closer to the Teacher"></a>It’s All in the Teacher: Zero-Shot Quantization Brought Closer to the Teacher</h4><ul>
+<li>Presentation: Oral</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Choi_Its_All_in_the_Teacher_Zero-Shot_Quantization_Brought_Closer_to_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: Yonsei University</li>
+<li>PI: Jinho Lee</li>
+</ul>
+<p>Zero-shot quantization (or data-free quantization) is quantizing a neural network without access to any of its training data. This is done by taking information from the weights of a full-precision teacher network to compensate the performance drop of the quantized network.</p>
+<h4 id="MiniViT-Compressing-Vision-Transformers-with-Weight-Multiplexing"><a href="#MiniViT-Compressing-Vision-Transformers-with-Weight-Multiplexing" class="headerlink" title="MiniViT: Compressing Vision Transformers with Weight Multiplexing"></a>MiniViT: Compressing Vision Transformers with Weight Multiplexing</h4><ul>
+<li>Presentation: Poster</li>
+<li>Paper: <a href="https://arxiv.org/pdf/2204.07154.pdf" target="_blank" rel="noopener">arxiv</a></li>
+<li>Institution: Microsoft</li>
+</ul>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162435/cvpr22/Screen_Shot_2022-07-06_at_10.53.16_PM_grcmhy.png" alt=""></div>
+<p>ViT has good performance but is computationally expensive. This work compresses ViT by multiplexing (sharing) weights of consecutive transformer blocks. </p>
+<h4 id="Scaling-Up-Your-Kernels-to-31x31-Revisiting-Large-Kernel-Design-in-CNNs"><a href="#Scaling-Up-Your-Kernels-to-31x31-Revisiting-Large-Kernel-Design-in-CNNs" class="headerlink" title="Scaling Up Your Kernels to 31x31: Revisiting Large Kernel Design in CNNs"></a>Scaling Up Your Kernels to 31x31: Revisiting Large Kernel Design in CNNs</h4><ul>
+<li>Presentation: Poster</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Ding_Scaling_Up_Your_Kernels_to_31x31_Revisiting_Large_Kernel_Design_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: Tsinghua University, MEGVII</li>
+<li>PI: Guiguang Ding</li>
+</ul>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162583/cvpr22/Screen_Shot_2022-07-06_at_10.56.10_PM_xzgaiq.png" alt=""></div>
+<p>This paper proposes RepLKNet to scale ConvNet kernels to 31x31 with reparameterization.</p>
+<h4 id="A-ViT-Adaptive-Tokens-for-Efficient-Vision-Transformer"><a href="#A-ViT-Adaptive-Tokens-for-Efficient-Vision-Transformer" class="headerlink" title="A-ViT: Adaptive Tokens for Efficient Vision Transformer"></a>A-ViT: Adaptive Tokens for Efficient Vision Transformer</h4><ul>
+<li>Presentation: Poster</li>
+<li>Paper: <a href="https://arxiv.org/pdf/2112.07658.pdf" target="_blank" rel="noopener">arxiv</a></li>
+<li>Institution: NVIDIA</li>
+</ul>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657162765/cvpr22/Screen_Shot_2022-07-06_at_10.59.11_PM_wrgahn.png" alt=""></div>
+<p>Let ViT learns which image patches to preserve, discarding redundant spatial tokens to achieve higher efficiency. The loss is designed to balance the accuracy-efficiency trade-off. </p>
+<h3 id="The-Ongoing-Debate-of-ConvNet-or-Transformer"><a href="#The-Ongoing-Debate-of-ConvNet-or-Transformer" class="headerlink" title="The Ongoing Debate of ConvNet or Transformer"></a>The Ongoing Debate of ConvNet or Transformer</h3><h4 id="A-ConvNet-for-the-2020s"><a href="#A-ConvNet-for-the-2020s" class="headerlink" title="A ConvNet for the 2020s"></a>A ConvNet for the 2020s</h4><ul>
+<li>Presentation: Oral</li>
+<li>Paper: <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Liu_A_ConvNet_for_the_2020s_CVPR_2022_paper.pdf" target="_blank" rel="noopener">cvf</a></li>
+<li>Institution: Berkeley and FAIR</li>
+<li>PIs: Trevor Darrell, Saining Xie<div class="figure center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657163017/cvpr22/Screen_Shot_2022-07-06_at_11.03.21_PM_kjpfjq.png" alt=""></div>
+</li>
+</ul>
+<p>This work is aimed to test the limit of a pure ConvNet. They gradually “modernize” a standard ResNet towards the design of a vision Transformer, and discover several key components that contribute to the performance difference:</p>
+<ul>
+<li>Stage Compute Raio</li>
+<li>Non-overlapping Conv, “to pachify”</li>
+<li>Use depthwise convolution</li>
+<li>Inverted bottleneck</li>
+<li>Large kernel sizes</li>
+<li>Replacing ReLU with GELU</li>
+<li>Fewer activation and normalization</li>
+<li>Substitue BN with LN</li>
+<li>Separate downsampling layer from basic block</li>
+</ul>
+<h3 id="Demos"><a href="#Demos" class="headerlink" title="Demos"></a>Demos</h3><p>CVPR features a huge demo event. Companies and sponsors showcase their product or research work with actual demos and give out gifts. Here are some pictures of the demos:</p>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157997/cvpr22/companies/IMG_0960_c6deos.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157997/cvpr22/companies/IMG_0960_c6deos.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0956_jj6a3z.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0956_jj6a3z.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0963_t7xaox.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0963_t7xaox.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0970_ogl7lg.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0970_ogl7lg.jpg" alt=""></a></div>
+<div class="figure fig-100" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0955_kvmmd9.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0955_kvmmd9.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0957_oji0vx.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_0957_oji0vx.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_1011_pfk9j4.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657157996/cvpr22/companies/IMG_1011_pfk9j4.jpg" alt=""></a></div>
+<p>Tesla’s cyber truck is a lot larger than I imagined. </p>
+<h3 id="Student-Activity-Speed-Mentoring"><a href="#Student-Activity-Speed-Mentoring" class="headerlink" title="Student Activity: Speed Mentoring"></a>Student Activity: Speed Mentoring</h3><p>Students attending CVPR has a chance to participate “speed mentoring”. Each table sits around students with one empty seat, and mentors will rotate between tables. Mentors are professors and senior researchers from the industry. The students are free to ask about any questions. </p>
+<h3 id="Tesla-AI-Event"><a href="#Tesla-AI-Event" class="headerlink" title="Tesla AI Event"></a>Tesla AI Event</h3><p>Companies would invite authors of relevant field to their exclusive events during CVPR. I was fortunate enough to be invited to Tesla’s AI event.</p>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158319/cvpr22/companies/IMG_0999_lfllkl.jpg" alt="Elon connecting from the Giga factory in Austin"><span class="caption">Elon connecting from the Giga factory in Austin</span></div>
+<p>Elon Musk connected with the live audience and did an AMA. The head engineers at Tesla introduce their vision-first approach on self-driving. I also had a chance to test drive a prototype Tesla Modle 3 on New Orlean’s streets.</p>
+<h3 id="Special-Event-at-Mardi-Gras-World"><a href="#Special-Event-at-Mardi-Gras-World" class="headerlink" title="Special Event at Mardi Gras World"></a>Special Event at Mardi Gras World</h3><div class="figure center" style="width:100%"; >
+<video class="fig-video" controls alt="Live Performance at Mardi Gras World">
+<source src="https://res.cloudinary.com/dxzx2bxch/video/upload/v1657158373/cvpr22/534_egugtu.mov" type="video/mp4">
+<p>Your browser doesn't support HTML5 Video :/</p></video>
+<span class="caption">Live Performance at Mardi Gras World</span>
+</div>
+<p>This is CVPR’s reception event happening in parallel with Tesla’s event. I didn’t attend this event but here is a video from a friend who did. </p>
+<h2 id="New-Orleans"><a href="#New-Orleans" class="headerlink" title="New Orleans"></a>New Orleans</h2><h3 id="The-Streets-and-the-Mississippi-River"><a href="#The-Streets-and-the-Mississippi-River" class="headerlink" title="The Streets and the Mississippi River"></a>The Streets and the Mississippi River</h3><div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0841_ihs8io.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0841_ihs8io.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0832_ybyhs0.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0832_ybyhs0.jpg" alt=""></a></div>
+<div class="figure fig-100" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158829/cvpr22/new_orleans/IMG_0821_t5w6cm.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158829/cvpr22/new_orleans/IMG_0821_t5w6cm.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158635/cvpr22/new_orleans/IMG_0828_sbsuas.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158635/cvpr22/new_orleans/IMG_0828_sbsuas.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158635/cvpr22/new_orleans/IMG_0826_mvjqoa.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158635/cvpr22/new_orleans/IMG_0826_mvjqoa.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0837_g6bd6c.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_0837_g6bd6c.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_1065_gypgo3.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1657158636/cvpr22/new_orleans/IMG_1065_gypgo3.jpg" alt=""></a></div>
+<p>New Orleans is a beatiful city, and it’s much hotter and humid than I expected. During the day it’s about 38 degree with 70% humidity. During the conference I visited the French Quarter and walked along the Mississippi River. </p>
+<h3 id="Food"><a href="#Food" class="headerlink" title="Food"></a>Food</h3><div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969788/cvpr22/food/IMG_0846_rbjw4w.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969788/cvpr22/food/IMG_0846_rbjw4w.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0894_dbg5me.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0894_dbg5me.jpg" alt=""></a></div>
+<div class="figure fig-100" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_0773_oea7cl.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_0773_oea7cl.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0910_wppska.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0910_wppska.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_0914_xexnrv.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_0914_xexnrv.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_1062_wh3rpp.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_1062_wh3rpp.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0848_hdo91n.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969789/cvpr22/food/IMG_0848_hdo91n.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969814/cvpr22/food/IMG_0793_wtltxh.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969814/cvpr22/food/IMG_0793_wtltxh.jpg" alt=""></a></div>
+<div class="figure fig-50" style="width:;"><a class="fancybox" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_1061_acuxwn.jpg" target="_blank" rel="noopener" title="" data-caption="" data-fancybox="default"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1656969790/cvpr22/food/IMG_1061_acuxwn.jpg" alt=""></a></div>
+<p>The seafood in New Orleans is supreme. I especially enjoyed the seafood gumbo and the crawfish pasta. The Gus world-famous fried chicken is also delicious, make sure to try it if you are in New Orleans.</p>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/profiling/"
+                    data-tooltip="Efficient Path Profiling"
+                    aria-label="NEXT: Efficient Path Profiling"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/cvpr22/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/cvpr22/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/profiling/"
+                    data-tooltip="Efficient Path Profiling"
+                    aria-label="NEXT: Efficient Path Profiling"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/cvpr22/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/cvpr22/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/cvpr22/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/cvpr22/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/cvpr22/';
+              
+            this.page.identifier = 'cvpr22/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

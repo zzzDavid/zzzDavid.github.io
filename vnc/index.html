@@ -1,0 +1,919 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>How to Set Up VNC Server on a Linux Machine - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\n\nFirst of all, what is VNC?\n\nIn computing, Virtual Network Computing is a graphical desktop-sharing system that uses the Remote Frame Buffer protocol to remotely control another computer. It transmits the keyboard and mouse events from one computer to another, relaying the graphical-screen updates back in the other direction, over a network. Wikipedia\n\nBasically it’s a remote desktop controller for all platforms. \nSettingsI was asked to start a VNC server on a CentOS remote machine, for people to access from Windows laptops. The CentOS server already has vncserver installed, also I am using conda on it.\nInstall VNC serverFor completeness, I shall include a description of how to install VNC server.\n\nInstall a desktop on the remote machine\n\nWe often access the remote server without GUI desktop. If it doesn’t have desktop installed, we need to do it ourselves.\nFor Ubuntu:1$ sudo apt-get install xfce xfce4-goodies -yor for CentOS:12$ sudo yum -y groups install \"GNOME Desktop\"$ startx\n\nInstall vncserver\n\nOn Ubuntu:1$ sudo apt-get install tightvncserver -yor on CentOS:1$ sudo yum install tigervnc-server\nIf the installation is successful, we should be able to run1$ vncserver\nStart VNC serverStart VNC server by running:1$ vncserver\nCheck if it is running by checking the log:12345678910111213(base) niansong@auros-gaming3e-2:~$ cat ~/.vnc/auros-gaming3e-2\\:1.logXvnc TigerVNC 1.8.0 - built Nov  2 2018 19:05:14Copyright (C) 1999-2017 TigerVNC Team and many others (see README.txt)See http://www.tigervnc.org for information on TigerVNC.Underlying X server release 12001000, The X.Org FoundationWed Feb 24 11:00:32 2021 vncext:      VNC extension running! vncext:      Listening for VNC connections on all interface(s), port 5901 vncext:      created VNC server for screen 0GLib-GIO-Message: 11:00:36.261: Using the 'memory' GSettings backend.  Your settings will not be saved or shared with other applications.Wed Feb 24 11:00:36 2021 ComparingUpdateTracker: 0 pixels in / 0 pixels out ComparingUpdateTracker: (1:-nan ratio)\nIf the log looks like this, no error or exiting, we are good.\nidb conflict with condaI got following complain in the log:\ngnome-session[4099]: WARNING: Could not make bus activated clients aware of\nDISPLAY=:7 environment variable: Failed to connect to socket\n/tmp/dbus-TAq3EF94t4: Connection refusedß\nAfter trying many methods, I found that it was a dbus conflict casued by conda (who could have thought). We need to uninstall the dbus module in conda:\n12$ conda uninstall dbus$ conda uninstall --offline dbus # uninstall without internet\nConnect to VNC serverWe need to forward the display port to localhost, and then connect to it with VNC Viewer.\nFirst we run this command:\n1$ ssh -L 5901:127.0.0.1:5901 -C -N -l &lt;username&gt; &lt;ip&gt;\n\n5901: the port at which vncserver is running, check it in the log. 5901 is the default number.\n&lt;username&gt; is the username you input when running vncserver\nip is the server’s ip\n\nIn my case:\n\nThis command will hang in there, no output is normal. Then we connect to localhost:5901 on VNC Viewer:\n\nIf the connection is successful, we will be able to get the desktop GUI like this:\n\nReferenceshttps://github.com/TigerVNC/tigervnc/issues/592https://www.techrepublic.com/article/how-to-install-a-vnc-server-on-linux/https://www.techrepublic.com/article/how-to-install-a-gui-on-top-of-centos-7/","dateCreated":"2021-02-24T13:45:23-05:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2021-02-24T13:45:23-05:00","description":"A tutorial to setup VNC server on linux machines for remote GUI desktop access.","headline":"How to Set Up VNC Server on a Linux Machine","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/vnc/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/vnc/"}</script>
+    <meta name="description" content="A tutorial to setup VNC server on linux machines for remote GUI desktop access.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="How to Set Up VNC Server on a Linux Machine">
+<meta property="og:url" content="https://www.zzzdavid.tech/vnc/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="A tutorial to setup VNC server on linux machines for remote GUI desktop access.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150673/posts/ssh_iyyxkv.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150673/posts/VNC_viewer_qjaqw9.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150676/posts/success_z6vplv.png">
+<meta property="article:published_time" content="2021-02-24T18:45:23.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.150Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150673/posts/ssh_iyyxkv.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            How to Set Up VNC Server on a Linux Machine
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2021-02-24T13:45:23-05:00">
+	
+		    Feb 24, 2021
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <!-- excerpt -->
+<h1 id="table-of-contents">Table of Contents</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Settings"><span class="toc-text">Settings</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Install-VNC-server"><span class="toc-text">Install VNC server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Start-VNC-server"><span class="toc-text">Start VNC server</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#idb-conflict-with-conda"><span class="toc-text">idb conflict with conda</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Connect-to-VNC-server"><span class="toc-text">Connect to VNC server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li></ol>
+<p>First of all, what is VNC?</p>
+<blockquote>
+<p>In computing, Virtual Network Computing is a graphical desktop-sharing system that uses the Remote Frame Buffer protocol to remotely control another computer. It transmits the keyboard and mouse events from one computer to another, relaying the graphical-screen updates back in the other direction, over a network. Wikipedia</p>
+</blockquote>
+<p>Basically it’s a remote desktop controller for all platforms. </p>
+<h2 id="Settings"><a href="#Settings" class="headerlink" title="Settings"></a>Settings</h2><p>I was asked to start a VNC server on a CentOS remote machine, for people to access from Windows laptops. The CentOS server already has <code>vncserver</code> installed, also I am using conda on it.</p>
+<h2 id="Install-VNC-server"><a href="#Install-VNC-server" class="headerlink" title="Install VNC server"></a>Install VNC server</h2><p>For completeness, I shall include a description of how to install VNC server.</p>
+<ol>
+<li>Install a desktop on the remote machine</li>
+</ol>
+<p>We often access the remote server without GUI desktop. If it doesn’t have desktop installed, we need to do it ourselves.</p>
+<p>For Ubuntu:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-<span class="builtin-name">get</span> install xfce xfce4-goodies -y</span><br></pre></td></tr></table></figure><br>or for CentOS:<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>sudo yum -y groups install <span class="string">"GNOME Desktop"</span></span><br><span class="line"><span class="variable">$ </span>startx</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>Install <code>vncserver</code></li>
+</ol>
+<p>On Ubuntu:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install tightvncserver -y</span><br></pre></td></tr></table></figure><br>or on CentOS:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install tigervnc-server</span><br></pre></td></tr></table></figure></p>
+<p>If the installation is successful, we should be able to run<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vncserver</span><br></pre></td></tr></table></figure></p>
+<h2 id="Start-VNC-server"><a href="#Start-VNC-server" class="headerlink" title="Start VNC server"></a>Start VNC server</h2><p>Start VNC server by running:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vncserver</span><br></pre></td></tr></table></figure></p>
+<p>Check if it is running by checking the log:<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">(base) niansong@auros-gaming3e-2:~$ cat ~/.vnc/auros-gaming3e-2\:1.log</span><br><span class="line">Xvnc TigerVNC 1.8.0 - built Nov  2 2018 19:05:14</span><br><span class="line">Copyright (C) 1999-2017 TigerVNC Team and many others (see README.txt)</span><br><span class="line">See http://www.tigervnc.org <span class="keyword">for</span> information on TigerVNC.</span><br><span class="line">Underlying X server release 12001000, The X.Org Foundation</span><br><span class="line">Wed Feb 24 11:00:32 2021</span><br><span class="line"> vncext:      VNC extension running!</span><br><span class="line"> vncext:      Listening <span class="keyword">for</span> VNC connections on all interface(s), port 5901</span><br><span class="line"> vncext:      created VNC server <span class="keyword">for</span> screen 0</span><br><span class="line">GLib-GIO-Message: 11:00:36.261: Using the <span class="string">'memory'</span> GSettings backend.  Your settings will not be saved or shared with other applications.</span><br><span class="line">Wed Feb 24 11:00:36 2021</span><br><span class="line"> ComparingUpdateTracker: 0 pixels <span class="keyword">in</span> / 0 pixels out</span><br><span class="line"> ComparingUpdateTracker: (1:-nan ratio)</span><br></pre></td></tr></table></figure></p>
+<p>If the log looks like this, no error or exiting, we are good.</p>
+<h3 id="idb-conflict-with-conda"><a href="#idb-conflict-with-conda" class="headerlink" title="idb conflict with conda"></a>idb conflict with conda</h3><p>I got following complain in the log:</p>
+<p><code>gnome-session[4099]: WARNING: Could not make bus activated clients aware of
+DISPLAY=:7 environment variable: Failed to connect to socket
+/tmp/dbus-TAq3EF94t4: Connection refused</code>ß</p>
+<p>After trying many methods, I found that it was a dbus conflict casued by conda (who could have thought). We need to uninstall the dbus module in conda:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ conda uninstall dbus</span><br><span class="line">$ conda uninstall --offline dbus <span class="comment"># uninstall without internet</span></span><br></pre></td></tr></table></figure>
+<h2 id="Connect-to-VNC-server"><a href="#Connect-to-VNC-server" class="headerlink" title="Connect to VNC server"></a>Connect to VNC server</h2><p>We need to forward the display port to localhost, and then connect to it with VNC Viewer.</p>
+<p>First we run this command:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -L 5901:127.0.0.1:5901 -C -N -l &lt;username&gt; &lt;ip&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>5901</code>: the port at which <code>vncserver</code> is running, check it in the log. 5901 is the default number.</li>
+<li><code>&lt;username&gt;</code> is the username you input when running <code>vncserver</code></li>
+<li><code>ip</code> is the server’s ip</li>
+</ul>
+<p>In my case:</p>
+<div class="figure center" style="width:80%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150673/posts/ssh_iyyxkv.png" style="width:80%;"alt=""></div>
+<p>This command will hang in there, no output is normal. Then we connect to <code>localhost:5901</code> on VNC Viewer:</p>
+<div class="figure center" style="width:90%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150673/posts/VNC_viewer_qjaqw9.png" style="width:90%;"alt=""></div>
+<p>If the connection is successful, we will be able to get the desktop GUI like this:</p>
+<div class="figure center" style="width:90%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1614150676/posts/success_z6vplv.png" style="width:90%;"alt=""></div>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p><a href="https://github.com/TigerVNC/tigervnc/issues/592" target="_blank" rel="noopener">https://github.com/TigerVNC/tigervnc/issues/592</a><br><a href="https://www.techrepublic.com/article/how-to-install-a-vnc-server-on-linux/" target="_blank" rel="noopener">https://www.techrepublic.com/article/how-to-install-a-vnc-server-on-linux/</a><br><a href="https://www.techrepublic.com/article/how-to-install-a-gui-on-top-of-centos-7/" target="_blank" rel="noopener">https://www.techrepublic.com/article/how-to-install-a-gui-on-top-of-centos-7/</a></p>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/profiling/"
+                    data-tooltip="Efficient Path Profiling"
+                    aria-label="PREVIOUS: Efficient Path Profiling"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/SystemC/"
+                    data-tooltip="Introduction to SystemC"
+                    aria-label="NEXT: Introduction to SystemC"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/vnc/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/vnc/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/profiling/"
+                    data-tooltip="Efficient Path Profiling"
+                    aria-label="PREVIOUS: Efficient Path Profiling"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/SystemC/"
+                    data-tooltip="Introduction to SystemC"
+                    aria-label="NEXT: Introduction to SystemC"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/vnc/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/vnc/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#table-of-contents" aria-label="Table of Contents">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/vnc/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/vnc/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/vnc/';
+              
+            this.page.identifier = 'vnc/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

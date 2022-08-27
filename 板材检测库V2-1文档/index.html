@@ -1,0 +1,1007 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>Meausre, the C# Imaging Library - Documentations - Niansong Zhang</title><meta name="robots" content="noindex">
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"Documentations for a collaborative project with X.G. Intelligent Systems:An Automatic Geometric Dimensions Measuring Method for Industrial Profiles Based on Computer Vision and Image Processing.\n\nGitHub代码地址为：MeasurePlate，这是一个私人仓库，需要相应的权限才可以进入。项目环境配置：\n12345- Visual Studio 2015及以上- .netFramework 4.6以上 （推荐使用4.7.2）- .netFramework 开发环境- OpenCvSharp4.Windows- NUnit（UnitTest测试用，非必要）文件结构1234567891011Measure                             Project名称|-------UnitTests.cs                单元测试文件|-------src        |------Circles.cs           检测内部孔        |------Curves.cs            检测外轮廓中曲线        |------Lines.cs             检测外轮廓中直线        |------MeasurePlates.cs     Constructor与Destructor        |------Rectangular.cs       当板材为矩形板时，检测角点与长宽对角线差        |------Slots.cs             检测铣槽与锯槽        |------TestAPIs.cs          测试中查看Private成员使用的API        |______Utils.cs             工具函数\n主要函数此项目的全部代码使用一个命名空间Measure, 并且整个库只包含一个类MeasurePlate。此类中包含7个功能函数，分别实现板材检测的某一个功能。功能函数的名称与作用如下：下表中所有函数输出变量status表示函数执行状态，输入unit代表输出数据的单位，默认毫米，后不再赘述。\n\n\n\n\n函数名称\n输入输出\n函数功能\n\n\n\n\nFourCorners(out float[] corners)\ncorners为float[8]，分别为从左上角开始顺时针四角的坐标。\n检测矩形板的四个角点坐标\n\n\nWidthHeightDiagonal(out float[] lengths)\nlengths为float[3] {宽、高、对角线差}\n检测矩形板的宽高与对角线差\n\n\nLines(out List&lt;float[]&gt; lines)\nlines为float[5]的List，每个数组分别为{X1, Y1, X2, Y2, 直线长}\n检测外轮廓中的直线位置与长度\n\n\nCurves(out List&lt;float[]&gt; curves)\ncurves为float[3]的List，每个数组代表一个弧线边所在圆，分别为{圆心X，圆心Y，半径}\n检测外轮廓弧线边对应的相切圆的位置与半径\n\n\nCircles(out List&lt;float[]&gt; circles)\ncircles为float[3]的List，每个数组代表一个圆孔，分别为{圆心X，圆心Y，半径}\n检测内部圆孔的圆心位置与半径\n\n\nMillSlot(out List&lt;float[]&gt; slots)\nslots为float[8]代表矩形铣槽的四点X，Y坐标，分别为{Ax，Ay，Bx，……，Dx，Dy}\n检测铣槽的四个角点\n\n\nSawSlot(out List&lt;float[]&gt; slots)\nsslots为float[6]的List，每个数组代表一个矩形锯槽，分别为{中心X，中心Y，宽，高，角度，朝向（0为纵向，1为横向）}\n检测锯槽的位置与信息\n\n\n\n\n\n项目代码解析1. MeasurePlate.csMeasurePlate.cs包含类的Constructor与Destructor. Constructor承担了大部分计算任务，其主要功能是在实例化的同时初始化后面检测函数要用到的数据，比如原图与亮度调整后的图；同时，为了避免重复计算，Constructor从图中提取板材的内外轮廓。\nConstructorConstructor的工作流程：找ROI -&gt; 从整张图片截取ROI部分 -&gt; 计算参数 -&gt; 确定内外轮廓1234567891011121314151617public MeasurePlate(string filename, float ratio = 0.11F)&#123;    var image = 读入灰度图;    var smallImage = 缩小(image);    var largestContour = 二值化并找最大外轮廓(smallImage);        板材灰度均值 = Mean(最大轮廓内区域)    _roi = 外接矩形（largestContour）* 扩大倍数    _roiEx = 扩张(roi) * 扩大倍数    _im = image中_roiEx的部分    _imAdjusted = 亮度调整(_im)    外轮廓 = _SetExtContour();    内轮廓 = _SetIntContour(); &#125;\nSetExtContour()这是对参数非常敏感且对检测结果影响很大的一部分。在原来的图片素材中由于板材分亮暗，锯槽会不会把板材分为两部分等多种情况，所以这里主要采用分类讨论的办法。分类讨论的依据就是板材的灰度均值，板材外轮廓是否被锯槽分为两部分等等。只有正确检测了外轮廓，才能得到正确的直线检测与弧线检测结果。123456789101112131415161718192021222324252627282930313233343536373839404142434445private Point[] _SetExtContour()&#123;    预处理    使用OTSU法尝试第一次二值化，寻找外轮廓       统计面积大于1e5的外轮廓的个数n    if (n &gt; 1)        板材被锯槽分为多个部分        _extContour = 最大的外轮廓    extPoly = 多边形拟合(_extContour)    if (extPoly中包含的点太多了 || 板材被锯槽分为多个部分)    &#123;        重新使用固定阈值二值化，并分情况讨论        var threshold = 0        if (板材比较亮 &amp;&amp; 没有锯槽 &amp;&amp; extPoly中包含的点不是特别多)        &#123;            这是外轮廓上有破边孔的亮色板            threshold = 240        &#125;        else if (板材比较亮 &amp;&amp; 没有锯槽 &amp;&amp; extPoly中包含的点太多了)        &#123;            这是比较亮的板，但是OSTU法让它的外轮廓损坏严重            threshold = 80        &#125;        else if (板材稍微暗 &amp;&amp; 没有锯槽)        &#123;            threshold = 80        &#125;        else if (板材很亮 &amp;&amp; 有锯槽)        &#123;            threshold = 80            定一个很低的阈值来得到完整的外轮廓        &#125;        else            thresold = 45 对于暗色板                使用threshold二值化        寻找外轮廓        _extContour = 最大的外轮廓    &#125;&#125;\n2. Rectangular.csRectangular.cs 包含两个相互独立的函数。这两个函数在仅仅应用外轮廓的结果计算需要返回的量。这两部分代码基本上不被调用。\nFourCorners123456public bool FourCorners(out float[] corners, out string status)&#123;    找到外轮廓最小外接矩形    返回最小外接矩形的四个角点坐标&#125;\nWidthHeighDiagonal12345678910public bool WidthHeightDiagonal (oiut float[] lengths, out stirng status)&#123;    var polygon = 多边形拟合(_extContour)    计算多边形中心点    根据与中心的相对位置确定上下左右四个角点    计算宽，高，对角线差&#125;\n3. Circles.cs孔检测，包含两个函数Circles和_MergeCircles，其中_MergeCircles被Circles调用，其作用是合并距离很近的多个孔检测结果。Circles是孔检测的主要函数。\nCircles1234567891011121314151617181920212223242526272829303132333435363738394041424344454647public bool Circles(out List&lt;float[]&gt; circles, out string status)&#123;    &#x2F;&#x2F; 找内轮廓中的圆形    if (板材是暗色板)    &#123;        imDarkBin &#x3D; 预处理并且缩小(_im);        imDarkBin &#x3D; Canny(imDarkBin)        for (r &#x3D; 20; r&lt;&#x3D;30; r+&#x3D;2)        &#123;            houghCircles &#x3D; cv2.HoughCircles(imDarkBin, r);        &#125;        avgCircles &#x3D; _MergeCircles(houghCircles);        circles0 &#x3D; 放大(avgCircles)    &#125;    else &#x2F;&#x2F;板材不是暗色板    &#123;        foreach (var contour in _intContours)        &#123;            rect &#x3D; 外接矩形(contour)            if(rect的长或宽太小)                continue                        area &#x3D; 求轮廓面积(contour)            if(area太小 || area&#x2F;矩形面积太小)                continue            hull &#x3D; cv2.ConvexHull(contour)            circle &#x3D; 最小二乘法圆拟合(hull)            circles1.Add(circle)        &#125;        circles1 &#x3D; 去除重叠的圆(circles1)    &#125;    &#x2F;&#x2F; 找外轮廓中的圆形    imOut &#x3D; 将板材外轮廓附近的图像抠出来(_im);    imCanny &#x3D; Canny(imOut)    imOut &#x3D; cv2.GaussianBlur(imOut, Mean(imCanny));    for (i &#x3D; 24; i&lt;&#x3D;30; i+&#x3D;2)    &#123;        houghCircles2 &#x3D; cv2.HoughCircle(imOut, i)    &#125;    circles2 &#x3D; houghCircles2    &#x2F;&#x2F; 合并结果    circles3 &#x3D; _MergeCircles(circles0, circles1, circles2)&#125;\n这里_MergeCircles是一个帮助函数，它的作用是将圆心邻近并且半径大小差不多的圆合并成一个圆。\n4. Curves.csCurvesCurves函数是用来检测外轮廓上的弧线的。需要注意的是，如果外轮廓上的弧线超过了半圆，则算作破边孔，不包括在曲线检测之内。123456789101112131415161718192021222324public bool Curves(out List&lt;float[]&gt; curves, out string status)&#123;    points &#x3D; new List&lt;Point&gt;(_extPolygon);    &#x2F;&#x2F; 这个函数分析外轮廓上的所有点，返回一个与外轮廓上点的数目相同的数组    &#x2F;&#x2F; 数组中是0或1，对应于外轮廓上的每一个点    &#x2F;&#x2F; 如果该点在弧线上则对应1，否则对应0    var isOnCircle &#x3D; _AnalyzePointsOnCircle(Points);    &#x2F;&#x2F;为了让所有在外轮廓上的点连续(一条弧线的点不会分别出现在数组开头和结尾)    &#x2F;&#x2F;需要对数组旋转    while(isOnCircle最后一个元素&#x3D;&#x3D;1)    &#123;        isOnCircle &#x3D; 旋转(isOnCircle);        points &#x3D; 旋转(Points);    &#125;        &#x2F;&#x2F; 计算圆的方程    for (;;)    &#123;        curve &#x3D; inOnCircle中每段连续的1;        circle &#x3D; 最小二乘法拟合圆的方程(curve)    &#125;&#125;\n5. Lines.csLines.cs只包含一个函数Line，用来检测外轮廓上的直线。\nLines1234567891011121314151617181920212223242526public bool Lines(out List&lt;float[]&gt; lines, out string status)&#123;    points &#x3D; new List&lt;Point&gt;(_exPolygon);    n &#x3D; points.长度    if ( n &lt; 3)        ERROR(&quot;点太少了&quot;)        if (是矩形板)    &#123;        if(n &#x3D;&#x3D;5)        &#123;            点多了一个，尝试减少一个点        &#125;        &#x2F;&#x2F;去除了一个点之后有4个点，生成直线        for(var i&#x3D;0; i&lt;4; i++)            lines.Add(两点确定的直线)    &#125;    else    &#123;        &#x2F;&#x2F; 这个函数分析外轮廓上的所有点，返回一个与外轮廓上点的数目相同的数组        &#x2F;&#x2F; 数组中是0或1，对应于外轮廓上的每一个点        &#x2F;&#x2F; 如果该点在弧线上则对应1，否则对应0        var isOnCircle &#x3D; _AnalyzePointsOnCircle(points)        然后根据isOnCircle的信息把直线添加到lines中    &#125;&#125;\n6. Slots.csSlots.cs包含两个函数，分别负责检测锯槽与铣槽。\nMillSlot铣槽的检测方法十分简单，在Constructor中已经提取了内轮廓，所以就利用提取的内轮廓，从中筛选出近似矩形的轮廓即可123456789101112131415public bool MillSlot(out List&lt;float[]&gt; slots, out string status)&#123;    &#x2F;&#x2F; 判断内轮廓是否为矩形    foreach (var intContour in _intContours)    &#123;        box &#x3D; 最小外接矩形(intContour);        areaOfContour &#x3D; 求轮廓面积(intContour)        areaOfBox &#x3D; box.Width * box.height        if(!_IsCircularContour(intContour) &amp;&amp; areaOfContour足够大 &amp;&amp;             areaofContour&#x2F;areaofBox &gt; 1.1 * PI&#x2F;4)            SlotContour.Add(intContour)    &#125;    &#x2F;&#x2F; 根据SlotContour计算需要返回的值&#125;\nSawSlotSawSlot相对比较复杂，它主要将槽分为两种方法检测。一种是亮色板的锯槽，因为这种锯槽会把板面分为两部分，这样就会出现两个较大的轮廓。另一种是暗色板的槽，这种槽内部有很多干扰的噪声，这种槽就利用Canny提取纹理信息，利用槽内部的花纹检测。123456789101112131415161718192021public bool SawSlot(out list&lt;float[]&gt; slots, out string status)&#123;    if (不是亮色板||没有两个较大的轮廓||不是矩形板)    &#123;        去除背景噪声        根据_mean分类讨论，二值化并进行Canny操作得到imCanny        lineSegments &#x3D; 霍夫直线(imCanny);        horizontal &#x3D; 选出所有横线(lineSegments)        vertical &#x3D; 选出所有竖线(lineSegments)        将横线竖线分别画在两张图上，并且膨胀                分别提取所有轮廓，找到外接矩形面积最大的轮廓，这些轮廓就是槽    &#125;    else    &#123;        转到FindSlotRect函数，返回槽的信息    &#125;&#125;\nFindSlotRect这个函数是专门用来处理亮色板锯槽的函数，因为亮色板的锯槽会把板面分成几个部分，所以二值化之后就产生多个外轮廓1234567891011121314151617private List&lt;float[]&gt; FindSlotRect()&#123;    预处理    extContours &#x3D; 找到所有外轮廓()    boxes &#x3D; 找到所有外接矩形(extContours)    根据boxes中前两个box的位置关系判断槽是横的还是竖的    if(横的)        boxes.从左到右排序    else        boxes.从上到下排序        这时相邻两个box之间就是一个槽，按顺序找到槽的位置，并返回&#125;\n7. Utils.cs这里全部都是帮助函数，这些函数基本不需要修改，因此下面仅列出这些函数的函数名与对应的功能\n\n\n\n\n函数名称\n函数功能\n\n\n\n\n_Distance\n计算两点之间距离\n\n\n_AngleOfLine\n计算直线与水平夹角\n\n\n_AngleOfPath\n计算三个点确定的两条直线的夹角\n\n\n_LargestContourByRect\n输入一组轮廓，返回这些轮廓中外接矩形面积最大的轮廓\n\n\n_LargestContourByArea\n输入一组轮廓，返回这些轮廓中面积最大的轮廓\n\n\n_LargestRectsByArea\n输入一组矩形，返回一个或多个面积较大的矩形\n\n\n_isCircularContour\n判断一个轮廓是否为近似圆的轮廓\n\n\n_AnalyzePointsOnCircle\n分析轮廓所有点，返回一个与输入数组同样大小的数组，对应输入数组中的每个点，如果该点在曲线上则对应位置为1，反之为0\n\n\n_LSCircleFitting\n最小二乘法圆拟合\n\n\n_imAdjust\n调整暗色板亮度\n\n\n_IsSawSlot\n判断轮廓是否为锯槽\n\n\n_SmartLines\n智能直线，将外轮廓上的毛刺，拐角缺损等去掉，达到理想的外轮廓检测效果\n\n\n_InterSection4\n计算四个点确定给的两条直线的交点\n\n\n_Entropy\n计算图像的熵\n\n\n\n\n","dateCreated":"2019-04-13T23:42:01-04:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2019-04-13T23:42:01-04:00","description":"Documentations for a collaborative project with X.G. Intelligent Systems:An Automatic Geometric Dimensions Measuring Method for Industrial Profiles Based on Computer Vision and Image Processing.","headline":"Meausre, the C# Imaging Library - Documentations","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/","keywords":"CV, Insider"}</script>
+    <meta name="description" content="Documentations for a collaborative project with X.G. Intelligent Systems:An Automatic Geometric Dimensions Measuring Method for Industrial Profiles Based on Computer Vision and Image Processing.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Meausre, the C# Imaging Library - Documentations">
+<meta property="og:url" content="https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="Documentations for a collaborative project with X.G. Intelligent Systems:An Automatic Geometric Dimensions Measuring Method for Industrial Profiles Based on Computer Vision and Image Processing.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-04-14T03:42:01.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.150Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="CV">
+<meta property="article:tag" content="Insider">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Meausre, the C# Imaging Library - Documentations
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-04-13T23:42:01-04:00">
+	
+		    Apr 13, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <p>Documentations for a collaborative project with X.G. Intelligent Systems:<br>An Automatic Geometric Dimensions Measuring Method for Industrial Profiles Based on Computer Vision and Image Processing.</p>
+<a id="more"></a>
+<p>GitHub代码地址为：<a href="https://github.com/Patrick22414/MeasurePlate.git" target="_blank" rel="noopener">MeasurePlate</a>，这是一个私人仓库，需要相应的权限才可以进入。项目环境配置：</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">-</span> <span class="selector-tag">Visual</span> <span class="selector-tag">Studio</span> 2015及以上</span><br><span class="line"><span class="selector-tag">-</span> <span class="selector-class">.netFramework</span> 4<span class="selector-class">.6</span>以上 （推荐使用4<span class="selector-class">.7</span><span class="selector-class">.2</span>）</span><br><span class="line"><span class="selector-tag">-</span> <span class="selector-class">.netFramework</span> 开发环境</span><br><span class="line"><span class="selector-tag">-</span> <span class="selector-tag">OpenCvSharp4</span><span class="selector-class">.Windows</span></span><br><span class="line"><span class="selector-tag">-</span> <span class="selector-tag">NUnit</span>（<span class="selector-tag">UnitTest</span>测试用，非必要）</span><br></pre></td></tr></table></figure></h2><h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Measure                             Project名称</span><br><span class="line"><span class="string">|-------UnitTests.cs                单元测试文件</span></span><br><span class="line"><span class="string">|-------src</span></span><br><span class="line">        <span class="string">|------Circles.cs           检测内部孔</span></span><br><span class="line">        <span class="string">|------Curves.cs            检测外轮廓中曲线</span></span><br><span class="line">        <span class="string">|------Lines.cs             检测外轮廓中直线</span></span><br><span class="line">        <span class="string">|------MeasurePlates.cs     Constructor与Destructor</span></span><br><span class="line">        <span class="string">|------Rectangular.cs       当板材为矩形板时，检测角点与长宽对角线差</span></span><br><span class="line">        <span class="string">|------Slots.cs             检测铣槽与锯槽</span></span><br><span class="line">        <span class="string">|------TestAPIs.cs          测试中查看Private成员使用的API</span></span><br><span class="line">        <span class="string">|______Utils.cs             工具函数</span></span><br></pre></td></tr></table></figure>
+<h2 id="主要函数"><a href="#主要函数" class="headerlink" title="主要函数"></a>主要函数</h2><p>此项目的全部代码使用一个命名空间<code>Measure</code>, 并且整个库只包含一个类<code>MeasurePlate</code>。此类中包含7个功能函数，分别实现板材检测的某一个功能。功能函数的名称与作用如下：<br>下表中所有函数输出变量<code>status</code>表示函数执行状态，输入<code>unit</code>代表输出数据的单位，默认毫米，后不再赘述。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">函数名称</th>
+<th style="text-align:center">输入输出</th>
+<th style="text-align:left">函数功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>FourCorners(out float[] corners)</code></td>
+<td style="text-align:center">corners为<code>float[8]</code>，分别为从左上角开始顺时针四角的坐标。</td>
+<td style="text-align:left">检测矩形板的四个角点坐标</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>WidthHeightDiagonal(out float[] lengths)</code></td>
+<td style="text-align:center">lengths为<code>float[3] {宽、高、对角线差}</code></td>
+<td style="text-align:left">检测矩形板的宽高与对角线差</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Lines(out List&lt;float[]&gt; lines)</code></td>
+<td style="text-align:center">lines为<code>float[5]</code>的List，每个数组分别为<code>{X1, Y1, X2, Y2, 直线长}</code></td>
+<td style="text-align:left">检测外轮廓中的直线位置与长度</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Curves(out List&lt;float[]&gt; curves)</code></td>
+<td style="text-align:center">curves为<code>float[3]</code>的List，每个数组代表一个弧线边所在圆，分别为<code>{圆心X，圆心Y，半径}</code></td>
+<td style="text-align:left">检测外轮廓弧线边对应的相切圆的位置与半径</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Circles(out List&lt;float[]&gt; circles)</code></td>
+<td style="text-align:center">circles为<code>float[3]</code>的List，每个数组代表一个圆孔，分别为<code>{圆心X，圆心Y，半径}</code></td>
+<td style="text-align:left">检测内部圆孔的圆心位置与半径</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MillSlot(out List&lt;float[]&gt; slots)</code></td>
+<td style="text-align:center">slots为<code>float[8]</code>代表矩形铣槽的四点X，Y坐标，分别为<code>{Ax，Ay，Bx，……，Dx，Dy}</code></td>
+<td style="text-align:left">检测铣槽的四个角点</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>SawSlot(out List&lt;float[]&gt; slots)</code></td>
+<td style="text-align:center">sslots为<code>float[6]</code>的List，每个数组代表一个矩形锯槽，分别为<code>{中心X，中心Y，宽，高，角度，朝向（0为纵向，1为横向）}</code></td>
+<td style="text-align:left">检测锯槽的位置与信息</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="项目代码解析"><a href="#项目代码解析" class="headerlink" title="项目代码解析"></a>项目代码解析</h2><h3 id="1-MeasurePlate-cs"><a href="#1-MeasurePlate-cs" class="headerlink" title="1. MeasurePlate.cs"></a>1. MeasurePlate.cs</h3><p><code>MeasurePlate.cs</code>包含类的Constructor与Destructor. Constructor承担了大部分计算任务，其主要功能是在实例化的同时初始化后面检测函数要用到的数据，比如原图与亮度调整后的图；同时，为了避免重复计算，Constructor从图中提取板材的内外轮廓。</p>
+<h4 id="Constructor"><a href="#Constructor" class="headerlink" title="Constructor"></a>Constructor</h4><p>Constructor的工作流程：找ROI -&gt; 从整张图片截取ROI部分 -&gt; 计算参数 -&gt; 确定内外轮廓<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MeasurePlate</span><span class="params">(string filename, <span class="keyword">float</span> ratio = <span class="number">0.11</span>F)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> image = 读入灰度图;</span><br><span class="line">    <span class="keyword">var</span> smallImage = 缩小(image);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> largestContour = 二值化并找最大外轮廓(smallImage);</span><br><span class="line">    </span><br><span class="line">    板材灰度均值 = Mean(最大轮廓内区域)</span><br><span class="line">    _roi = 外接矩形（largestContour）* 扩大倍数</span><br><span class="line">    _roiEx = 扩张(roi) * 扩大倍数</span><br><span class="line"></span><br><span class="line">    _im = image中_roiEx的部分</span><br><span class="line">    _imAdjusted = 亮度调整(_im)</span><br><span class="line"></span><br><span class="line">    外轮廓 = _SetExtContour();</span><br><span class="line">    内轮廓 = _SetIntContour(); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="SetExtContour"><a href="#SetExtContour" class="headerlink" title="SetExtContour()"></a>SetExtContour()</h4><p>这是对参数非常敏感且对检测结果影响很大的一部分。在原来的图片素材中由于板材分亮暗，锯槽会不会把板材分为两部分等多种情况，所以这里主要采用分类讨论的办法。分类讨论的依据就是板材的灰度均值，板材外轮廓是否被锯槽分为两部分等等。只有正确检测了外轮廓，才能得到正确的直线检测与弧线检测结果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Point[] _SetExtContour()</span><br><span class="line">&#123;</span><br><span class="line">    预处理</span><br><span class="line"></span><br><span class="line">    使用OTSU法尝试第一次二值化，寻找外轮廓</span><br><span class="line">   </span><br><span class="line">    统计面积大于<span class="number">1e5</span>的外轮廓的个数n</span><br><span class="line">    <span class="keyword">if</span> (n &gt; <span class="number">1</span>)</span><br><span class="line">        板材被锯槽分为多个部分</span><br><span class="line">    </span><br><span class="line">    _extContour = 最大的外轮廓</span><br><span class="line">    extPoly = 多边形拟合(_extContour)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (extPoly中包含的点太多了 || 板材被锯槽分为多个部分)</span><br><span class="line">    &#123;</span><br><span class="line">        重新使用固定阈值二值化，并分情况讨论</span><br><span class="line">        <span class="keyword">var</span> threshold = <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> (板材比较亮 &amp;&amp; 没有锯槽 &amp;&amp; extPoly中包含的点不是特别多)</span><br><span class="line">        &#123;</span><br><span class="line">            这是外轮廓上有破边孔的亮色板</span><br><span class="line">            threshold = <span class="number">240</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (板材比较亮 &amp;&amp; 没有锯槽 &amp;&amp; extPoly中包含的点太多了)</span><br><span class="line">        &#123;</span><br><span class="line">            这是比较亮的板，但是OSTU法让它的外轮廓损坏严重</span><br><span class="line">            threshold = <span class="number">80</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (板材稍微暗 &amp;&amp; 没有锯槽)</span><br><span class="line">        &#123;</span><br><span class="line">            threshold = <span class="number">80</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (板材很亮 &amp;&amp; 有锯槽)</span><br><span class="line">        &#123;</span><br><span class="line">            threshold = <span class="number">80</span></span><br><span class="line">            定一个很低的阈值来得到完整的外轮廓</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            thresold = <span class="number">45</span> 对于暗色板</span><br><span class="line">        </span><br><span class="line">        使用threshold二值化</span><br><span class="line">        寻找外轮廓</span><br><span class="line">        _extContour = 最大的外轮廓</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-Rectangular-cs"><a href="#2-Rectangular-cs" class="headerlink" title="2. Rectangular.cs"></a>2. Rectangular.cs</h3><p><code>Rectangular.cs</code> 包含两个相互独立的函数。这两个函数在仅仅应用外轮廓的结果计算需要返回的量。这两部分代码基本上不被调用。</p>
+<h4 id="FourCorners"><a href="#FourCorners" class="headerlink" title="FourCorners"></a>FourCorners</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> bool <span class="title">FourCorners</span><span class="params">(out <span class="keyword">float</span>[] corners, out string status)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    找到外轮廓最小外接矩形</span><br><span class="line"></span><br><span class="line">    返回最小外接矩形的四个角点坐标</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="WidthHeighDiagonal"><a href="#WidthHeighDiagonal" class="headerlink" title="WidthHeighDiagonal"></a>WidthHeighDiagonal</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> bool <span class="title">WidthHeightDiagonal</span> <span class="params">(oiut <span class="keyword">float</span>[] lengths, out stirng status)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> polygon = 多边形拟合(_extContour)</span><br><span class="line"></span><br><span class="line">    计算多边形中心点</span><br><span class="line"></span><br><span class="line">    根据与中心的相对位置确定上下左右四个角点</span><br><span class="line"></span><br><span class="line">    计算宽，高，对角线差</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-Circles-cs"><a href="#3-Circles-cs" class="headerlink" title="3. Circles.cs"></a>3. Circles.cs</h3><p>孔检测，包含两个函数<code>Circles</code>和<code>_MergeCircles</code>，其中<code>_MergeCircles</code>被<code>Circles</code>调用，其作用是合并距离很近的多个孔检测结果。<code>Circles</code>是孔检测的主要函数。</p>
+<h4 id="Circles"><a href="#Circles" class="headerlink" title="Circles"></a>Circles</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">public bool Circles(out List&lt;float[]&gt; circles, out string status)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 找内轮廓中的圆形</span><br><span class="line">    if (板材是暗色板)</span><br><span class="line">    &#123;</span><br><span class="line">        imDarkBin &#x3D; 预处理并且缩小(_im);</span><br><span class="line">        imDarkBin &#x3D; Canny(imDarkBin)</span><br><span class="line">        for (r &#x3D; 20; r&lt;&#x3D;30; r+&#x3D;2)</span><br><span class="line">        &#123;</span><br><span class="line">            houghCircles &#x3D; cv2.HoughCircles(imDarkBin, r);</span><br><span class="line">        &#125;</span><br><span class="line">        avgCircles &#x3D; _MergeCircles(houghCircles);</span><br><span class="line">        circles0 &#x3D; 放大(avgCircles)</span><br><span class="line">    &#125;</span><br><span class="line">    else &#x2F;&#x2F;板材不是暗色板</span><br><span class="line">    &#123;</span><br><span class="line">        foreach (var contour in _intContours)</span><br><span class="line">        &#123;</span><br><span class="line">            rect &#x3D; 外接矩形(contour)</span><br><span class="line">            if(rect的长或宽太小)</span><br><span class="line">                continue</span><br><span class="line">            </span><br><span class="line">            area &#x3D; 求轮廓面积(contour)</span><br><span class="line">            if(area太小 || area&#x2F;矩形面积太小)</span><br><span class="line">                continue</span><br><span class="line"></span><br><span class="line">            hull &#x3D; cv2.ConvexHull(contour)</span><br><span class="line">            circle &#x3D; 最小二乘法圆拟合(hull)</span><br><span class="line"></span><br><span class="line">            circles1.Add(circle)</span><br><span class="line">        &#125;</span><br><span class="line">        circles1 &#x3D; 去除重叠的圆(circles1)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 找外轮廓中的圆形</span><br><span class="line">    imOut &#x3D; 将板材外轮廓附近的图像抠出来(_im);</span><br><span class="line">    imCanny &#x3D; Canny(imOut)</span><br><span class="line">    imOut &#x3D; cv2.GaussianBlur(imOut, Mean(imCanny));</span><br><span class="line">    for (i &#x3D; 24; i&lt;&#x3D;30; i+&#x3D;2)</span><br><span class="line">    &#123;</span><br><span class="line">        houghCircles2 &#x3D; cv2.HoughCircle(imOut, i)</span><br><span class="line">    &#125;</span><br><span class="line">    circles2 &#x3D; houghCircles2</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 合并结果</span><br><span class="line">    circles3 &#x3D; _MergeCircles(circles0, circles1, circles2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里<code>_MergeCircles</code>是一个帮助函数，它的作用是将圆心邻近并且半径大小差不多的圆合并成一个圆。</p>
+<h3 id="4-Curves-cs"><a href="#4-Curves-cs" class="headerlink" title="4. Curves.cs"></a>4. Curves.cs</h3><h4 id="Curves"><a href="#Curves" class="headerlink" title="Curves"></a>Curves</h4><p><code>Curves</code>函数是用来检测外轮廓上的弧线的。需要注意的是，如果外轮廓上的弧线超过了半圆，则算作破边孔，不包括在曲线检测之内。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public bool Curves(out List&lt;float[]&gt; curves, out string status)</span><br><span class="line">&#123;</span><br><span class="line">    points &#x3D; new List&lt;Point&gt;(_extPolygon);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 这个函数分析外轮廓上的所有点，返回一个与外轮廓上点的数目相同的数组</span><br><span class="line">    &#x2F;&#x2F; 数组中是0或1，对应于外轮廓上的每一个点</span><br><span class="line">    &#x2F;&#x2F; 如果该点在弧线上则对应1，否则对应0</span><br><span class="line">    var isOnCircle &#x3D; _AnalyzePointsOnCircle(Points);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;为了让所有在外轮廓上的点连续(一条弧线的点不会分别出现在数组开头和结尾)</span><br><span class="line">    &#x2F;&#x2F;需要对数组旋转</span><br><span class="line">    while(isOnCircle最后一个元素&#x3D;&#x3D;1)</span><br><span class="line">    &#123;</span><br><span class="line">        isOnCircle &#x3D; 旋转(isOnCircle);</span><br><span class="line">        points &#x3D; 旋转(Points);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 计算圆的方程</span><br><span class="line">    for (;;)</span><br><span class="line">    &#123;</span><br><span class="line">        curve &#x3D; inOnCircle中每段连续的1;</span><br><span class="line">        circle &#x3D; 最小二乘法拟合圆的方程(curve)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="5-Lines-cs"><a href="#5-Lines-cs" class="headerlink" title="5. Lines.cs"></a>5. Lines.cs</h3><p><code>Lines.cs</code>只包含一个函数<code>Line</code>，用来检测外轮廓上的直线。</p>
+<h4 id="Lines"><a href="#Lines" class="headerlink" title="Lines"></a>Lines</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public bool Lines(out List&lt;float[]&gt; lines, out string status)</span><br><span class="line">&#123;</span><br><span class="line">    points &#x3D; new List&lt;Point&gt;(_exPolygon);</span><br><span class="line">    n &#x3D; points.长度</span><br><span class="line">    if ( n &lt; 3)</span><br><span class="line">        ERROR(&quot;点太少了&quot;)</span><br><span class="line">    </span><br><span class="line">    if (是矩形板)</span><br><span class="line">    &#123;</span><br><span class="line">        if(n &#x3D;&#x3D;5)</span><br><span class="line">        &#123;</span><br><span class="line">            点多了一个，尝试减少一个点</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;去除了一个点之后有4个点，生成直线</span><br><span class="line">        for(var i&#x3D;0; i&lt;4; i++)</span><br><span class="line">            lines.Add(两点确定的直线)</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F; 这个函数分析外轮廓上的所有点，返回一个与外轮廓上点的数目相同的数组</span><br><span class="line">        &#x2F;&#x2F; 数组中是0或1，对应于外轮廓上的每一个点</span><br><span class="line">        &#x2F;&#x2F; 如果该点在弧线上则对应1，否则对应0</span><br><span class="line">        var isOnCircle &#x3D; _AnalyzePointsOnCircle(points)</span><br><span class="line">        然后根据isOnCircle的信息把直线添加到lines中</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="6-Slots-cs"><a href="#6-Slots-cs" class="headerlink" title="6. Slots.cs"></a>6. Slots.cs</h3><p><code>Slots.cs</code>包含两个函数，分别负责检测锯槽与铣槽。</p>
+<h4 id="MillSlot"><a href="#MillSlot" class="headerlink" title="MillSlot"></a>MillSlot</h4><p>铣槽的检测方法十分简单，在Constructor中已经提取了内轮廓，所以就利用提取的内轮廓，从中筛选出近似矩形的轮廓即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public bool MillSlot(out List&lt;float[]&gt; slots, out string status)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; 判断内轮廓是否为矩形</span><br><span class="line">    foreach (var intContour in _intContours)</span><br><span class="line">    &#123;</span><br><span class="line">        box &#x3D; 最小外接矩形(intContour);</span><br><span class="line">        areaOfContour &#x3D; 求轮廓面积(intContour)</span><br><span class="line">        areaOfBox &#x3D; box.Width * box.height</span><br><span class="line">        if(!_IsCircularContour(intContour) &amp;&amp; areaOfContour足够大 &amp;&amp; </span><br><span class="line">            areaofContour&#x2F;areaofBox &gt; 1.1 * PI&#x2F;4)</span><br><span class="line">            SlotContour.Add(intContour)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 根据SlotContour计算需要返回的值</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="SawSlot"><a href="#SawSlot" class="headerlink" title="SawSlot"></a>SawSlot</h4><p><code>SawSlot</code>相对比较复杂，它主要将槽分为两种方法检测。一种是亮色板的锯槽，因为这种锯槽会把板面分为两部分，这样就会出现两个较大的轮廓。另一种是暗色板的槽，这种槽内部有很多干扰的噪声，这种槽就利用Canny提取纹理信息，利用槽内部的花纹检测。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public bool SawSlot(out list&lt;float[]&gt; slots, out string status)</span><br><span class="line">&#123;</span><br><span class="line">    if (不是亮色板||没有两个较大的轮廓||不是矩形板)</span><br><span class="line">    &#123;</span><br><span class="line">        去除背景噪声</span><br><span class="line"></span><br><span class="line">        根据_mean分类讨论，二值化并进行Canny操作得到imCanny</span><br><span class="line"></span><br><span class="line">        lineSegments &#x3D; 霍夫直线(imCanny);</span><br><span class="line">        horizontal &#x3D; 选出所有横线(lineSegments)</span><br><span class="line">        vertical &#x3D; 选出所有竖线(lineSegments)</span><br><span class="line"></span><br><span class="line">        将横线竖线分别画在两张图上，并且膨胀</span><br><span class="line">        </span><br><span class="line">        分别提取所有轮廓，找到外接矩形面积最大的轮廓，这些轮廓就是槽</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        转到FindSlotRect函数，返回槽的信息</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="FindSlotRect"><a href="#FindSlotRect" class="headerlink" title="FindSlotRect"></a>FindSlotRect</h4><p>这个函数是专门用来处理亮色板锯槽的函数，因为亮色板的锯槽会把板面分成几个部分，所以二值化之后就产生多个外轮廓<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">private List&lt;float[]&gt; FindSlotRect()</span><br><span class="line">&#123;</span><br><span class="line">    预处理</span><br><span class="line"></span><br><span class="line">    extContours &#x3D; 找到所有外轮廓()</span><br><span class="line"></span><br><span class="line">    boxes &#x3D; 找到所有外接矩形(extContours)</span><br><span class="line"></span><br><span class="line">    根据boxes中前两个box的位置关系判断槽是横的还是竖的</span><br><span class="line"></span><br><span class="line">    if(横的)</span><br><span class="line">        boxes.从左到右排序</span><br><span class="line">    else</span><br><span class="line">        boxes.从上到下排序</span><br><span class="line">    </span><br><span class="line">    这时相邻两个box之间就是一个槽，按顺序找到槽的位置，并返回</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="7-Utils-cs"><a href="#7-Utils-cs" class="headerlink" title="7. Utils.cs"></a>7. Utils.cs</h3><p>这里全部都是帮助函数，这些函数基本不需要修改，因此下面仅列出这些函数的函数名与对应的功能</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">函数名称</th>
+<th style="text-align:center">函数功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>_Distance</code></td>
+<td style="text-align:center">计算两点之间距离</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_AngleOfLine</code></td>
+<td style="text-align:center">计算直线与水平夹角</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_AngleOfPath</code></td>
+<td style="text-align:center">计算三个点确定的两条直线的夹角</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LargestContourByRect</code></td>
+<td style="text-align:center">输入一组轮廓，返回这些轮廓中外接矩形面积最大的轮廓</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LargestContourByArea</code></td>
+<td style="text-align:center">输入一组轮廓，返回这些轮廓中面积最大的轮廓</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LargestRectsByArea</code></td>
+<td style="text-align:center">输入一组矩形，返回一个或多个面积较大的矩形</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_isCircularContour</code></td>
+<td style="text-align:center">判断一个轮廓是否为近似圆的轮廓</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_AnalyzePointsOnCircle</code></td>
+<td style="text-align:center">分析轮廓所有点，返回一个与输入数组同样大小的数组，对应输入数组中的每个点，如果该点在曲线上则对应位置为1，反之为0</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_LSCircleFitting</code></td>
+<td style="text-align:center">最小二乘法圆拟合</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_imAdjust</code></td>
+<td style="text-align:center">调整暗色板亮度</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_IsSawSlot</code></td>
+<td style="text-align:center">判断轮廓是否为锯槽</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_SmartLines</code></td>
+<td style="text-align:center">智能直线，将外轮廓上的毛刺，拐角缺损等去掉，达到理想的外轮廓检测效果</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_InterSection4</code></td>
+<td style="text-align:center">计算四个点确定给的两条直线的交点</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>_Entropy</code></td>
+<td style="text-align:center">计算图像的熵</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- flag of hidden posts -->
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/%E6%9D%BF%E6%9D%90%E6%A3%80%E6%B5%8B%E5%BA%93V2-1%E6%96%87%E6%A1%A3/';
+              
+            this.page.identifier = '板材检测库V2-1文档/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

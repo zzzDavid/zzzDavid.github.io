@@ -1,0 +1,978 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>Introduction to SystemC - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nOverview\nLoosely speaking, SystemC allows a user to write a set of C++ functions (processes) that are executed under control of a scheduler in an order that mimics the pasasge of simulated time and that are synchronized and communicate in a way that is useful for modeling electronic systems containing hardware and embedded software.\n\nThe module is the basic buidling block of a system. A module can contain the following:\n\nPorts\nExports\nChannels\nProcesses\nEvents\nInstances of other modules\nOther data members and functions\n\nThey are all implemented as C++ classes. The base class of them is sc_object.\nConceptsSchedulerAt the core of SystemC is a simulation engine containing a process scheduler. Processes are executed in response to the notification of events. Events are notified at specific points in simulated time. \nElaboration and simulationThe execution of SystemC application consists of elaboration and simulation.During elaboration, the module hierarchy is created, followed by simulation, during which the scheduler runs. \nKernelThe kernel is the part of SystemC class library implementation that provides the core functionality for elaboration and the scheduler.\nProcesses (threads)Processes are C++ functions registered with kernel. Processes are used to perform computations and hence to model the functionality of a system. They can be created statically during elaboration or dynamically during simulation.\nSensitivityThe sensitivity of a process identifies the set of events that would cause the scheduler to execute that process should those events be notified. Both static and dynamic sensitivity are provided. Static sensitivity is created at the time the process instance is created. Dynamic sensitivity is created during the execution of the process’s associated function. \nChannels and interfacesInterfaces are abstract classes that declare a set of pure virtual functions. These virtual functions are implemented by Channel. In other words, a channel is said to implement an interface if it defines all of the methods declared in that interface.Channels serve to encapsulate the mechanism through which processes communicate and hence to model the communication aspects or protocols of a system. It can be used for inter-module communication or inter-process communication within a module.Since the methods of a interface are virtual functions, they are typically called through an interface. A channel may implement more than one interface, and a single interface may be implemented by more than one channel.\nPorts and exportsA port specifies that a particular interface is required by a module, whereas an export spefices that a particular interface is provided by a module.Ports and exports forward method calls from the processes within a module to channels, to which those ports and exports are bound. Ports can only forward method calls up or out of a module, whereas exports can only forward method calls down or into a module.\nTutorialIntroductionCombinational example:\n1234567891011121314151617# include &lt;systemc.h&gt;SC_MODULE ( and ) &#123;    sc_in&lt;DT&gt;   a;    sc_in&lt;DT&gt;   b;    sc_out&lt;DT&gt;  f;    void func() &#123;        f.write(a.read() &amp; b.read())    &#125;        SC_CTOR( and ) &#123;       // turn the function into a thread       SC_METHOD( func );       // specify sensitivity       sensitive &lt;&lt; a &lt;&lt; b ;    &#125;&#125;\nDT is a placeholder, such as sc_int&lt;4&gt;, sc_uint&lt;4&gt;\nSequential example:123456789101112131415161718# include &lt;systemc.h&gt;SC_MODULE ( and ) &#123;    sc_in&lt;DT&gt;   a;    sc_in&lt;DT&gt;   b;    sc_in&lt;bool&gt; clk;    sc_out&lt;DT&gt;  f;    void func() &#123;        f.write(a.read() &amp; b.read())    &#125;        SC_CTOR( and ) &#123;       // turn the function into a thread       SC_METHOD( func );       // sensitive to positive edge of the clock       sensitive &lt;&lt; clk.pos();       // sensitive &lt;&lt; clk.neg(); for negative edge    &#125;\nSC_CTOR\nThe module constructor\nPut the name of the module in the paranthesis\nInside {} we need to construct the processes and sensitivity list\n\nPort I/O\nSystemC uses functions to read from sc_in&lt;&gt; or write to sc_out&lt;&gt;\n.read()\n.write()\n\n\nExamples\nx = inp.read();\noutp.write(val);\n\n\n\nProcesses (thread)\nA thread is a function made to act like a hardware process\nRuns concurrently\nSensitive to signals, clock edges, or fixed amounts of simulation time\nNot called by the user, always active\n\n\nSystemC supports 3 kinds of threads\nSC_METHOD()\nExecutes once every sensitivity event\nRuns continuously\nAnalogous to a Verilog @always block\nSynthesizable\nUseful for combinational expressions or simple sequential logic that finishes in 1 clock cycle\n\n\nSC_THREAD()\nRuns only once at start of simulation them suspends itself when done\nCan contain an infinite loop to execute code at fixed rate of time\nNOT Synthesizable\nUseful in testbenches to describe clocks or initial startup signal sequences\n\n\nSC_CTHREAD()\nC means “clocked”\nRuns continuously\nReferences a clock edge\nSynthesizable\nCan take one or more clock cycles to execute a single iteration\nUsed in 99% of all high-level behavioral designs\n\n\n\n\n\nSC_CTHREAD Clocked Threads\nSC_THREAD() only support one-cycle operations, not much difference with RTL code\nSC_CTHREAD()is not limited to one cycle\nCan contain continuous loops\nCan contain large blocks of code with operations of controls\nGood for behavior description\n\n\n\nLet’s look at a FIR example:1234567891011121314#include &lt;systemc.h&gt;SC_MODULE( fir ) &#123;    sc_in&lt;bool&gt; clk;    sc_in&lt;bool&gt; rst;    sc_in&lt; sc_int&lt;16&gt; &gt; inp;    sc_out&lt; sc_int&lt;16&gt; &gt; outp;    void fir_main(); // just the declaration        SC_CTOR( fir ) &#123;        SC_CTHREAD( fir_main, clk.pos() ); // second arg is sensitivity        reset_signal_is(rst, true); // reset signal, true means reset is asserted high    &#125;&#125;;\nThis is how to define compute with reset:\n12345678910111213141516171819// Coefficients for each FIRconst sc_uint&lt;8&gt; coef[5] = &#123;    18, 77, 108, 28, 21, 34&#125;// FIR Main threadvoid fir::fir_main() &#123;    // Reset code    // Reset internal variables    // Reset outputs    wait();    while ( true ) &#123;        // Read inputs        // Algorithm code        // Write outputs        wait();    &#125;&#125;\n\nwait() means wait for one clock cycle\nEverything from the beginning to the first wait() statement will become a reset state in the generated RTL\nAt each clock cycle the simulator checks if the reset is triggered. If it is, the process restarts from the beginning.\n\nLet’s write the FIR filter:123456789101112131415161718void fir::fir_main(void) &#123;    // Reset    outp.write(0);    wait();    while(true) &#123;        for (int i = 5-1; i &gt; 0; i--) &#123;            taps[i] = taps[i-1];        &#125;        taps[0] = inp.read();        sc_int&lt;16&gt; val;        for ( int i = 0; i &lt;5 ; i++) &#123;            val += coef[i] * taps[i];        &#125;        outp.write(val);        wait();    &#125;&#125;\nTestbenchTest environment:\n- SYSTEM\n  - testbench module\n  - design module\nTop level system module looks like this:123456789101112SC_MODULE( SYSTEM ) &#123;    // Module declarations    // Local signal declarations    SC_CTOR(SYSTEM) &#123;        // Module instance signal connections    &#125;    ~SYSTEM()        // Destructor&#125;;\nNow we code the actual top level program:\nmain.cc:123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051#include&lt;systemc.h&gt;#include \"fir.h\"#include \"tb.h\"SC_MODULE(SYSTEM) &#123;    // note that we are declaring pointers    tb  *tb0;    fir *fir0;    // declare signals, note that clock is special    sc_signal&lt;bool&gt; rst_sig;    sc_signal&lt; sc_int&lt;16&gt; &gt; inp_sig;    sc_signal&lt; sc_int&lt;16&gt; &gt; outp_sig;    sc_clock clk_sig;    // constructor to tie them together    SC_CTOR(SYSTEM)        // first thing we do is parameterize clock signal        : clk_sig (\"clk_sig\", 10, SC_NS) // this is a copy constructor        // \"clk_sig\" is the name of the clock        // 10 is the clock period, SC_NS is nano second, the unit of clock    &#123;        // to instantiate modules we use \"new\"        tb0 = new tb(\"tb0\");        tb0-&gt;clk(clk_sig);        tb0-&gt;rst(rst_sig);        tb0-&gt;inp(inp_sig);        tb0-&gt;outp(outp_sig);        fir0 = new fir(\"fir0\");        fir0-&gt;clk(clk_sig); // thus the signals are connected        fir0-&gt;rst(rst_sig);        fir0-&gt;inp(inp_sig);        fir0-&gt;outp(outp_sig);    &#125;    // destructor    ~SYSTEM() &#123;        // memory housekeeping        delete tb0;        delete fir0;    &#125;&#125;SYSTEM *top = NULL;int src_main(int argc, char* argv[]) // our good'ol arg count and arg vector&#123;    top = new SYSTEM(\"top\");    sc_start();    return 0;&#125;Now we write testbench tb.h:123456789101112131415161718#include &lt;systemc.h&gt;SC_MODULE(tb) &#123;    // note that the directions are inverted    sc_in&lt;bool&gt; clk;    sc_out&lt;bool&gt; rst;    sc_out&lt; sc_int&lt;16&gt; &gt; inp;    sc_in&lt; sc_int&lt;16&gt; &gt; outp;    // source produces the out signal    // sink receives in signals    void source();    void sink();    SC_CTOR(tb) &#123;        SC_CTHREAD(source, clk.pos());        SC_CTHREAD(sink, clk.pos());    &#125;&#125;tb.cc12345678910111213141516171819202122232425262728293031323334353637#include \"tb.h\"void tb::source() &#123;    // Reset    inp.write(0);    rst.write(1);    wait();    rst.write(0);    wait();     // set rst to high, wait one cycle and set it to low, wait another cycle,    // this way we generate a complete reset pulse    sc_int&lt;16&gt; tmp;    // send stimulus to FIR    for (int i = 0; i &lt; 64; i++) &#123;        if (i &gt; 23 &amp;&amp; i &lt; 29&gt;)            tmp = 256;        else            tmp = 0;        inp.write(tmp);        wait();    &#125;&#125;```c++void tb::sink() &#123;    sc_int&lt;16&gt; indata;    // read output coming from DUT    for (int i = 0; i &lt; 64; i++) &#123;        indata = outp.read();        wait();        cout &lt;&lt; i &lt;&lt; \" : \\t\" &lt;&lt; indata.to_int() &lt;&lt; endl;        // note the to_int()    &#125;    // finally, we stop the simulation    sc_stop();&#125;\nReference\nFORTE’s Learn SystemC Youtube playlist\n","dateCreated":"2021-02-08T13:45:23-05:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2021-02-08T13:45:23-05:00","description":"SystemC is a system-level modeling language, often applied to high-level synthesis.","headline":"Introduction to SystemC","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/SystemC/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/SystemC/"}</script>
+    <meta name="description" content="SystemC is a system-level modeling language, often applied to high-level synthesis.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Introduction to SystemC">
+<meta property="og:url" content="https://www.zzzdavid.tech/SystemC/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="SystemC is a system-level modeling language, often applied to high-level synthesis.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-02-08T18:45:23.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.148Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Introduction to SystemC
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2021-02-08T13:45:23-05:00">
+	
+		    Feb 08, 2021
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Research/">Research</a>, <a class="category-link" href="/categories/Research/Tutorial/">Tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <!-- excerpt -->
+<h1 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h1><blockquote>
+<p>Loosely speaking, SystemC allows a user to write a set of C++ functions (processes) that are executed under control of a scheduler in an order that mimics the pasasge of simulated time and that are synchronized and communicate in a way that is useful for modeling electronic systems containing hardware and embedded software.</p>
+</blockquote>
+<p>The <em>module</em> is the basic buidling block of a system. A module can contain the following:</p>
+<ul>
+<li>Ports</li>
+<li>Exports</li>
+<li>Channels</li>
+<li>Processes</li>
+<li>Events</li>
+<li>Instances of other modules</li>
+<li>Other data members and functions</li>
+</ul>
+<p>They are all implemented as C++ classes. The base class of them is <code>sc_object</code>.</p>
+<h2 id="Concepts"><a href="#Concepts" class="headerlink" title="Concepts"></a>Concepts</h2><h4 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h4><p>At the core of SystemC is a simulation engine containing a process scheduler. Processes are executed in response to the notification of events. Events are notified at specific points in simulated time. </p>
+<h4 id="Elaboration-and-simulation"><a href="#Elaboration-and-simulation" class="headerlink" title="Elaboration and simulation"></a>Elaboration and simulation</h4><p>The execution of SystemC application consists of elaboration and simulation.<br>During elaboration, the module hierarchy is created, followed by simulation, during which the scheduler runs. </p>
+<h4 id="Kernel"><a href="#Kernel" class="headerlink" title="Kernel"></a>Kernel</h4><p>The kernel is the part of SystemC class library implementation that provides the core functionality for elaboration and the scheduler.</p>
+<h4 id="Processes-threads"><a href="#Processes-threads" class="headerlink" title="Processes (threads)"></a>Processes (threads)</h4><p>Processes are C++ functions registered with kernel. Processes are used to perform computations and hence to model the functionality of a system. They can be created statically during elaboration or dynamically during simulation.</p>
+<h4 id="Sensitivity"><a href="#Sensitivity" class="headerlink" title="Sensitivity"></a>Sensitivity</h4><p>The sensitivity of a process identifies the set of events that would cause the scheduler to execute that process should those events be notified. Both <em>static</em> and <em>dynamic</em> sensitivity are provided. Static sensitivity is created at the time the process instance is created. Dynamic sensitivity is created during the execution of the process’s associated function. </p>
+<h4 id="Channels-and-interfaces"><a href="#Channels-and-interfaces" class="headerlink" title="Channels and interfaces"></a>Channels and interfaces</h4><p>Interfaces are abstract classes that declare a set of pure virtual functions. These virtual functions are <em>implemented</em> by Channel. In other words, a channel is said to implement an interface if it defines all of the methods declared in that interface.<br>Channels serve to encapsulate the mechanism through which processes communicate and hence to model the communication aspects or protocols of a system. It can be used for inter-module communication or inter-process communication within a module.<br>Since the methods of a interface are virtual functions, they are typically called through an interface. A channel may implement more than one interface, and a single interface may be implemented by more than one channel.</p>
+<h4 id="Ports-and-exports"><a href="#Ports-and-exports" class="headerlink" title="Ports and exports"></a>Ports and exports</h4><p>A port specifies that a particular interface is required by a module, whereas an export spefices that a particular interface is provided by a module.<br>Ports and exports forward method calls from the processes within a module to channels, to which those ports and exports are bound. Ports can only forward method calls <em>up</em> or <em>out</em> of a module, whereas exports can only forward method calls <em>down</em> or <em>into</em> a module.</p>
+<h1 id="Tutorial"><a href="#Tutorial" class="headerlink" title="Tutorial"></a>Tutorial</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Combinational example:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">include</span> <span class="meta-string">&lt;systemc.h&gt;</span></span></span><br><span class="line">SC_MODULE ( <span class="keyword">and</span> ) &#123;</span><br><span class="line">    sc_in&lt;DT&gt;   a;</span><br><span class="line">    sc_in&lt;DT&gt;   b;</span><br><span class="line">    sc_out&lt;DT&gt;  f;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        f.write(a.read() &amp; b.read())</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    SC_CTOR( <span class="keyword">and</span> ) &#123;</span><br><span class="line">       <span class="comment">// turn the function into a thread</span></span><br><span class="line">       SC_METHOD( func );</span><br><span class="line">       <span class="comment">// specify sensitivity</span></span><br><span class="line">       sensitive &lt;&lt; a &lt;&lt; b ;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>DT</code> is a placeholder, such as <code>sc_int&lt;4&gt;</code>, <code>sc_uint&lt;4&gt;</code></p>
+<p>Sequential example:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">include</span> <span class="meta-string">&lt;systemc.h&gt;</span></span></span><br><span class="line">SC_MODULE ( <span class="keyword">and</span> ) &#123;</span><br><span class="line">    sc_in&lt;DT&gt;   a;</span><br><span class="line">    sc_in&lt;DT&gt;   b;</span><br><span class="line">    sc_in&lt;<span class="keyword">bool</span>&gt; clk;</span><br><span class="line">    sc_out&lt;DT&gt;  f;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        f.write(a.read() &amp; b.read())</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    SC_CTOR( <span class="keyword">and</span> ) &#123;</span><br><span class="line">       <span class="comment">// turn the function into a thread</span></span><br><span class="line">       SC_METHOD( func );</span><br><span class="line">       <span class="comment">// sensitive to positive edge of the clock</span></span><br><span class="line">       sensitive &lt;&lt; clk.pos();</span><br><span class="line">       <span class="comment">// sensitive &lt;&lt; clk.neg(); for negative edge</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SC-CTOR"><a href="#SC-CTOR" class="headerlink" title="SC_CTOR"></a>SC_CTOR</h3><ul>
+<li>The module constructor</li>
+<li>Put the name of the module in the paranthesis</li>
+<li>Inside <code>{}</code> we need to construct the processes and sensitivity list</li>
+</ul>
+<h3 id="Port-I-O"><a href="#Port-I-O" class="headerlink" title="Port I/O"></a>Port I/O</h3><ul>
+<li>SystemC uses functions to read from <code>sc_in&lt;&gt;</code> or write to <code>sc_out&lt;&gt;</code><ul>
+<li><code>.read()</code></li>
+<li><code>.write()</code></li>
+</ul>
+</li>
+<li>Examples<ul>
+<li><code>x = inp.read();</code></li>
+<li><code>outp.write(val);</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="Processes-thread"><a href="#Processes-thread" class="headerlink" title="Processes (thread)"></a>Processes (thread)</h3><ul>
+<li>A thread is a function made to act like a hardware process<ul>
+<li>Runs concurrently</li>
+<li>Sensitive to signals, clock edges, or fixed amounts of simulation time</li>
+<li>Not called by the user, always active</li>
+</ul>
+</li>
+<li>SystemC supports 3 kinds of threads<ul>
+<li><code>SC_METHOD()</code><ul>
+<li>Executes once every sensitivity event</li>
+<li>Runs continuously</li>
+<li>Analogous to a Verilog <code>@always</code> block</li>
+<li>Synthesizable</li>
+<li>Useful for combinational expressions or simple sequential logic that finishes in 1 clock cycle</li>
+</ul>
+</li>
+<li><code>SC_THREAD()</code><ul>
+<li>Runs only once at start of simulation them suspends itself when done</li>
+<li>Can contain an infinite loop to execute code at fixed rate of time</li>
+<li>NOT Synthesizable</li>
+<li>Useful in testbenches to describe clocks or initial startup signal sequences</li>
+</ul>
+</li>
+<li><code>SC_CTHREAD()</code><ul>
+<li>C means “clocked”</li>
+<li>Runs continuously</li>
+<li>References a clock edge</li>
+<li>Synthesizable</li>
+<li>Can take <strong>one or more</strong> clock cycles to execute a single iteration</li>
+<li>Used in 99% of all high-level behavioral designs</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="SC-CTHREAD-Clocked-Threads"><a href="#SC-CTHREAD-Clocked-Threads" class="headerlink" title="SC_CTHREAD Clocked Threads"></a>SC_CTHREAD Clocked Threads</h2><ul>
+<li><code>SC_THREAD()</code> only support one-cycle operations, not much difference with RTL code</li>
+<li><code>SC_CTHREAD()</code>is not limited to one cycle<ul>
+<li>Can contain continuous loops</li>
+<li>Can contain large blocks of code with operations of controls</li>
+<li>Good for behavior description</li>
+</ul>
+</li>
+</ul>
+<p>Let’s look at a FIR example:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;systemc.h&gt;</span></span></span><br><span class="line">SC_MODULE( fir ) &#123;</span><br><span class="line">    sc_in&lt;<span class="keyword">bool</span>&gt; clk;</span><br><span class="line">    sc_in&lt;<span class="keyword">bool</span>&gt; rst;</span><br><span class="line">    sc_in&lt; sc_int&lt;<span class="number">16</span>&gt; &gt; inp;</span><br><span class="line">    sc_out&lt; sc_int&lt;<span class="number">16</span>&gt; &gt; outp;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">fir_main</span><span class="params">()</span></span>; <span class="comment">// just the declaration</span></span><br><span class="line">    </span><br><span class="line">    SC_CTOR( fir ) &#123;</span><br><span class="line">        SC_CTHREAD( fir_main, clk.pos() ); <span class="comment">// second arg is sensitivity</span></span><br><span class="line">        reset_signal_is(rst, <span class="literal">true</span>); <span class="comment">// reset signal, true means reset is asserted high</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>This is how to define compute with reset:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Coefficients for each FIR</span></span><br><span class="line"><span class="keyword">const</span> sc_uint&lt;<span class="number">8</span>&gt; coef[<span class="number">5</span>] = &#123;</span><br><span class="line">    <span class="number">18</span>, <span class="number">77</span>, <span class="number">108</span>, <span class="number">28</span>, <span class="number">21</span>, <span class="number">34</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// FIR Main thread</span></span><br><span class="line"><span class="keyword">void</span> fir::fir_main() &#123;</span><br><span class="line">    <span class="comment">// Reset code</span></span><br><span class="line">    <span class="comment">// Reset internal variables</span></span><br><span class="line">    <span class="comment">// Reset outputs</span></span><br><span class="line">    wait();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ( <span class="literal">true</span> ) &#123;</span><br><span class="line">        <span class="comment">// Read inputs</span></span><br><span class="line">        <span class="comment">// Algorithm code</span></span><br><span class="line">        <span class="comment">// Write outputs</span></span><br><span class="line">        wait();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>wait()</code> means wait for one clock cycle</li>
+<li>Everything from the beginning to the first <code>wait()</code> statement will become a reset state in the generated RTL</li>
+<li>At each clock cycle the simulator checks if the reset is triggered. If it is, the process restarts from the beginning.</li>
+</ul>
+<p>Let’s write the FIR filter:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> fir::fir_main(<span class="keyword">void</span>) &#123;</span><br><span class="line">    <span class="comment">// Reset</span></span><br><span class="line">    outp.write(<span class="number">0</span>);</span><br><span class="line">    wait();</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">5</span><span class="number">-1</span>; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">            taps[i] = taps[i<span class="number">-1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        taps[<span class="number">0</span>] = inp.read();</span><br><span class="line"></span><br><span class="line">        sc_int&lt;<span class="number">16</span>&gt; val;</span><br><span class="line">        <span class="keyword">for</span> ( <span class="keyword">int</span> i = <span class="number">0</span>; i &lt;<span class="number">5</span> ; i++) &#123;</span><br><span class="line">            val += coef[i] * taps[i];</span><br><span class="line">        &#125;</span><br><span class="line">        outp.write(val);</span><br><span class="line">        wait();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Testbench"><a href="#Testbench" class="headerlink" title="Testbench"></a>Testbench</h2><p>Test environment:</p>
+<pre><code>- SYSTEM
+  - testbench module
+  - design module
+</code></pre><p>Top level system module looks like this:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SC_MODULE( SYSTEM ) &#123;</span><br><span class="line">    <span class="comment">// Module declarations</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Local signal declarations</span></span><br><span class="line"></span><br><span class="line">    SC_CTOR(SYSTEM) &#123;</span><br><span class="line">        <span class="comment">// Module instance signal connections</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~SYSTEM()</span><br><span class="line">        <span class="comment">// Destructor</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>Now we code the actual top level program:</p>
+<p><code>main.cc</code>:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;systemc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"fir.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tb.h"</span></span></span><br><span class="line"></span><br><span class="line">SC_MODULE(SYSTEM) &#123;</span><br><span class="line">    <span class="comment">// note that we are declaring pointers</span></span><br><span class="line">    tb  *tb0;</span><br><span class="line">    fir *fir0;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// declare signals, note that clock is special</span></span><br><span class="line">    sc_signal&lt;<span class="keyword">bool</span>&gt; rst_sig;</span><br><span class="line">    sc_signal&lt; sc_int&lt;<span class="number">16</span>&gt; &gt; inp_sig;</span><br><span class="line">    sc_signal&lt; sc_int&lt;<span class="number">16</span>&gt; &gt; outp_sig;</span><br><span class="line">    sc_clock clk_sig;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// constructor to tie them together</span></span><br><span class="line">    SC_CTOR(SYSTEM)</span><br><span class="line">        <span class="comment">// first thing we do is parameterize clock signal</span></span><br><span class="line">        : clk_sig (<span class="string">"clk_sig"</span>, <span class="number">10</span>, SC_NS) <span class="comment">// this is a copy constructor</span></span><br><span class="line">        <span class="comment">// "clk_sig" is the name of the clock</span></span><br><span class="line">        <span class="comment">// 10 is the clock period, SC_NS is nano second, the unit of clock</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// to instantiate modules we use "new"</span></span><br><span class="line">        tb0 = <span class="keyword">new</span> tb(<span class="string">"tb0"</span>);</span><br><span class="line">        tb0-&gt;clk(clk_sig);</span><br><span class="line">        tb0-&gt;rst(rst_sig);</span><br><span class="line">        tb0-&gt;inp(inp_sig);</span><br><span class="line">        tb0-&gt;outp(outp_sig);</span><br><span class="line"></span><br><span class="line">        fir0 = <span class="keyword">new</span> fir(<span class="string">"fir0"</span>);</span><br><span class="line">        fir0-&gt;clk(clk_sig); <span class="comment">// thus the signals are connected</span></span><br><span class="line">        fir0-&gt;rst(rst_sig);</span><br><span class="line">        fir0-&gt;inp(inp_sig);</span><br><span class="line">        fir0-&gt;outp(outp_sig);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// destructor</span></span><br><span class="line">    ~SYSTEM() &#123;</span><br><span class="line">        <span class="comment">// memory housekeeping</span></span><br><span class="line">        <span class="keyword">delete</span> tb0;</span><br><span class="line">        <span class="keyword">delete</span> fir0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">SYSTEM *top = <span class="literal">NULL</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">src_main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span> <span class="comment">// our good'ol arg count and arg vector</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    top = <span class="keyword">new</span> SYSTEM(<span class="string">"top"</span>);</span><br><span class="line">    sc_start();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>Now we write testbench <code>tb.h</code>:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;systemc.h&gt;</span></span></span><br><span class="line">SC_MODULE(tb) &#123;</span><br><span class="line">    <span class="comment">// note that the directions are inverted</span></span><br><span class="line">    sc_in&lt;<span class="keyword">bool</span>&gt; clk;</span><br><span class="line">    sc_out&lt;<span class="keyword">bool</span>&gt; rst;</span><br><span class="line">    sc_out&lt; sc_int&lt;<span class="number">16</span>&gt; &gt; inp;</span><br><span class="line">    sc_in&lt; sc_int&lt;<span class="number">16</span>&gt; &gt; outp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// source produces the out signal</span></span><br><span class="line">    <span class="comment">// sink receives in signals</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">source</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sink</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    SC_CTOR(tb) &#123;</span><br><span class="line">        SC_CTHREAD(source, clk.pos());</span><br><span class="line">        SC_CTHREAD(sink, clk.pos());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><code>tb.cc</code><br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tb.h"</span></span></span><br><span class="line"><span class="keyword">void</span> tb::source() &#123;</span><br><span class="line">    <span class="comment">// Reset</span></span><br><span class="line">    inp.write(<span class="number">0</span>);</span><br><span class="line">    rst.write(<span class="number">1</span>);</span><br><span class="line">    wait();</span><br><span class="line">    rst.write(<span class="number">0</span>);</span><br><span class="line">    wait(); </span><br><span class="line">    <span class="comment">// set rst to high, wait one cycle and set it to low, wait another cycle,</span></span><br><span class="line">    <span class="comment">// this way we generate a complete reset pulse</span></span><br><span class="line"></span><br><span class="line">    sc_int&lt;<span class="number">16</span>&gt; tmp;</span><br><span class="line">    <span class="comment">// send stimulus to FIR</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">64</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (i &gt; <span class="number">23</span> &amp;&amp; i &lt; <span class="number">29</span>&gt;)</span><br><span class="line">            tmp = <span class="number">256</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            tmp = <span class="number">0</span>;</span><br><span class="line">        inp.write(tmp);</span><br><span class="line">        wait();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">```c++</span><br><span class="line"><span class="keyword">void</span> tb::sink() &#123;</span><br><span class="line">    sc_int&lt;<span class="number">16</span>&gt; indata;</span><br><span class="line">    <span class="comment">// read output coming from DUT</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">64</span>; i++) &#123;</span><br><span class="line">        indata = outp.read();</span><br><span class="line">        wait();</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">" : \t"</span> &lt;&lt; indata.to_int() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="comment">// note the to_int()</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// finally, we stop the simulation</span></span><br><span class="line">    sc_stop();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
+<li><a href="https://www.youtube.com/watch?v=-O2fkVbnqMo&amp;list=PLcvQHr8v8MQLj9tCYyOw44X1PLisEsX-J&amp;index=2" target="_blank" rel="noopener">FORTE’s Learn SystemC Youtube playlist</a></li>
+</ul>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/vnc/"
+                    data-tooltip="How to Set Up VNC Server on a Linux Machine"
+                    aria-label="PREVIOUS: How to Set Up VNC Server on a Linux Machine"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/three-d/"
+                    data-tooltip="3D Scene Understanding"
+                    aria-label="NEXT: 3D Scene Understanding"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/SystemC/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/SystemC/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/vnc/"
+                    data-tooltip="How to Set Up VNC Server on a Linux Machine"
+                    aria-label="PREVIOUS: How to Set Up VNC Server on a Linux Machine"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/three-d/"
+                    data-tooltip="3D Scene Understanding"
+                    aria-label="NEXT: 3D Scene Understanding"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/SystemC/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/SystemC/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/SystemC/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/SystemC/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/SystemC/';
+              
+            this.page.identifier = 'SystemC/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

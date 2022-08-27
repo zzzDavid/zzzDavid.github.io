@@ -1,0 +1,915 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>On Convolution Network Pruning - Niansong Zhang</title><meta name="robots" content="noindex">
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604473094/github/palm-tree_yvmmw8.svg">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nSome RamblingI have been working on neural network pruning since last winter, starting from a convolution neural network pruning tool based on Caffe. I did not have a thorough understanding of the topic when I started. As I keep working on the framework, I become familiar with the process of pruning a convolution neural net. So I think I should write a post about it.\nThere sure are a plethora of methods to prune a neural network. But this post focuses more about the implementation of one particular method, less about reviewing various methods. In fact, I think researchers are moving to Neural Architecture Search for light-weight neural nets. \nAnyway, this post writes about an iterative pruning method. It only prunes away convolution kernels, so it eschews the pain of re-implementing a sparse computation framework, we can just use standard CUDA. The pruned model is still dense - there are no random zeros inside the convolution kernels. Less important kernels are removed entirely. The pruned convolution layer has less kernels, which means it has less output channels.\nBy iterative pruning I mean, we prune the nets again and again, with increasing pruning rate. For example, we start at a pruning rate of 0.5, meaning we want to remove half of the convolution kernels. Then we finetune (or as others may call it, re-train) the pruned model to convergence, and we see if the performance is still satisfactory. In the next round, we increase the pruning rate, prune and finetune the model, and see if the performance is good still. We continue this process until the performance of pruned model is no longer satisfactory. \nSensitivity AnalysisWe only perform the sensitivity analysis once at the beginning.\nWhat is sensitivity analysis? Good question. Well, first we must conclude that different layers have different “sensitivity”. What is sensitivity, then? You can think of it as importance. Some layers are important, or sensitive to disturbance. If you remove them or change their weight parameters, the overall performance of the network would dramatically degrade. So we don’t want to touch these layers. At least we prune these layers as little as possible. This is the intuitive idea of sensitivity analysis. If the layer is sensitive to changes, we prune less of it. Otherwise, we could prune more of its weights. \n“How do we decide the sensitivity of each layer?” you might ask. Indeed, it is hard define the sensitivity mathematically. In the implementation, we do this:\n\nAssume that layers are independent from each other.\nPrune 0.0, 0.1, 0.2, .., 0.9 of the layer’s parameter, while keep other layers untouched.\nRecord the performance (e.g. accuracy) of the network at each stage.\n\nSo we analyze each layer independently, pruning away more and more of its weights, and see how it affects the overall performance of the network. \nLike you, I also doubt the independence assumption. But if we jointly consider all layers at each pruning rate, the search space would be too big. \nSo idea is to decide prune ratio of each layer based on sensitivity analysis. How do we do that?\nHow to decide prune ratio for each layerWe know the overall pruning rate of the network, as this information is input at each pruning iteration. After sensitivity analysis, we get something like this: \n.ana.regular\n1234567891011121314151617181920212223242526group_sens &#123;  group_layers: &quot;group0_block0_conv0&quot;  acc: 0.93  acc: 0.93  acc: 0.93  acc: 0.93  acc: 0.93  acc: 0.93  acc: 0.93  acc: 0.93  acc: 0.94  acc: 0.94&#125;group_sens &#123;  group_layers: &quot;group2_block8_conv1,group2_block7_conv1,group2_block6_conv1,group2_block5_conv1,group2_block4_conv1,group2_block3_conv1,group2_block2_conv1,group2_block1_conv1,group2_block0_proj,group2_block0_conv1&quot;  acc: 0.93  acc: 0.89  acc: 0.87  acc: 0.87  acc: 0.8  acc: 0.55  acc: 0.44  acc: 0.36  acc: 0.28  acc: 0.21&#125;\nWhat are those “groups”? We will mention this topic later. Now let’s just ackowledge that some layers must be pruned together. We must remove kernels of same index for these layers.\nLet’s look at the code src/caffe/pruning/pruning_runner.cpp\n12345678910111213141516171819202122232425262728293031323334353637383940414243void PruningRunner::GenNetPruningParam(const NetSens&amp; net_sens,                                       NetPruningParameter* npp) &#123;  if (!npp) return;  npp-&gt;Clear();  const deephi::ExcludedLayers&amp; excl_layer = cp_.pruner().exclude();  vector&lt;string&gt; layers;  for (int i = 0; i &lt; net_sens.group_sens_size(); ++i) &#123;    const GroupSens&amp; group_sens = net_sens.group_sens(i);    boost::split(layers, group_sens.group_layers(), boost::is_any_of(\",\"));    // Find excluded layer.    bool skipped = false;    for (const string&amp; layer : layers) &#123;      for (int excl = 0; excl &lt; excl_layer.layer_top_size(); ++excl) &#123;        if (layer == excl_layer.layer_top(excl)) &#123;          skipped = true;          break;        &#125;      &#125;      if (skipped) &#123; break; &#125;    &#125;    if (skipped) &#123; continue; &#125;    LayerPruningParameter* lpp = npp-&gt;add_layer_pruning();    for (const string&amp; layer : layers) &#123;      lpp-&gt;add_layer_top(layer);    &#125;    int exp;    for (exp = group_sens.acc_size() - 1; exp &gt; 0; --exp) &#123;      if (std::abs(group_sens.acc(exp) - group_sens.acc(0)) &lt; cp_.threshold()) &#123;        break;      &#125;    &#125;    lpp-&gt;set_rate(exp  * 0.1);    //ofs &lt;&lt; exp  * 0.1 &lt;&lt; std::endl;    for (int k = 0; k &lt; cp_.pruner().shape().dim_size(); ++k) &#123;      lpp-&gt;mutable_shape()-&gt;add_dim(cp_.pruner().shape().dim(k));    &#125;  &#125;  //ofs.close();&#125;\nLook at this part:\n1234567int exp;for (exp = group_sens.acc_size() - 1; exp &gt; 0; --exp) &#123;   if (std::abs(group_sens.acc(exp) - group_sens.acc(0)) &lt; cp_.threshold()) &#123;       break;   &#125;&#125;lpp-&gt;set_rate(exp  * 0.1);\nWe see that the pruning rate of this layer is determined by cp_.threshold(). If the accuracy degradation is less than threshold, we use current pruning rate for this layer.\nHow do we set threshold? According to the code, we first calculate an initial threshold by EstimateThByRate. Then, we prune the network once, see is the pruned ratio is close to the input pruning rate. If not, we tune the threshold and prune again.\nEstimateThByRate\n1234567891011121314151617float PruningRunner::EstimateThByRate(const NetSens&amp; net_sens) &#123;  int index = static_cast&lt;int&gt;(cp_.rate() * 10);  vector&lt;float&gt; vec_ths;  float base_acc = net_sens.group_sens(0).acc(0);  for (int i = 0; i &lt; net_sens.group_sens_size(); ++i) &#123;    vec_ths.push_back(base_acc - net_sens.group_sens(i).acc(index));  &#125;  std::sort(vec_ths.begin(), vec_ths.end(),            [](float x, float y) &#123;return x &lt; y;&#125;);  size_t num_ths = vec_ths.size();  float median_th = num_ths &amp; 0x01 ?      vec_ths[num_ths / 2] :      (vec_ths[(num_ths - 1) / 2] + vec_ths[num_ths / 2]) * 0.5;  int rate_decimal = static_cast&lt;int&gt;(cp_.rate() * 100);  int index_offset = index == 0 ? rate_decimal : rate_decimal % (index * 10);  return median_th + index_offset * 8e-4;&#125;\nSo basically the threshold is a “median accuracy degradation”. So according to this threshold, sensitive layers get smaller pruning rate, not sensitive layers get larger pruning rates. \nLet’s illustrate this process with a hand-drawn figure\n\nIn short, we first calculate a threshold according to the sensitivity analysis, which is just a median accuracy degradation at the requested overall prune ratio. According to that threshold, sensitive layers are assigned smaller prune ratio, and otherwise bigger prune ratio.\n","dateCreated":"2020-08-05T14:49:18-04:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2020-08-05T14:49:18-04:00","description":"How do we implement network pruning for convolution nets?","headline":"On Convolution Network Pruning","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1596612418/posts/annie-spratt-6egdNN_3k3I-unsplash_nbcmj6.jpg","https://res.cloudinary.com/dxzx2bxch/image/upload/v1596610446/posts/annie-spratt-kf3e1bOYhto-unsplash_j1ujok.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/pruning/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/pruning/","keywords":"Neural Network","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1596612418/posts/annie-spratt-6egdNN_3k3I-unsplash_nbcmj6.jpg"}</script>
+    <meta name="description" content="How do we implement network pruning for convolution nets?">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="On Convolution Network Pruning">
+<meta property="og:url" content="https://www.zzzdavid.tech/pruning/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="How do we implement network pruning for convolution nets?">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596618991/posts/Sensitivity_Analysis_Results_qwoipk.png">
+<meta property="article:published_time" content="2020-08-05T18:49:18.000Z">
+<meta property="article:modified_time" content="2022-08-26T19:32:11.150Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Neural Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596618991/posts/Sensitivity_Analysis_Results_qwoipk.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596612418/posts/annie-spratt-6egdNN_3k3I-unsplash_nbcmj6.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596612418/posts/annie-spratt-6egdNN_3k3I-unsplash_nbcmj6.jpg"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596610446/posts/annie-spratt-kf3e1bOYhto-unsplash_j1ujok.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596610446/posts/annie-spratt-kf3e1bOYhto-unsplash_j1ujok.jpg"/>
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/pdf/CV-niansong.pdf"
+                            
+                            title="Resume/CV"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-user-graduate" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Resume/CV</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-left
+                    "
+             style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1596610446/posts/annie-spratt-kf3e1bOYhto-unsplash_j1ujok.jpg');"
+             data-behavior="5">
+            
+                <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            On Convolution Network Pruning
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2020-08-05T14:49:18-04:00">
+	
+		    Aug 05, 2020
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+            
+        </div>
+
+            <div id="main" data-behavior="5"
+                 class="hasCover
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div>
+            <!-- excerpt -->
+<h2 id="Some-Rambling"><a href="#Some-Rambling" class="headerlink" title="Some Rambling"></a>Some Rambling</h2><p>I have been working on neural network pruning since last winter, starting from a convolution neural network pruning tool based on Caffe. I did not have a thorough understanding of the topic when I started. As I keep working on the framework, I become familiar with the process of pruning a convolution neural net. So I think I should write a post about it.</p>
+<p>There sure are a plethora of methods to prune a neural network. But this post focuses more about the implementation of one particular method, less about reviewing various methods. In fact, I think researchers are moving to Neural Architecture Search for light-weight neural nets. </p>
+<p>Anyway, this post writes about an iterative pruning method. It only prunes away convolution kernels, so it eschews the pain of re-implementing a sparse computation framework, we can just use standard CUDA. The pruned model is still dense - there are no random zeros inside the convolution kernels. Less important kernels are removed entirely. The pruned convolution layer has less kernels, which means it has less output channels.</p>
+<p>By iterative pruning I mean, we prune the nets again and again, with increasing pruning rate. For example, we start at a pruning rate of 0.5, meaning we want to remove half of the convolution kernels. Then we finetune (or as others may call it, re-train) the pruned model to convergence, and we see if the performance is still satisfactory. In the next round, we increase the pruning rate, prune and finetune the model, and see if the performance is good still. We continue this process until the performance of pruned model is no longer satisfactory. </p>
+<h2 id="Sensitivity-Analysis"><a href="#Sensitivity-Analysis" class="headerlink" title="Sensitivity Analysis"></a>Sensitivity Analysis</h2><p>We only perform the sensitivity analysis once at the beginning.</p>
+<p>What is sensitivity analysis? Good question. Well, first we must conclude that different layers have different “sensitivity”. What is sensitivity, then? You can think of it as importance. Some layers are important, or sensitive to disturbance. If you remove them or change their weight parameters, the overall performance of the network would dramatically degrade. So we don’t want to touch these layers. At least we prune these layers as little as possible. This is the intuitive idea of sensitivity analysis. If the layer is sensitive to changes, we prune less of it. Otherwise, we could prune more of its weights. </p>
+<p>“How do we decide the sensitivity of each layer?” you might ask. Indeed, it is hard define the sensitivity mathematically. In the implementation, we do this:</p>
+<ol>
+<li>Assume that layers are independent from each other.</li>
+<li>Prune 0.0, 0.1, 0.2, .., 0.9 of the layer’s parameter, while keep other layers untouched.</li>
+<li>Record the performance (e.g. accuracy) of the network at each stage.</li>
+</ol>
+<p>So we analyze each layer independently, pruning away more and more of its weights, and see how it affects the overall performance of the network. </p>
+<p>Like you, I also doubt the independence assumption. But if we jointly consider all layers at each pruning rate, the search space would be too big. </p>
+<p>So idea is to decide prune ratio of each layer based on sensitivity analysis. How do we do that?</p>
+<h3 id="How-to-decide-prune-ratio-for-each-layer"><a href="#How-to-decide-prune-ratio-for-each-layer" class="headerlink" title="How to decide prune ratio for each layer"></a>How to decide prune ratio for each layer</h3><p>We know the overall pruning rate of the network, as this information is input at each pruning iteration. After sensitivity analysis, we get something like this: </p>
+<p><code>.ana.regular</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">group_sens &#123;</span><br><span class="line">  group_layers: &quot;group0_block0_conv0&quot;</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.94</span><br><span class="line">  acc: 0.94</span><br><span class="line">&#125;</span><br><span class="line">group_sens &#123;</span><br><span class="line">  group_layers: &quot;group2_block8_conv1,group2_block7_conv1,group2_block6_conv1,group2_block5_conv1,group2_block4_conv1,group2_block3_conv1,group2_block2_conv1,group2_block1_conv1,group2_block0_proj,group2_block0_conv1&quot;</span><br><span class="line">  acc: 0.93</span><br><span class="line">  acc: 0.89</span><br><span class="line">  acc: 0.87</span><br><span class="line">  acc: 0.87</span><br><span class="line">  acc: 0.8</span><br><span class="line">  acc: 0.55</span><br><span class="line">  acc: 0.44</span><br><span class="line">  acc: 0.36</span><br><span class="line">  acc: 0.28</span><br><span class="line">  acc: 0.21</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>What are those “groups”? We will mention this topic later. Now let’s just ackowledge that some layers must be pruned together. We must remove kernels of same index for these layers.</p>
+<p>Let’s look at the code <code>src/caffe/pruning/pruning_runner.cpp</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> PruningRunner::GenNetPruningParam(<span class="keyword">const</span> NetSens&amp; net_sens,</span><br><span class="line">                                       NetPruningParameter* npp) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!npp) <span class="keyword">return</span>;</span><br><span class="line">  npp-&gt;Clear();</span><br><span class="line">  <span class="keyword">const</span> deephi::ExcludedLayers&amp; excl_layer = cp_.pruner().exclude();</span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; layers;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; net_sens.group_sens_size(); ++i) &#123;</span><br><span class="line">    <span class="keyword">const</span> GroupSens&amp; group_sens = net_sens.group_sens(i);</span><br><span class="line">    boost::split(layers, group_sens.group_layers(), boost::is_any_of(<span class="string">","</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Find excluded layer.</span></span><br><span class="line">    <span class="keyword">bool</span> skipped = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> <span class="built_in">string</span>&amp; layer : layers) &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> excl = <span class="number">0</span>; excl &lt; excl_layer.layer_top_size(); ++excl) &#123;</span><br><span class="line">        <span class="keyword">if</span> (layer == excl_layer.layer_top(excl)) &#123;</span><br><span class="line">          skipped = <span class="literal">true</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (skipped) &#123; <span class="keyword">break</span>; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (skipped) &#123; <span class="keyword">continue</span>; &#125;</span><br><span class="line"></span><br><span class="line">    LayerPruningParameter* lpp = npp-&gt;add_layer_pruning();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> <span class="built_in">string</span>&amp; layer : layers) &#123;</span><br><span class="line">      lpp-&gt;add_layer_top(layer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">exp</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">exp</span> = group_sens.acc_size() - <span class="number">1</span>; <span class="built_in">exp</span> &gt; <span class="number">0</span>; --<span class="built_in">exp</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">std</span>::<span class="built_in">abs</span>(group_sens.acc(<span class="built_in">exp</span>) - group_sens.acc(<span class="number">0</span>)) &lt; cp_.threshold()) &#123;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    lpp-&gt;set_rate(<span class="built_in">exp</span>  * <span class="number">0.1</span>);</span><br><span class="line">    <span class="comment">//ofs &lt;&lt; exp  * 0.1 &lt;&lt; std::endl;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; cp_.pruner().shape().dim_size(); ++k) &#123;</span><br><span class="line">      lpp-&gt;mutable_shape()-&gt;add_dim(cp_.pruner().shape().dim(k));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//ofs.close();</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Look at this part:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> <span class="built_in">exp</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">exp</span> = group_sens.acc_size() - <span class="number">1</span>; <span class="built_in">exp</span> &gt; <span class="number">0</span>; --<span class="built_in">exp</span>) &#123;</span><br><span class="line">   <span class="keyword">if</span> (<span class="built_in">std</span>::<span class="built_in">abs</span>(group_sens.acc(<span class="built_in">exp</span>) - group_sens.acc(<span class="number">0</span>)) &lt; cp_.threshold()) &#123;</span><br><span class="line">       <span class="keyword">break</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">lpp-&gt;set_rate(<span class="built_in">exp</span>  * <span class="number">0.1</span>);</span><br></pre></td></tr></table></figure>
+<p>We see that the pruning rate of this layer is determined by <code>cp_.threshold()</code>. If the accuracy degradation is less than threshold, we use current pruning rate for this layer.</p>
+<p>How do we set threshold? According to the code, we first calculate an initial threshold by <code>EstimateThByRate</code>. Then, we prune the network once, see is the pruned ratio is close to the input pruning rate. If not, we tune the threshold and prune again.</p>
+<p><code>EstimateThByRate</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> PruningRunner::EstimateThByRate(<span class="keyword">const</span> NetSens&amp; net_sens) &#123;</span><br><span class="line">  <span class="keyword">int</span> index = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(cp_.rate() * <span class="number">10</span>);</span><br><span class="line">  <span class="built_in">vector</span>&lt;<span class="keyword">float</span>&gt; vec_ths;</span><br><span class="line">  <span class="keyword">float</span> base_acc = net_sens.group_sens(<span class="number">0</span>).acc(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; net_sens.group_sens_size(); ++i) &#123;</span><br><span class="line">    vec_ths.push_back(base_acc - net_sens.group_sens(i).acc(index));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">std</span>::sort(vec_ths.begin(), vec_ths.end(),</span><br><span class="line">            [](<span class="keyword">float</span> x, <span class="keyword">float</span> y) &#123;<span class="keyword">return</span> x &lt; y;&#125;);</span><br><span class="line">  <span class="keyword">size_t</span> num_ths = vec_ths.size();</span><br><span class="line">  <span class="keyword">float</span> median_th = num_ths &amp; <span class="number">0x01</span> ?</span><br><span class="line">      vec_ths[num_ths / <span class="number">2</span>] :</span><br><span class="line">      (vec_ths[(num_ths - <span class="number">1</span>) / <span class="number">2</span>] + vec_ths[num_ths / <span class="number">2</span>]) * <span class="number">0.5</span>;</span><br><span class="line">  <span class="keyword">int</span> rate_decimal = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(cp_.rate() * <span class="number">100</span>);</span><br><span class="line">  <span class="keyword">int</span> index_offset = index == <span class="number">0</span> ? rate_decimal : rate_decimal % (index * <span class="number">10</span>);</span><br><span class="line">  <span class="keyword">return</span> median_th + index_offset * <span class="number">8e-4</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>So basically the threshold is a “median accuracy degradation”. So according to this threshold, sensitive layers get smaller pruning rate, not sensitive layers get larger pruning rates. </p>
+<p>Let’s illustrate this process with a hand-drawn figure</p>
+<div class="figure " style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1596618991/posts/Sensitivity_Analysis_Results_qwoipk.png" alt=""></div>
+<p>In short, we first calculate a threshold according to the sensitivity analysis, which is just a median accuracy degradation at the requested overall prune ratio. According to that threshold, sensitive layers are assigned smaller prune ratio, and otherwise bigger prune ratio.</p>
+<!-- flag of hidden posts -->
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/pruning/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/pruning/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2022 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/pruning/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/pruning/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/pruning/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/pruning/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/pruning/';
+              
+            this.page.identifier = 'pruning/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
