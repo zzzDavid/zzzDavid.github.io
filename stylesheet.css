@@ -14,18 +14,18 @@ subheading {
 }  
 p {
     color: rgb(0, 0, 0);
-    font-family: optima;
+    font-family: optima, 'Noto Sans';
     font-size: 120%;
   }
 
 a {
     color: rgb(15, 155, 236);
-    font-family: optima;
+    font-family: optima, 'Noto Sans';
     font-size: 100%;
   }
 
 name {
-      font-family:  optima;
+      font-family:  'Cormorant Garamond', optima, 'Noto Sans';
       font-size: 200%
   }
   .circle_image {
@@ -39,16 +39,16 @@ papertitle {
 }
 
 strong{
-    font-family: optima;
+    font-family: optima, 'Noto Sans';
     font-size: 100%;
 }
 strong-red{
-    font-family: optima;
+    font-family: optima, 'Noto Sans';
     font-size: 100%;
     color: red;
 }
 em{
-    font-family: optima;
+    font-family: optima, 'Noto Sans';
     font-size: 100%;
 }
 
