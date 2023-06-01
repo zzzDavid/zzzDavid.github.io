@@ -25,7 +25,7 @@ a {
   }
 
 name {
-      font-family:  'Cormorant Garamond', optima, 'Noto Sans';
+      font-family:  optima, 'Cormorant Garamond', 'Noto Sans';
       font-size: 200%
   }
   .circle_image {
