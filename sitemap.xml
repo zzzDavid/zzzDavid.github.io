@@ -65,13 +65,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/Readings/</loc>
-    
-    <lastmod>2022-08-26T19:32:11.147Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/NAS/</loc>
     
     <lastmod>2022-08-26T19:32:11.147Z</lastmod>
@@ -79,7 +72,14 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
+    <loc>https://www.zzzdavid.tech/Readings/</loc>
+    
+    <lastmod>2022-08-26T19:32:11.147Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/GumbelSoftmax/</loc>
     
     <lastmod>2022-08-26T19:32:11.146Z</lastmod>
     
@@ -93,7 +93,7 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/GumbelSoftmax/</loc>
+    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
     
     <lastmod>2022-08-26T19:32:11.146Z</lastmod>
     
