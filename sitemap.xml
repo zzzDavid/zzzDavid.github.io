@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.zzzdavid.tech/profiling/</loc>
+    
+    <lastmod>2023-12-27T11:23:35.132Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/all-tags/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
@@ -23,13 +30,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/vnc/</loc>
-    
-    <lastmod>2022-08-26T19:32:11.150Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/three-d/</loc>
     
     <lastmod>2022-08-26T19:32:11.150Z</lastmod>
@@ -37,9 +37,9 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/profiling/</loc>
+    <loc>https://www.zzzdavid.tech/vnc/</loc>
     
-    <lastmod>2022-08-26T19:32:11.149Z</lastmod>
+    <lastmod>2022-08-26T19:32:11.150Z</lastmod>
     
   </url>
   
