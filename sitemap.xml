@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.zzzdavid.tech/quartus-apple/</loc>
+    
+    <lastmod>2024-01-25T22:16:43.280Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/profiling/</loc>
     
     <lastmod>2023-12-03T04:41:54.606Z</lastmod>
@@ -37,13 +44,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
-    
-    <lastmod>2022-07-05T15:14:33.197Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/all-tags/index.html</loc>
     
     <lastmod>2022-07-05T15:14:33.197Z</lastmod>
@@ -52,6 +52,13 @@
   
   <url>
     <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
+    
+    <lastmod>2022-07-05T15:14:33.197Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
     
     <lastmod>2022-07-05T15:14:33.197Z</lastmod>
     
