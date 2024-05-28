@@ -17,7 +17,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nPaper DigestExploring Simple Siamese Representation LearningAuthors: Xinlei Chen, Kaiming HeAffiliation/Institution: FAIRVenue: Tech report, arXiv, Nov. 2020\nMotivationMethodologySiamese Architecture\n123456789101112131415# f: backbone + projection mlp# h: prediction mlpfor x in loader: # load a minibatch x with n samples   x1, x2 = aug(x), aug(x) # random augmentation   z1, z2 = f(x1), f(x2) # projections, n-by-d   p1, p2 = h(z1), h(z2) # predictions, n-by-d   L = D(p1, z2)/2 + D(p2, z1)/2 # loss   L.backward() # back-propagate   update(f, h) # SGD updatedef D(p, z): # negative cosine similarity   z = z.detach() # stop gradient   p = normalize(p, dim=1) # l2-normalize   z = normalize(z, dim=1) # l2-normalize   return -(p*z).sum(dim=1).mean()\nStop-gradientDiscussionWhy stop-gradient?\\mathcal{L}(\\theta, \\eta)=\\mathbb{E}_{x, \\mathcal{T}}\\left[\\left\\|\\mathcal{F}_{\\theta}(\\mathcal{T}(x))-\\eta_{x}\\right\\|_{2}^{2}\\right]\n$x$ is image\n$\\mathcal{F}$ is the encoder network parameterized by $\\theta$.\n$\\mathcal{T}$ is data augmentation.\n$\\eta_x$ stands for the representation of image $x$.\n$\\mathbb{E}[\\bullet]$ is the expectation over all images and all transformations.\n\nReferenceAndy’s Writing Room: Simple Siamese\n","dateCreated":"2020-12-23T00:00:00-05:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2020-12-23T00:00:00-05:00","description":"Contrastive Learning is a type of self-supervised method to find similar and dissimilar things and learn better representations.","headline":"Contrastive Learning","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/contrastive/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/contrastive/"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nPaper DigestExploring Simple Siamese Representation LearningAuthors: Xinlei Chen, Kaiming HeAffiliation/Institution: FAIRVenue: Tech report, arXiv, Nov. 2020\nMotivationMethodologySiamese Architecture\n123456789101112131415# f: backbone + projection mlp# h: prediction mlpfor x in loader: # load a minibatch x with n samples   x1, x2 = aug(x), aug(x) # random augmentation   z1, z2 = f(x1), f(x2) # projections, n-by-d   p1, p2 = h(z1), h(z2) # predictions, n-by-d   L = D(p1, z2)/2 + D(p2, z1)/2 # loss   L.backward() # back-propagate   update(f, h) # SGD updatedef D(p, z): # negative cosine similarity   z = z.detach() # stop gradient   p = normalize(p, dim=1) # l2-normalize   z = normalize(z, dim=1) # l2-normalize   return -(p*z).sum(dim=1).mean()\nStop-gradientDiscussionWhy stop-gradient?\\mathcal{L}(\\theta, \\eta)=\\mathbb{E}_{x, \\mathcal{T}}\\left[\\left\\|\\mathcal{F}_{\\theta}(\\mathcal{T}(x))-\\eta_{x}\\right\\|_{2}^{2}\\right]\n$x$ is image\n$\\mathcal{F}$ is the encoder network parameterized by $\\theta$.\n$\\mathcal{T}$ is data augmentation.\n$\\eta_x$ stands for the representation of image $x$.\n$\\mathbb{E}[\\bullet]$ is the expectation over all images and all transformations.\n\nReferenceAndy’s Writing Room: Simple Siamese\n","dateCreated":"2020-12-22T21:00:00-08:00","dateModified":"2022-08-26T12:32:11-07:00","datePublished":"2020-12-22T21:00:00-08:00","description":"Contrastive Learning is a type of self-supervised method to find similar and dissimilar things and learn better representations.","headline":"Contrastive Learning","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/contrastive/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/contrastive/"}</script>
     <meta name="description" content="Contrastive Learning is a type of self-supervised method to find similar and dissimilar things and learn better representations.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Contrastive Learning">
@@ -45,7 +45,7 @@
     
     <!--STYLES-->
     
-<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+<link rel="stylesheet" href="/assets/css/style-egrklxs2vte5yq5p5brvvpiaix3e5lkibogs6ytgwy7fjgp4ogn1y0aytgii.min.css">
 
     <!--STYLES END-->
     
@@ -502,9 +502,9 @@ mjx-container + br {
     
     
         <div class="post-meta">
-    <time datetime="2020-12-23T00:00:00-05:00">
+    <time datetime="2020-12-22T21:00:00-08:00">
 	
-		    Dec 23, 2020
+		    Dec 22, 2020
     	
     </time>
     
@@ -522,10 +522,10 @@ mjx-container + br {
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <div style="overflow: hidden; white-space: nowrap;"">
+            <!-- <div style="overflow: hidden; white-space: nowrap;"">
                 <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
                 &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
-            </div>
+            </div> -->
             <!-- excerpt -->
 <h1 id="Paper-Digest"><a href="#Paper-Digest" class="headerlink" title="Paper Digest"></a>Paper Digest</h1><h2 id="Exploring-Simple-Siamese-Representation-Learning"><a href="#Exploring-Simple-Siamese-Representation-Learning" class="headerlink" title="Exploring Simple Siamese Representation Learning"></a><a href="https://arxiv.org/abs/2011.10566" target="_blank" rel="noopener">Exploring Simple Siamese Representation Learning</a></h2><p>Authors: Xinlei Chen, Kaiming He<br>Affiliation/Institution: FAIR<br>Venue: Tech report, arXiv, Nov. 2020</p>
 <h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h3><h3 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h3><h4 id="Siamese-Architecture"><a href="#Siamese-Architecture" class="headerlink" title="Siamese Architecture"></a>Siamese Architecture</h4><div class="figure center" style="width:70%;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1608899674/Screen_Shot_2020-12-25_at_20.34.23_rm3hl3.png" style="width:70%;"alt=""></div>
@@ -653,7 +653,7 @@ mjx-container + br {
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2023 Niansong Zhang. All Rights Reserved.
+        Copyrights &copy; 2024 Niansong Zhang. All Rights Reserved.
     </span>
 </footer>
 
@@ -829,7 +829,7 @@ mjx-container + br {
 <div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
         <!--SCRIPTS-->
 
-<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+<script src="/assets/js/script-qrt67e1rdmkmp6weklfpqtzxshzdeng82nc0xjjgbqctdlerivl9d7a3ekej.min.js"></script>
 
 <!--SCRIPTS END-->
 

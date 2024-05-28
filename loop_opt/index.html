@@ -17,7 +17,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nWhat is II?II means initiation interval. \nFor a function, II is the number of clock cycles before it could accept new inputs and is generally the most critical performance metric in any system. \nFor a loop, II is the number of clock cycles before the next iteration of a loop starts to process data.\nLoop Pipelining\nAlthough we are already familiar with “pipelining”, this figure still gives a great example for “II” and loop latency.\nThere are some more details about loop pipelining. One thing worth noticing is that when a loop is called multiple times, there could be a thing called io “bubble” happening:\n\nThis means that when the loop finishes executing, the next read and write won’t start until the loop is called again, even though II=1. So, if there are loops that are called multiple times, we can identify them and allow each call to overlap to remove the bubble. This is called rewind.\n\nLoop UnrollingLoop unrolling is to trade performance (latency, throughput) with resources. \nBy default, loops are kept rolled in Vivado HLS. These rolled loops generate a hardware resource which is used by each iteration of the loop.\n\nRolled Loop\nWhen the loop is rolled, each iteration is peformed in seperate clock cycles. This implementation takes four clock cycles, only requires one multiplier and each block RAM can be a single-port block RAM.\nPartially Unrolled Loop\nWe can partially unroll a loop by specifying a unroll factor. In this example, we are setting unrolling factor = 2. This implementation requires two multipliers and a dual-port RAMs to support two reads or writes to each RAM in the same clock cycle. This implementation does however only take 2 clock cycles to complete.\nUnrolled Loop\nIf the loop is fully unrolled, it uses 4 multipliers and requires the ability to perform 4 reads and 4 writes at the same time (we can achieve this with array partitioning). This uses more computation and storage resources but only take 1 clock cycle to complete.\nArray Partitioning\n\n\nA common issue in pipelined loop is memory conflict. Arrays in HLS are implemented as Block RAMs. If there are two accesses to the same array in the loop body, it will need two read operation through the same memory port. So II becomes 2.\nHow do we solve this? The idea is to break one array into multiple parts, each part implemented as a BRAMs, so that we can access them at them same time. \n\nThere are three fashions of array partitioning:\n\nBlock: the original array is split into equally sized blocks of consecutive elements of the original \nCyclic: the original array is split into equally sized blocks interleaving the elemetns of the original array.\nComplete: the default operation is to split the array into its individual elements. This corresponds to resolving a memory into registers.\n\nReferences\nLoop pipelining and loop unrolling\nug902-vivado-high-level-synthesis.pdf","dateCreated":"2020-10-31T00:00:00-04:00","dateModified":"2022-08-26T15:32:11-04:00","datePublished":"2020-10-31T00:00:00-04:00","description":"Loop optimization in Vivado HLS.","headline":"Loop Optimization in HLS","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/loop_opt/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/loop_opt/"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"},"articleBody":"\nWhat is II?II means initiation interval. \nFor a function, II is the number of clock cycles before it could accept new inputs and is generally the most critical performance metric in any system. \nFor a loop, II is the number of clock cycles before the next iteration of a loop starts to process data.\nLoop Pipelining\nAlthough we are already familiar with “pipelining”, this figure still gives a great example for “II” and loop latency.\nThere are some more details about loop pipelining. One thing worth noticing is that when a loop is called multiple times, there could be a thing called io “bubble” happening:\n\nThis means that when the loop finishes executing, the next read and write won’t start until the loop is called again, even though II=1. So, if there are loops that are called multiple times, we can identify them and allow each call to overlap to remove the bubble. This is called rewind.\n\nLoop UnrollingLoop unrolling is to trade performance (latency, throughput) with resources. \nBy default, loops are kept rolled in Vivado HLS. These rolled loops generate a hardware resource which is used by each iteration of the loop.\n\nRolled Loop\nWhen the loop is rolled, each iteration is peformed in seperate clock cycles. This implementation takes four clock cycles, only requires one multiplier and each block RAM can be a single-port block RAM.\nPartially Unrolled Loop\nWe can partially unroll a loop by specifying a unroll factor. In this example, we are setting unrolling factor = 2. This implementation requires two multipliers and a dual-port RAMs to support two reads or writes to each RAM in the same clock cycle. This implementation does however only take 2 clock cycles to complete.\nUnrolled Loop\nIf the loop is fully unrolled, it uses 4 multipliers and requires the ability to perform 4 reads and 4 writes at the same time (we can achieve this with array partitioning). This uses more computation and storage resources but only take 1 clock cycle to complete.\nArray Partitioning\n\n\nA common issue in pipelined loop is memory conflict. Arrays in HLS are implemented as Block RAMs. If there are two accesses to the same array in the loop body, it will need two read operation through the same memory port. So II becomes 2.\nHow do we solve this? The idea is to break one array into multiple parts, each part implemented as a BRAMs, so that we can access them at them same time. \n\nThere are three fashions of array partitioning:\n\nBlock: the original array is split into equally sized blocks of consecutive elements of the original \nCyclic: the original array is split into equally sized blocks interleaving the elemetns of the original array.\nComplete: the default operation is to split the array into its individual elements. This corresponds to resolving a memory into registers.\n\nReferences\nLoop pipelining and loop unrolling\nug902-vivado-high-level-synthesis.pdf","dateCreated":"2020-10-30T21:00:00-07:00","dateModified":"2022-08-26T12:32:11-07:00","datePublished":"2020-10-30T21:00:00-07:00","description":"Loop optimization in Vivado HLS.","headline":"Loop Optimization in HLS","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/loop_opt/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1603333481/posts/Screen_Shot_2020-10-22_at_10.24.31_hfpnrc.png"}},"url":"https://www.zzzdavid.tech/loop_opt/"}</script>
     <meta name="description" content="Loop optimization in Vivado HLS.">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Loop Optimization in HLS">
@@ -50,7 +50,7 @@
     
     <!--STYLES-->
     
-<link rel="stylesheet" href="/assets/css/style-uooilepu7vf0f3bxc06xvullo1wslswnxntpb3tidtsbf7b94rbib1icbwwr.min.css">
+<link rel="stylesheet" href="/assets/css/style-egrklxs2vte5yq5p5brvvpiaix3e5lkibogs6ytgwy7fjgp4ogn1y0aytgii.min.css">
 
     <!--STYLES END-->
     
@@ -507,9 +507,9 @@ mjx-container + br {
     
     
         <div class="post-meta">
-    <time datetime="2020-10-31T00:00:00-04:00">
+    <time datetime="2020-10-30T21:00:00-07:00">
 	
-		    Oct 31, 2020
+		    Oct 30, 2020
     	
     </time>
     
@@ -527,10 +527,10 @@ mjx-container + br {
     
     <div class="post-content markdown">
         <div class="main-content-wrap">
-            <div style="overflow: hidden; white-space: nowrap;"">
+            <!-- <div style="overflow: hidden; white-space: nowrap;"">
                 <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
                 &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
-            </div>
+            </div> -->
             <!-- excerpt -->
 <h2 id="What-is-II"><a href="#What-is-II" class="headerlink" title="What is II?"></a>What is II?</h2><p>II means initiation interval. </p>
 <p>For a function, II is the number of clock cycles before it could accept new inputs and is generally the <em>most critical performance metric in any system.</em> </p>
@@ -685,7 +685,7 @@ mjx-container + br {
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2023 Niansong Zhang. All Rights Reserved.
+        Copyrights &copy; 2024 Niansong Zhang. All Rights Reserved.
     </span>
 </footer>
 
@@ -867,7 +867,7 @@ mjx-container + br {
 <div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
         <!--SCRIPTS-->
 
-<script src="/assets/js/script-fhmarkacoap4j3albrpiwduhz4eum3yksihvkymljovnyngmsd1yjgifc0ho.min.js"></script>
+<script src="/assets/js/script-qrt67e1rdmkmp6weklfpqtzxshzdeng82nc0xjjgbqctdlerivl9d7a3ekej.min.js"></script>
 
 <!--SCRIPTS END-->
 
