@@ -73,10 +73,28 @@
                   </p>
                 </td>
                 <td style="padding:0%;width:30%;max-width:50%">
-                  <img alt="profile photo"
-                    src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"
+                  <img id="profileImage" alt="profile photo"
+                    src=""
                     class="circle_image" style="position:relative;left:80px">
                 </td>
+                <script>
+                  // Array of image URLs
+                  const images = [
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg',
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1718927264/pfp-cloud_ruoon2.png' // Add your second image URL here
+                  ];
+          
+                  // Function to get the next image index
+                  function getNextImageIndex() {
+                      const lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
+                      const nextIndex = (lastIndex + 1) % images.length;
+                      localStorage.setItem('lastImageIndex', nextIndex);
+                      return nextIndex;
+                  }
+          
+                  // Set the src attribute of the img element to the next image URL
+                  document.getElementById('profileImage').src = images[getNextImageIndex()];
+              </script>
               </tr>
             </tbody>
           </table>
@@ -339,6 +357,27 @@
           <table
             style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
             <tbody>
+              <tr>
+                <td style="padding:20px;width:25%;vertical-align:middle;text-align:center">
+                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1718957993/posts/allo-icon_dfja8k.png"
+                    width=60% />
+                </td>
+                <td style="padding:20px;width:75%;vertical-align:middle">
+                  <p>
+                    <papertitle> Allo: A Programming Model for Composable Accelerator Design </papertitle>
+                  </p>
+                  <p>
+                    Hongzheng Chen* <strong>Niansong Zhang</strong>*, Shaojie Xiang, Zhichen Zeng, Mengjia Dai, Zhiru Zhang
+                  </p>
+                  <p style="font-size: smaller;">
+                    * Equal Contribution
+                  </p>
+                  <em>PLDI 2024</em> | <a href="https://dl.acm.org/doi/10.1145/3656401">paper</a> | <a href="https://github.com/cornell-zhang/allo/tree/main">code</a>
+                  <p>
+                    Special-purpose hardware accelerators are vital for performance improvements, but current tools are inadequate for complex designs. Allo, a new composable programming model, decouples hardware customizations from algorithms and outperforms existing tools, showing significant improvements in benchmarks and deep learning models like GPT-2.
+                  </p>
+                </td>
+              </tr>
               <tr>
                 <td style="padding:20px;width:25%;vertical-align:middle">
                   <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706216410/posts/ast_dmasmu.png"
