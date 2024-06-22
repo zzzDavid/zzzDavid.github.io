@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="Niansong Zhang">
-    <title>Loop Optimization in HLS - Niansong Zhang</title>
+    <title>On Being a Teaching Assistant - Niansong Zhang</title>
     <meta name="author" content="Niansong Zhang">
     
         <meta name="keywords" content="Niansong Zhang,Niansong,">
@@ -17,27 +17,27 @@
     
         <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"},"articleBody":"\nWhat is II?II means initiation interval. \nFor a function, II is the number of clock cycles before it could accept new inputs and is generally the most critical performance metric in any system. \nFor a loop, II is the number of clock cycles before the next iteration of a loop starts to process data.\nLoop Pipelining\nAlthough we are already familiar with “pipelining”, this figure still gives a great example for “II” and loop latency.\nThere are some more details about loop pipelining. One thing worth noticing is that when a loop is called multiple times, there could be a thing called io “bubble” happening:\n\nThis means that when the loop finishes executing, the next read and write won’t start until the loop is called again, even though II=1. So, if there are loops that are called multiple times, we can identify them and allow each call to overlap to remove the bubble. This is called rewind.\n\nLoop UnrollingLoop unrolling is to trade performance (latency, throughput) with resources. \nBy default, loops are kept rolled in Vivado HLS. These rolled loops generate a hardware resource which is used by each iteration of the loop.\n\nRolled Loop\nWhen the loop is rolled, each iteration is peformed in seperate clock cycles. This implementation takes four clock cycles, only requires one multiplier and each block RAM can be a single-port block RAM.\nPartially Unrolled Loop\nWe can partially unroll a loop by specifying a unroll factor. In this example, we are setting unrolling factor = 2. This implementation requires two multipliers and a dual-port RAMs to support two reads or writes to each RAM in the same clock cycle. This implementation does however only take 2 clock cycles to complete.\nUnrolled Loop\nIf the loop is fully unrolled, it uses 4 multipliers and requires the ability to perform 4 reads and 4 writes at the same time (we can achieve this with array partitioning). This uses more computation and storage resources but only take 1 clock cycle to complete.\nArray Partitioning\n\n\nA common issue in pipelined loop is memory conflict. Arrays in HLS are implemented as Block RAMs. If there are two accesses to the same array in the loop body, it will need two read operation through the same memory port. So II becomes 2.\nHow do we solve this? The idea is to break one array into multiple parts, each part implemented as a BRAMs, so that we can access them at them same time. \n\nThere are three fashions of array partitioning:\n\nBlock: the original array is split into equally sized blocks of consecutive elements of the original \nCyclic: the original array is split into equally sized blocks interleaving the elemetns of the original array.\nComplete: the default operation is to split the array into its individual elements. This corresponds to resolving a memory into registers.\n\nReferences\nLoop pipelining and loop unrolling\nug902-vivado-high-level-synthesis.pdf","dateCreated":"2020-10-30T21:00:00-07:00","dateModified":"2022-08-26T12:32:11-07:00","datePublished":"2020-10-30T21:00:00-07:00","description":"Loop optimization in Vivado HLS.","headline":"Loop Optimization in HLS","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/loop_opt/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"}},"url":"https://www.zzzdavid.tech/loop_opt/"}</script>
-    <meta name="description" content="Loop optimization in Vivado HLS.">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"},"articleBody":"\nOn December 11th, 2023, at precisely 3:02 PM, I received a message from my advisor: “Can we chat a bit this week about the 2300 TAship, say Friday at 5 PM?” I felt a rush of excitement. Being a teaching assistant is something I’ve thought as an important part of my PhD experience. Up until now, I’ve never been the primary person responsible for a class. Although I’ve had experience as a part-time TA, it was mostly behind-the-scenes support. This opportunity felt like a chance to step into a role I’ve been anticipating.\nA teaching assistant is defined as “an individual who assists a professor with instructional responsibilities.” I first knew what a TA does while watching episodes of Stanford’s CS231N course, where some lectures were delivered by the TAs. I remember being impressed by their competence and effectiveness. \nI am the head TA of ECE/ENGRD 2300, Digital Logic and Computer Organization. This is one of the ECE fundamental undergraduate courses. It covers Boolean algebra, combinational and sequential logic, FSMs, memories, pipelined processors, up to cache and memory virtualization. My responsibilities are mainly two-fold: providing structure and delivering content. I help schedule the lectures, office hours, lab sessions, organize TA grading sessions. On content delivery, I give tutorials and review sessions before the exams, hold office hours and lab sessions, and answer questions on Ed, our online discussion platform. Being the head TA is quite different. I am the last person students come to if they don’t get an answer from other TAs, so I have to be ready. \nI give myself two challenges: be the TA I didn’t get when I learned these topics, and answer as many questions as fast as possible on Ed. The first is because I actually didn’t understand a lot of the topics when I first learned them, and there were no help for me to go to. The second is just for fun.\nPreparationPreparing to be a TA has two steps: passing the language assessment and completing the TA development program. Cornell Engineering provides excellent support and resources through its TA development program. It covers important basics like managing grades and creating rubrics, also more subtle aspects such as how to create a friendly and inclusive learning environment, how to handle conflict, when to ask for help. This program is very helpful for someone like me, who isn’t initially familiar with the American undergraduate education system. \n&nbsp;\nTA Development Program\n5-min microteaching: how to build an aquarium\n&nbsp;\nMy biggest takeaway from the program is the active learning skills, how to make your content delivery clear and engaging. Two techniques I’ve found useful are setting specific learning goals at the beginning and creating low-stakes quizzes. I used these techniques in the Verilog tutorial and the review lectures. The fun part of the program is the “micro-teaching session”: teach any topic you choose in 5 minutes. I chose the topic of how to build a freshwater aquarium. It’s a nice practice of the teaching skills and I got some quick feedbacks from the tutor and fellow TAs.\nThings I Learned During My TA ExperienceIt’s a 24/7 JobCornell undergraduate students typically take more than three courses each semester. Everyone works at their own pace. Many discussions happen asynchronously on Ed, so I make it a priority to answer questions in a timely manner. By the end of the first month, I am quite used to answering Ed questions wherever I am.\nTeamwork is importantThere is no way I can cover everything. I have a wonderful team of 19 TAs, many of them have more experience in teaching this course than I do. I received a lot of help from them, and grading is always fast.\nOne thing I could do better is the office hour allocation. We have homework deadlines every Friday, and I later learned that the Friday evening office hour is usually packed because it’s near the deadline. So whenever there is a deadline, we should allocate more staff to the office hour or lab sessions.\n\n&nbsp;\nMy setup for the review session to show the process of solving problems\nAnswering questions on Ed at the beach in Monterey during FPGA 2024\n&nbsp;\nShow the thinking processI find it really helpful to show the exact steps of solving problems. I did this in the first review session, where I used my iPad to solve the problems in real time, and people can interrupt me to discuss.\nBe gentleI always remember what it was like when I first learned the topic, and constantly remind myself that Cornell undergraduate students are under a lot of pressure. Don’t worry, I’m here to help. \nThe devil is always in the detailTime and again, I spend hours with students debugging their code, only to find that the issue was a typo, a mismatched bitwidth, or a flipped bit causing everything else to go wrong. Good formatting is crucial because such mistakes are much harder to spot when the code is squeezed into one line. It’s also beneficial to encourage students to develop good coding habits.\nRefer to the course material whenever possibleBecause I watched the same lecture recordings as the students, I refer to the course materials in my answers and discussions. I find this approach surprisingly helpful, as students often respond with, “Oh, I didn’t understand that slide before, but now I do.”\nFun thingsOne time, I overheard a group of students discussing a lab topic they couldn’t figure out, and someone said, “Let’s go ask the nice TA.” Then they came to me. I was touched.\nI learned digital logics with the same textbook and the same FPGA board in a different country. It is surprising how standardized this field can be.\nI got asked twice if I’m related to my advisor because we share the same last name. I explained: “it’s like Smith, a very common last name.”\nI find an interesting shift of mindset when I rewatch the lecture recordings given by my advisor. When I was preparing for my PhD qualifying exam, I focused on the content. But as a TA, I focus more on how to explain certain topics, how to design the quizzes, and how to connect concepts together.\n\nAbout the second challenge, I wrote 369 answers over the semester, that’s about 3.26 answers per day:&nbsp;\n\n  \n\n\n\nConclusionsNow that the semester has concluded, I can reflect and share some thoughts. I believe we had a successful semester. Several students expressed raised interest in continuing their studies in ECE, and a few even asked me about life as a PhD student and the work I do. I think getting people interested in this field is as important as teaching the fundamentals, if not more. \nIt turns out I have infinite patience and might be quite good at teaching.","dateCreated":"2024-06-21T21:54:50-07:00","dateModified":"2024-06-22T00:20:17-07:00","datePublished":"2024-06-21T21:54:50-07:00","description":"Things I learned from my teaching assistant experience in ECE2300 SP24.","headline":"On Being a Teaching Assistant","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1719032614/ta/cornell_fdx5fz.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/ta/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"}},"url":"https://www.zzzdavid.tech/ta/","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1719032614/ta/cornell_fdx5fz.jpg"}</script>
+    <meta name="description" content="Things I learned from my teaching assistant experience in ECE2300 SP24.">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Loop Optimization in HLS">
-<meta property="og:url" content="https://www.zzzdavid.tech/loop_opt/index.html">
+<meta property="og:title" content="On Being a Teaching Assistant">
+<meta property="og:url" content="https://www.zzzdavid.tech/ta/index.html">
 <meta property="og:site_name" content="Niansong Zhang">
-<meta property="og:description" content="Loop optimization in Vivado HLS.">
+<meta property="og:description" content="Things I learned from my teaching assistant experience in ECE2300 SP24.">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459708/posts/X14770-loop-pipelining_v42eza.svg">
-<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604467903/posts/Screen_Shot_2020-11-04_at_13.30.51_pvobq4.png">
-<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604467905/posts/Screen_Shot_2020-11-04_at_13.30.58_reproh.png">
-<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459839/posts/loop_unroll_icpavw.png">
-<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604461901/posts/X14768-resource-contention_de0gk5.svg">
-<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604461378/posts/array_partition_ifubyx.png">
-<meta property="article:published_time" content="2020-10-31T04:00:00.000Z">
-<meta property="article:modified_time" content="2022-08-26T19:32:11.149Z">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719033077/ta/program_phtmio.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031943/ta/aquarium_eyh9eu.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/IMG_4591_x9pogd.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/IMG_4818_dqchog.jpg">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/ed_qupe7q.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/ed_qupe7q.png">
+<meta property="article:published_time" content="2024-06-22T04:54:50.000Z">
+<meta property="article:modified_time" content="2024-06-22T07:20:17.949Z">
 <meta property="article:author" content="Niansong Zhang">
 <meta property="article:tag" content="Niansong Zhang">
 <meta property="article:tag" content="Niansong">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459708/posts/X14770-loop-pipelining_v42eza.svg">
+<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719033077/ta/program_phtmio.png">
     
     
         
@@ -45,6 +45,9 @@
     
         <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"/>
     
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719032614/ta/cornell_fdx5fz.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719032614/ta/cornell_fdx5fz.jpg"/>
     
     
     
@@ -489,20 +492,20 @@ mjx-container + br {
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title">
-            Loop Optimization in HLS
+            On Being a Teaching Assistant
         </h1>
     
     
         <div class="post-meta">
-    <time datetime="2020-10-30T21:00:00-07:00">
+    <time datetime="2024-06-21T21:54:50-07:00">
 	
-		    Oct 30, 2020
+		    Jun 21, 2024
     	
     </time>
     
         <span>in </span>
         
-    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
+    <a class="category-link" href="/categories/Personal-Essay/">Personal Essay</a>
 
 
     
@@ -519,39 +522,41 @@ mjx-container + br {
                 &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
             </div> -->
             <!-- excerpt -->
-<h2 id="What-is-II"><a href="#What-is-II" class="headerlink" title="What is II?"></a>What is II?</h2><p>II means initiation interval. </p>
-<p>For a function, II is the number of clock cycles before it could accept new inputs and is generally the <em>most critical performance metric in any system.</em> </p>
-<p>For a loop, II is the number of clock cycles before the next iteration of a loop starts to process data.</p>
-<h2 id="Loop-Pipelining"><a href="#Loop-Pipelining" class="headerlink" title="Loop Pipelining"></a>Loop Pipelining</h2><p><p align=center><br><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459708/posts/X14770-loop-pipelining_v42eza.svg" alt="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459708/posts/X14770-loop-pipelining_v42eza.svg"></p>
-<p><p/><br>Although we are already familiar with “pipelining”, this figure still gives a great example for “II” and loop latency.</p>
-<p>There are some more details about loop pipelining. One thing worth noticing is that when a loop is called multiple times, there could be a thing called io “bubble” happening:</p>
-<p><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604467903/posts/Screen_Shot_2020-11-04_at_13.30.51_pvobq4.png" alt="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604467903/posts/Screen_Shot_2020-11-04_at_13.30.51_pvobq4.png"></p>
-<p>This means that when the loop finishes executing, the next read and write won’t start until the loop is called again, even though II=1. So, if there are loops that are called multiple times, we can identify them and allow each call to overlap to remove the bubble. This is called <strong>rewind</strong>.</p>
-<p><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604467905/posts/Screen_Shot_2020-11-04_at_13.30.58_reproh.png" alt="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604467905/posts/Screen_Shot_2020-11-04_at_13.30.58_reproh.png"></p>
-<h2 id="Loop-Unrolling"><a href="#Loop-Unrolling" class="headerlink" title="Loop Unrolling"></a>Loop Unrolling</h2><p>Loop unrolling is to trade performance (latency, throughput) with resources. </p>
-<p>By default, loops are kept rolled in Vivado HLS. These rolled loops generate a hardware resource which is used by each iteration of the loop.</p>
-<p><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459839/posts/loop_unroll_icpavw.png" alt="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604459839/posts/loop_unroll_icpavw.png"></p>
-<p><strong>Rolled Loop</strong></p>
-<p>When the loop is rolled, each iteration is peformed in seperate clock cycles. This implementation takes four clock cycles, only requires one multiplier and each block RAM can be a single-port block RAM.</p>
-<p><strong>Partially Unrolled Loop</strong></p>
-<p>We can partially unroll a loop by specifying a unroll factor. In this example, we are setting unrolling factor = 2. This implementation requires two multipliers and a dual-port RAMs to support two reads or writes to each RAM in the same clock cycle. This implementation does however only take 2 clock cycles to complete.</p>
-<p><strong>Unrolled Loop</strong></p>
-<p>If the loop is fully unrolled, it uses 4 multipliers and requires the ability to perform 4 reads and 4 writes at the same time (we can achieve this with array partitioning). This uses more computation and storage resources but only take 1 clock cycle to complete.</p>
-<h2 id="Array-Partitioning"><a href="#Array-Partitioning" class="headerlink" title="Array Partitioning"></a>Array Partitioning</h2><p><p align=center><br><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604461901/posts/X14768-resource-contention_de0gk5.svg" alt="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604461901/posts/X14768-resource-contention_de0gk5.svg"></p>
-<p/>
+<p>On December 11th, 2023, at precisely 3:02 PM, I received a message from my advisor: “Can we chat a bit this week about the 2300 TAship, say Friday at 5 PM?” I felt a rush of excitement. Being a teaching assistant is something I’ve thought as an important part of my PhD experience. Up until now, I’ve never been the primary person responsible for a class. Although I’ve had experience as a part-time TA, it was mostly behind-the-scenes support. This opportunity felt like a chance to step into a role I’ve been anticipating.</p>
+<p>A teaching assistant is defined as “an individual who assists a professor with instructional responsibilities.” I first knew what a TA does while watching episodes of Stanford’s CS231N course, where some lectures were delivered by the TAs. I remember being impressed by their competence and effectiveness. </p>
+<p>I am the head TA of ECE/ENGRD 2300, Digital Logic and Computer Organization. This is one of the ECE fundamental undergraduate courses. It covers Boolean algebra, combinational and sequential logic, FSMs, memories, pipelined processors, up to cache and memory virtualization. My responsibilities are mainly two-fold: providing structure and delivering content. I help schedule the lectures, office hours, lab sessions, organize TA grading sessions. On content delivery, I give tutorials and review sessions before the exams, hold office hours and lab sessions, and answer questions on Ed, our online discussion platform. Being the head TA is quite different. I am the last person students come to if they don’t get an answer from other TAs, so I have to be ready. </p>
+<p>I give myself two challenges: <em>be the TA I didn’t get when I learned these topics</em>, and <em>answer as many questions as fast as possible</em> on Ed. The first is because I actually didn’t understand a lot of the topics when I first learned them, and there were no help for me to go to. The second is just for fun.</p>
+<h2 id="Preparation"><a href="#Preparation" class="headerlink" title="Preparation"></a>Preparation</h2><p>Preparing to be a TA has two steps: passing the language assessment and completing the TA development program. Cornell Engineering provides excellent support and resources through its TA development program. It covers important basics like managing grades and creating rubrics, also more subtle aspects such as how to create a friendly and inclusive learning environment, how to handle conflict, when to ask for help. This program is very helpful for someone like me, who isn’t initially familiar with the American undergraduate education system. </p>
+<p>&nbsp;</p>
+<div class="figure fig-50 left" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719033077/ta/program_phtmio.png" alt="TA Development Program"><span class="caption">TA Development Program</span></div>
+<div class="figure fig-50 right" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031943/ta/aquarium_eyh9eu.png" alt="5-min microteaching: how to build an aquarium"><span class="caption">5-min microteaching: how to build an aquarium</span></div>
+<p>&nbsp;</p>
+<p>My biggest takeaway from the program is the active learning skills, how to make your content delivery clear and engaging. Two techniques I’ve found useful are setting specific learning goals at the beginning and creating low-stakes quizzes. I used these techniques in the Verilog tutorial and the review lectures. The fun part of the program is the “micro-teaching session”: teach any topic you choose in 5 minutes. I chose the topic of how to build a freshwater aquarium. It’s a nice practice of the teaching skills and I got some quick feedbacks from the tutor and fellow TAs.</p>
+<h2 id="Things-I-Learned-During-My-TA-Experience"><a href="#Things-I-Learned-During-My-TA-Experience" class="headerlink" title="Things I Learned During My TA Experience"></a>Things I Learned During My TA Experience</h2><h3 id="It’s-a-24-7-Job"><a href="#It’s-a-24-7-Job" class="headerlink" title="It’s a 24/7 Job"></a>It’s a 24/7 Job</h3><p>Cornell undergraduate students typically take more than three courses each semester. Everyone works at their own pace. Many discussions happen asynchronously on Ed, so I make it a priority to answer questions in a timely manner. By the end of the first month, I am quite used to answering Ed questions wherever I am.</p>
+<h3 id="Teamwork-is-important"><a href="#Teamwork-is-important" class="headerlink" title="Teamwork is important"></a>Teamwork is important</h3><p>There is no way I can cover everything. I have a wonderful team of 19 TAs, many of them have more experience in teaching this course than I do. I received a lot of help from them, and grading is always fast.</p>
+<p>One thing I could do better is the office hour allocation. We have homework deadlines every Friday, and I later learned that the Friday evening office hour is usually packed because it’s near the deadline. So whenever there is a deadline, we should allocate more staff to the office hour or lab sessions.</p>
+<!-- Another aspect I greatly appreciate is how well-structured this course is. I only needed to make a few adjustments on the material. -->
+<p>&nbsp;</p>
+<div class="figure fig-50 left" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/IMG_4591_x9pogd.jpg" alt="My setup for the review session to show the process of solving problems"><span class="caption">My setup for the review session to show the process of solving problems</span></div>
+<div class="figure fig-50 right" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/IMG_4818_dqchog.jpg" alt="Answering questions on Ed at the beach in Monterey during FPGA 2024"><span class="caption">Answering questions on Ed at the beach in Monterey during FPGA 2024</span></div>
+<p>&nbsp;</p>
+<h3 id="Show-the-thinking-process"><a href="#Show-the-thinking-process" class="headerlink" title="Show the thinking process"></a>Show the thinking process</h3><p>I find it really helpful to show the exact steps of solving problems. I did this in the first review session, where I used my iPad to solve the problems in real time, and people can interrupt me to discuss.</p>
+<h3 id="Be-gentle"><a href="#Be-gentle" class="headerlink" title="Be gentle"></a>Be gentle</h3><p>I always remember what it was like when I first learned the topic, and constantly remind myself that Cornell undergraduate students are under a lot of pressure. Don’t worry, I’m here to help. </p>
+<h3 id="The-devil-is-always-in-the-detail"><a href="#The-devil-is-always-in-the-detail" class="headerlink" title="The devil is always in the detail"></a>The devil is always in the detail</h3><p>Time and again, I spend hours with students debugging their code, only to find that the issue was a typo, a mismatched bitwidth, or a flipped bit causing everything else to go wrong. Good formatting is crucial because such mistakes are much harder to spot when the code is squeezed into one line. It’s also beneficial to encourage students to develop good coding habits.</p>
+<h3 id="Refer-to-the-course-material-whenever-possible"><a href="#Refer-to-the-course-material-whenever-possible" class="headerlink" title="Refer to the course material whenever possible"></a>Refer to the course material whenever possible</h3><p>Because I watched the same lecture recordings as the students, I refer to the course materials in my answers and discussions. I find this approach surprisingly helpful, as students often respond with, “Oh, I didn’t understand that slide before, but now I do.”</p>
+<h2 id="Fun-things"><a href="#Fun-things" class="headerlink" title="Fun things"></a>Fun things</h2><p>One time, I overheard a group of students discussing a lab topic they couldn’t figure out, and someone said, “Let’s go ask the nice TA.” Then they came to me. I was touched.</p>
+<p>I learned digital logics with the same textbook and the same FPGA board in a different country. It is surprising how standardized this field can be.</p>
+<p>I got asked twice if I’m related to my advisor because we share the same last name. I explained: “it’s like Smith, a very common last name.”</p>
+<p>I find an interesting shift of mindset when I rewatch the lecture recordings given by my advisor. When I was preparing for my PhD qualifying exam, I focused on the content. But as a TA, I focus more on how to explain certain topics, how to design the quizzes, and how to connect concepts together.</p>
+<!-- <div class="figure fig-100" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/ed_qupe7q.png" alt=""></div> -->
+<p>About the second challenge, I wrote 369 answers over the semester, that’s about 3.26 answers per day:<br>&nbsp;</p>
+<center>
+  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719031945/ta/ed_qupe7q.png" alt="Ed" style="width:80%;">
+</center>
 
-<p>A common issue in pipelined loop is memory conflict. Arrays in HLS are implemented as Block RAMs. If there are two accesses to the same array in the loop body, it will need two read operation through the same memory port. So II becomes 2.</p>
-<p>How do we solve this? The idea is to break one array into multiple parts, each part implemented as a BRAMs, so that we can access them at them same time. </p>
-<p><img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604461378/posts/array_partition_ifubyx.png" alt="https://res.cloudinary.com/dxzx2bxch/image/upload/v1604461378/posts/array_partition_ifubyx.png"></p>
-<p>There are three fashions of array partitioning:</p>
-<ol>
-<li><strong>Block</strong>: the original array is split into equally sized blocks of consecutive elements of the original </li>
-<li><strong>Cyclic</strong>: the original array is split into equally sized blocks interleaving the elemetns of the original array.</li>
-<li><strong>Complete</strong>: the default operation is to split the array into its individual elements. This corresponds to resolving a memory into registers.</li>
-</ol>
-<p><strong>References</strong></p>
-<p><a href="https://www.xilinx.com/support/documentation/sw_manuals/xilinx2015_2/sdsoc_doc/topics/calling-coding-guidelines/concept_pipelining_loop_unrolling.html#:~:text=Both%20loop%20pipelining%20and%20loop%20unrolling%20exploit%20the%20parallelism%20between%20loop%20iterations.&amp;text=It%20implies%20that%20the%20operation,the%20operation%20in%20subsequent%20iteration." target="_blank" rel="noopener">Loop pipelining and loop unrolling</a></p>
-<p>ug902-vivado-high-level-synthesis.pdf</p>
+
+<h2 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h2><p>Now that the semester has concluded, I can reflect and share some thoughts. I believe we had a successful semester. Several students expressed raised interest in continuing their studies in ECE, and a few even asked me about life as a PhD student and the work I do. I think getting people interested in this field is as important as teaching the fundamentals, if not more. </p>
+<p>It turns out I have infinite patience and might be quite good at teaching.</p>
             
 
 
@@ -565,14 +570,11 @@ mjx-container + br {
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/Readings/"
-                    data-tooltip="Paper Readings"
-                    aria-label="PREVIOUS: Paper Readings"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -582,9 +584,9 @@ mjx-container + br {
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/HeteroCL/"
-                    data-tooltip="On HeteroCL"
-                    aria-label="NEXT: On HeteroCL"
+                    href="/quartus-apple/"
+                    data-tooltip="Programming Intel FPGAs on Apple Silicon Macs"
+                    aria-label="NEXT: Programming Intel FPGAs on Apple Silicon Macs"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -609,7 +611,7 @@ mjx-container + br {
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/loop_opt/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/ta/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -622,7 +624,7 @@ mjx-container + br {
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/loop_opt/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/ta/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -684,14 +686,11 @@ mjx-container + br {
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    
-                <a
-                    class="post-action-btn btn btn--default tooltip--top"
-                    href="/Readings/"
-                    data-tooltip="Paper Readings"
-                    aria-label="PREVIOUS: Paper Readings"
-                >
-                    
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
                         <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
                     </a>
@@ -701,9 +700,9 @@ mjx-container + br {
                     
                 <a
                     class="post-action-btn btn btn--default tooltip--top"
-                    href="/HeteroCL/"
-                    data-tooltip="On HeteroCL"
-                    aria-label="NEXT: On HeteroCL"
+                    href="/quartus-apple/"
+                    data-tooltip="Programming Intel FPGAs on Apple Silicon Macs"
+                    aria-label="NEXT: Programming Intel FPGAs on Apple Silicon Macs"
                 >
                     
                         <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
@@ -728,7 +727,7 @@ mjx-container + br {
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/loop_opt/"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/ta/"
                     title="Share on Facebook"
                     aria-label="Share on Facebook"
                 >
@@ -741,7 +740,7 @@ mjx-container + br {
             <li class="post-action hide-xs">
                 <a
                     class="post-action-btn btn btn--default"
-                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/loop_opt/"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/ta/"
                     title="Share on Twitter"
                     aria-label="Share on Twitter"
                 >
@@ -785,7 +784,7 @@ mjx-container + br {
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/loop_opt/"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/ta/"
                         aria-label="Share on Facebook"
                     >
                         <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
@@ -798,7 +797,7 @@ mjx-container + br {
                     <a
                         class="share-option-btn"
                         target="new"
-                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/loop_opt/"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/ta/"
                         aria-label="Share on Twitter"
                     >
                         <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
@@ -862,9 +861,9 @@ mjx-container + br {
     
         <script>
           var disqus_config = function() {
-            this.page.url = 'https://www.zzzdavid.tech/loop_opt/';
+            this.page.url = 'https://www.zzzdavid.tech/ta/';
               
-            this.page.identifier = 'loop_opt/';
+            this.page.identifier = 'ta/';
               
           };
           (function() {
