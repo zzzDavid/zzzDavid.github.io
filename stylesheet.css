@@ -1,0 +1,73 @@
+@font-face {
+    font-family: 'KingHwa';
+    src: url('fonts/KingHwa.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Optima';
+    src: url('fonts/Optima-Regular-01.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+  
+body {
+    background-color: rgb(255, 255, 255);
+}
+heading {
+    color: rgb(0,0,0);
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 180%;
+}
+
+subheading {
+    color: rgb(0,0,0);
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 170%; 
+}  
+p {
+    color: rgb(0, 0, 0);
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 120%;
+  }
+
+a {
+    color: rgb(15, 155, 236);
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+  }
+
+name {
+      font-family:  'Optima', 'Noto Sans';
+      font-size: 200%
+  }
+  .circle_image {
+    width: 80%;
+    border-radius: 80%;
+}
+
+papertitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 140%
+}
+
+strong{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+}
+strong-red{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+    color: #ff5a02;
+}
+em{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+}
+
+large{
+    font-family: 'Cormorant Garamond';
+    font-size: 120%;
+}

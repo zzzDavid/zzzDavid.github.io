@@ -1,0 +1,940 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>Programming Intel FPGAs on Apple Silicon Macs - Niansong Zhang</title>
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"},"articleBody":"\nIntroductionWhy would you want to program Intel FPGAs on an Apple Silicon Mac? Maybe you are a student/TA who needs to run school projects on an Intel FPGA, but you only have access to an M-series chip MacBook. \nThe difficulty of programming Intel FPGAs on M-series Macs mainly comes from the EDA tools. The EDA tools are only designed for Windows/Linux running on x86 architecture. Since Apple switched from Intel x86 to their own ARM-based architecture, it becomes difficult to use virtualization to install Linux/Windows on Macs. However, we can still emulate an x86 operating system on an ARM-base architecture. Intuitively, it uses ARM instructions to mimick the functionality of each x86 instruction, and therefore allows us to run x86 software on an ARM architecture. This comes at a cost, emulation is far slower than virtualization, since the software is not running natively.\nInstall UTM on MacOSUTM is a virtualization/emulation engine that runs on Apple Silicon. From their website description:\n\n On Intel Macs, x86/x64 operating system can be virtualized. In addition, lower performance emulation is available to run x86/x64 on Apple Silicon as well as ARM64 on Intel.\n\n&#128511; UTM also works on iOS/iPadOS. Theoretically you can also use Intel FPGA with an iPad or an iPhone. But I didn’t try. \nThe first step is to download and install UTM from their website: https://mac.getutm.app\nInstall Ubuntu 16.04 LTS (x86 version) on UTMUTM website provides a gallery of pre-built virtual machines, but there isn’t one I needed. To run Quartus, I need to build a Ubuntu 16.04 x86 version virtual machine.\nFirst, download the 64-bit desktop image from official release: https://releases.ubuntu.com/16.04/\nLet’s start a new virtual machine by clicking the + on the left corner. Then, select “Emulate”:\n   \nNext, select the iso image downloaded from the Ubuntu release, and begin installation. It is a standard Ubuntu installation process. At the end of installation, you will select ejecting the disk on the upper right corner, then restart the VM, and it should be good to go.\nInstall Quartus on UbuntuThis step needs to be done in the VM.\nQuartus II Web Edition for Linux x86: http://download.altera.com/akdlm/software/acdsinst/15.0/145/ib_tar/Quartus-web-15.0.0.145-linux.tar\n\nRun ./QuartusSetupWeb-15.0.0.145-linux.run from the directory where you downloaded the files. Make sure ModelSimSetup-15.0.0.145-linux.run is in the same directory.\nSelect required tools, for me they are:\nQuartus II Web Edition (free)\nModelsim-Altera Starter Edition (free)\nDevices -&gt; Cyclone V\n\n\nClick “Next”, let the installation finish, and you should see a icon on the desktop.\n\nThere are a few additional steps to make sure everything works.\nPost InstallationInstall additional libraries for ModelSim\nInstall 32 bit libraries for ModelSim.1234sudo dpkg --add-architecture i386sudo apt-get updatesudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386sudo apt-get install libxft2:i386 libxext6:i386\nOpen Quartus and go to Tools &gt; Options &gt; General &gt; EDA Tool Options . Copy the path in the “ModelSim-Altera” box — for me this was /home/ubuntu/altera/15.0/modelsim_ase/linuxaloem.\nOpen a terminal, change directory to this path, and see if ModelSim works.12cd /home/ubuntu/altera/15.0/modelsim_ase/linuxaloem./vsim -help\nIf ModelSim works, it should print something like:12Usage: vsim [options] [[&lt;library&gt;.]&lt;primary&gt;[(&lt;secondary&gt;)]]... ...\n\n\nMake USB Blaster workYou don’t need to install any drivers to get the USB Blaster working on Linux since Quartus uses a Linux USB library instead of a driver. You do, however, have to do a little tweaking so non-root users can access it [1].\n\nAdd a udv rule allowing regular users to access the blaster.1234echo '# For Altera USB-Blaster permissions. SUBSYSTEM==\"usb\",\\ ENV&#123;DEVTYPE&#125;==\"usb_device\",\\ ATTR&#123;idVendor&#125;==\"09fb\",\\ ATTR&#123;idProduct&#125;==\"6001\",\\MODE=\"0666\",\\NAME=\"bus/usb/$env&#123;BUSNUM&#125;/$env&#123;DEVNUM&#125;\",\\RUN+=\"/bin/chmod 0666 %c\"' | sudo tee /etc/udev/rules.d/51-usbblaster.rules &gt; /dev/null\nTest if JTAG is working\nPlug power to the FPGA first.\nConnect FPGA to Mac with USB next.\nSelect USB blaster in UTM, connect FPGA to the virtual machine.\nTest if jtagconfig works1/home/ubuntu/altera/15.0/quartus/bin/jtagconfig\n\nYou should see output like:125) USB-Blaster [3-3] 020A60DD 5M570Z/EPM570Z\n\n\n\n\nTroubleshootingQuartus takes forever to open a projectYou probably enabled “force multicore” in the VM settings. I turned this on to make it work faster during installation, that did not cause any problem. But when I run Quartus, I have to turn it off, otherwise Quartus gets stuck during opening projects.\n   \nJTAG chain brokenI saw this error during testing jtagconfig;\n\nIt turns out you need both the power cable and the USB cable connected to the FPGA board. Although USB alone can power the board, the serial port obviously doesn’t work. Solution:\n\nTurn off the FPGA, unplug USB.\nConnect power cable, turn on the FPGA.\nPlug in USB, connect to VM, and then retry.\n\nReference\nAaron Abbot. Quartus 15.0 Web Edition Linux Installation. https://mil.ufl.edu/3701/docs/quartus/quartus15.0_Linux_installation_instructions.pdf\n","dateCreated":"2024-01-25T16:03:47-08:00","dateModified":"2025-03-03T16:46:51-08:00","datePublished":"2024-01-25T16:03:47-08:00","description":"This tutorial presents how to set up a Quartus compilation flow with UTM on Apple Silicon Macs. ","headline":"Programming Intel FPGAs on Apple Silicon Macs","image":["https://res.cloudinary.com/dxzx2bxch/image/upload/v1706216942/posts/quartus-on-mac_o55ezy.jpg","https://res.cloudinary.com/dxzx2bxch/image/upload/v1706217161/posts/quartus-on-mac_ktvmus.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/quartus-apple/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"}},"url":"https://www.zzzdavid.tech/quartus-apple/","thumbnailUrl":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1706216942/posts/quartus-on-mac_o55ezy.jpg"}</script>
+    <meta name="description" content="This tutorial presents how to set up a Quartus compilation flow with UTM on Apple Silicon Macs.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Programming Intel FPGAs on Apple Silicon Macs">
+<meta property="og:url" content="https://www.zzzdavid.tech/quartus-apple/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="This tutorial presents how to set up a Quartus compilation flow with UTM on Apple Silicon Macs.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706218769/posts/Screenshot_2024-01-25_at_4.36.12_PM_fswjym.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706215992/posts/blaster_htqfno.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706215990/posts/jtag-good_j3wciy.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706218769/posts/Screenshot_2024-01-25_at_4.37.40_PM_leljiu.png">
+<meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706215991/posts/jtag-broken_kerr1w.png">
+<meta property="article:published_time" content="2024-01-26T00:03:47.000Z">
+<meta property="article:modified_time" content="2025-03-04T00:46:51.220Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706218769/posts/Screenshot_2024-01-25_at_4.36.12_PM_fswjym.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706216942/posts/quartus-on-mac_o55ezy.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706216942/posts/quartus-on-mac_o55ezy.jpg"/>
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706217161/posts/quartus-on-mac_ktvmus.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706217161/posts/quartus-on-mac_ktvmus.jpg"/>
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ukwuipdjvn8pgheo9akimcfk3smwomq1lijwukzw99cjcuq7x7vcigohroks.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        // var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-left
+                    post-header-cover--partial"
+             style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1706217161/posts/quartus-on-mac_ktvmus.jpg');"
+             data-behavior="5">
+            
+                <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Programming Intel FPGAs on Apple Silicon Macs
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2024-01-25T16:03:47-08:00">
+	
+		    Jan 25, 2024
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Tutorial/">Tutorial</a>
+
+
+    
+</div>
+
+    
+</div>
+
+            
+        </div>
+
+            <div id="main" data-behavior="5"
+                 class="hasCover
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <!-- <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div> -->
+            <!-- excerpt -->
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>Why would you want to program Intel FPGAs on an Apple Silicon Mac? Maybe you are a student/TA who needs to run school projects on an Intel FPGA, but you only have access to an M-series chip MacBook. </p>
+<p>The difficulty of programming Intel FPGAs on M-series Macs mainly comes from the EDA tools. The EDA tools are only designed for Windows/Linux running on x86 architecture. Since Apple switched from Intel x86 to their own ARM-based architecture, it becomes difficult to use virtualization to install Linux/Windows on Macs. However, we can still <em>emulate</em> an x86 operating system on an ARM-base architecture. Intuitively, it uses ARM instructions to mimick the functionality of each x86 instruction, and therefore allows us to run x86 software on an ARM architecture. This comes at a cost, emulation is far slower than virtualization, since the software is not running natively.</p>
+<h2 id="Install-UTM-on-MacOS"><a href="#Install-UTM-on-MacOS" class="headerlink" title="Install UTM on MacOS"></a>Install UTM on MacOS</h2><p>UTM is a virtualization/emulation engine that runs on Apple Silicon. From their website description:</p>
+<blockquote>
+<p> On Intel Macs, x86/x64 operating system can be virtualized. In addition, lower performance emulation is available to run x86/x64 on Apple Silicon as well as ARM64 on Intel.</p>
+</blockquote>
+<p>&#128511; UTM also works on iOS/iPadOS. Theoretically you can also use Intel FPGA with an iPad or an iPhone. But I didn’t try. </p>
+<p>The first step is to download and install UTM from their website: <a href="https://mac.getutm.app" target="_blank" rel="noopener">https://mac.getutm.app</a></p>
+<h2 id="Install-Ubuntu-16-04-LTS-x86-version-on-UTM"><a href="#Install-Ubuntu-16-04-LTS-x86-version-on-UTM" class="headerlink" title="Install Ubuntu 16.04 LTS (x86 version) on UTM"></a>Install Ubuntu 16.04 LTS (x86 version) on UTM</h2><p>UTM website provides a gallery of pre-built virtual machines, but there isn’t one I needed. To run Quartus, I need to build a Ubuntu 16.04 x86 version virtual machine.</p>
+<p>First, download the 64-bit desktop image from official release: <a href="https://releases.ubuntu.com/16.04/" target="_blank" rel="noopener">https://releases.ubuntu.com/16.04/</a></p>
+<p>Let’s start a new virtual machine by clicking the <code>+</code> on the left corner. Then, select “Emulate”:</p>
+   <div class="figure fig-55 center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706218769/posts/Screenshot_2024-01-25_at_4.36.12_PM_fswjym.png" alt=""></div>
+<p>Next, select the <code>iso</code> image downloaded from the Ubuntu release, and begin installation. It is a standard Ubuntu installation process. At the end of installation, you will select ejecting the disk on the upper right corner, then restart the VM, and it should be good to go.</p>
+<h2 id="Install-Quartus-on-Ubuntu"><a href="#Install-Quartus-on-Ubuntu" class="headerlink" title="Install Quartus on Ubuntu"></a>Install Quartus on Ubuntu</h2><p>This step needs to be done in the VM.</p>
+<p>Quartus II Web Edition for Linux x86: <a href="http://download.altera.com/akdlm/software/acdsinst/15.0/145/ib_tar/Quartus-web-15.0.0.145-linux.tar" target="_blank" rel="noopener">http://download.altera.com/akdlm/software/acdsinst/15.0/145/ib_tar/Quartus-web-15.0.0.145-linux.tar</a></p>
+<ol>
+<li>Run <code>./QuartusSetupWeb-15.0.0.145-linux.run</code> from the directory where you downloaded the files. Make sure <code>ModelSimSetup-15.0.0.145-linux.run</code> is in the same directory.</li>
+<li>Select required tools, for me they are:<ol>
+<li>Quartus II Web Edition (free)</li>
+<li>Modelsim-Altera Starter Edition (free)</li>
+<li>Devices -&gt; Cyclone V</li>
+</ol>
+</li>
+<li>Click “Next”, let the installation finish, and you should see a icon on the desktop.</li>
+</ol>
+<p>There are a few additional steps to make sure everything works.</p>
+<h2 id="Post-Installation"><a href="#Post-Installation" class="headerlink" title="Post Installation"></a>Post Installation</h2><h3 id="Install-additional-libraries-for-ModelSim"><a href="#Install-additional-libraries-for-ModelSim" class="headerlink" title="Install additional libraries for ModelSim"></a>Install additional libraries for ModelSim</h3><ol>
+<li>Install 32 bit libraries for ModelSim.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg --add-architecture i386</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386</span><br><span class="line">sudo apt-get install libxft2:i386 libxext6:i386</span><br></pre></td></tr></table></figure></li>
+<li>Open Quartus and go to <code>Tools</code> &gt; <code>Options</code> &gt; <code>General</code> &gt; <code>EDA Tool Options</code> . Copy the path in the “ModelSim-Altera” box — for me this was <code>/home/ubuntu/altera/15.0/modelsim_ase/linuxaloem</code>.</li>
+<li>Open a terminal, change directory to this path, and see if ModelSim works.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/ubuntu/altera/15.0/modelsim_ase/linuxaloem</span><br><span class="line">./vsim -<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+If ModelSim works, it should print something like:<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Usage: vsim [options] <span class="string">[[&lt;library&gt;.]&lt;primary&gt;[(&lt;secondary&gt;)]]</span></span><br><span class="line">... ...</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Make-USB-Blaster-work"><a href="#Make-USB-Blaster-work" class="headerlink" title="Make USB Blaster work"></a>Make USB Blaster work</h3><p>You don’t need to install any drivers to get the USB Blaster working on Linux since Quartus uses a Linux USB library instead of a driver. You do, however, have to do a little tweaking so non-root users can access it [1].</p>
+<ol>
+<li>Add a <code>udv</code> rule allowing regular users to access the blaster.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'# For Altera USB-Blaster permissions. SUBSYSTEM=="usb",\ ENV&#123;DEVTYPE&#125;=="usb_device",\ ATTR&#123;idVendor&#125;=="09fb",\ ATTR&#123;idProduct&#125;=="6001",\</span></span><br><span class="line"><span class="string">MODE="0666",\</span></span><br><span class="line"><span class="string">NAME="bus/usb/$env&#123;BUSNUM&#125;/$env&#123;DEVNUM&#125;",\</span></span><br><span class="line"><span class="string">RUN+="/bin/chmod 0666 %c"'</span> | sudo tee /etc/udev/rules.d/51-usbblaster.rules &gt; /dev/null</span><br></pre></td></tr></table></figure></li>
+<li>Test if JTAG is working<ol>
+<li>Plug power to the FPGA first.</li>
+<li>Connect FPGA to Mac with USB next.<div class="figure fig-50 right" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706215992/posts/blaster_htqfno.png" alt=""></div></li>
+<li>Select USB blaster in UTM, connect FPGA to the virtual machine.</li>
+<li>Test if <code>jtagconfig</code> works<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/ubuntu/altera/15.0/quartus/bin/jtagconfig</span><br></pre></td></tr></table></figure>
+<div class="figure fig-50 right" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706215990/posts/jtag-good_j3wciy.png" alt=""></div>
+You should see output like:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">5) USB-Blaster [3-3] </span><br><span class="line">020A60DD 5M570Z/EPM570Z</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h2><h3 id="Quartus-takes-forever-to-open-a-project"><a href="#Quartus-takes-forever-to-open-a-project" class="headerlink" title="Quartus takes forever to open a project"></a>Quartus takes forever to open a project</h3><p>You probably enabled “force multicore” in the VM settings. I turned this on to make it work faster during installation, that did not cause any problem. But when I run Quartus, I have to turn it off, otherwise Quartus gets stuck during opening projects.</p>
+   <div class="figure fig-80 center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706218769/posts/Screenshot_2024-01-25_at_4.37.40_PM_leljiu.png" alt=""></div>
+<h3 id="JTAG-chain-broken"><a href="#JTAG-chain-broken" class="headerlink" title="JTAG chain broken"></a>JTAG chain broken</h3><p>I saw this error during testing <code>jtagconfig</code>;</p>
+<div class="figure fig-80 center" style="width:;"><img class="fig-img" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1706215991/posts/jtag-broken_kerr1w.png" alt=""></div>
+<p>It turns out you need both the power cable and the USB cable connected to the FPGA board. Although USB alone can power the board, the serial port obviously doesn’t work. Solution:</p>
+<ol>
+<li>Turn off the FPGA, unplug USB.</li>
+<li>Connect power cable, turn on the FPGA.</li>
+<li>Plug in USB, connect to VM, and then retry.</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Aaron Abbot. Quartus 15.0 Web Edition Linux Installation. <a href="https://mil.ufl.edu/3701/docs/quartus/quartus15.0_Linux_installation_instructions.pdf" target="_blank" rel="noopener">https://mil.ufl.edu/3701/docs/quartus/quartus15.0_Linux_installation_instructions.pdf</a></li>
+</ol>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/ta/"
+                    data-tooltip="On Being a Teaching Assistant"
+                    aria-label="PREVIOUS: On Being a Teaching Assistant"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/cvpr22/"
+                    data-tooltip="CVPR 2022 at New Orleans"
+                    aria-label="NEXT: CVPR 2022 at New Orleans"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/quartus-apple/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/quartus-apple/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/ta/"
+                    data-tooltip="On Being a Teaching Assistant"
+                    aria-label="PREVIOUS: On Being a Teaching Assistant"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/cvpr22/"
+                    data-tooltip="CVPR 2022 at New Orleans"
+                    aria-label="NEXT: CVPR 2022 at New Orleans"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/quartus-apple/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/quartus-apple/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/quartus-apple/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/quartus-apple/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ildyypobrv9qzoyty7ownq72ohmsn0yx3wvnupnrgh54cb7f5o3n3tpgv6fs.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/quartus-apple/';
+              
+            this.page.identifier = 'quartus-apple/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
