@@ -1,0 +1,959 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Niansong Zhang">
+    <title>FPGA 2025 at Monterey - Niansong Zhang</title><meta name="robots" content="noindex">
+    <meta name="author" content="Niansong Zhang">
+    
+        <meta name="keywords" content="Niansong Zhang,Niansong,">
+    
+    
+        <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
+    
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml">
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"},"articleBody":"\nAdditional Summary Points from FPGA’25 ProceedingsBelow are further distilled summary points for several papers where my personal notes were brief. These points are derived from the full conference proceedings and aim to capture key technical contributions and insights.\nAI Accelerators and Neural Network ArchitecturesTreeLUT: An Efficient Alternative Using Gradient Boosted Decision Trees\nEfficient Mapping: Demonstrates how decision trees for classification/regression can be efficiently mapped to LUTs and adder trees.\nLow-Cost Hardware: Uses no DSP resources, offering an extremely low hardware cost alternative for inference tasks.\nExperimental Validation: Evaluated on standard benchmarks (e.g., MNIST, JSC, NID), underscoring its practical applicability for resource-constrained designs.\n\nGreater than the Sum of its LUTs: Scaling Up LUT-based Neural Networks with AmigoLUT\nScalability Challenges: Addresses the exponential growth in LUT usage due to neuron fan-in limitations in conventional logic neural networks.\nEnsemble Approach: Proposes an ensemble method where multiple weak models (via averaging) collectively enhance prediction accuracy.\nRobustness Insight: Shows that simpler ensemble methods can sometimes yield more diversity than more complex bagging or boosting techniques.\n\nReducedLUT: Table Decomposition with “Don’t Care” Conditions (Short Paper)\nOptimization Goal: Aims to reduce the number of physical LUTs by exploiting inherent “don’t care” conditions in the logic representation.\nDesign Trade-Off: Balances between logic fidelity and hardware efficiency, ensuring that reduced resource usage does not significantly affect performance.\nMethodology: Introduces a decomposition strategy that adapts table implementations to hardware constraints.\n\nCAD, Verification, and FPGA Architecture ExplorationHercules: Efficient Verification of HLS Designs with FPGA Acceleration\nDynamic Probing: Integrates probes into the HLS flow to dynamically compare software simulations with hardware execution.\nSnapshot Recovery: Uses simulation snapshots to restart verification from intermediate points, enhancing debugging efficiency.\nCaveats: Notes potential side effects where the insertion of probes may alter loop scheduling, impacting performance analysis.\n\nAn Efficient Traversal Method for FPGA Interconnect Testing Based on Regular Routing\nINT Tile Graph (ITG): Introduces a tile-based intermediate representation that confines routing searches to manageable subgraphs.\nRegular Routing Approach: Leverages routing constraints and auxiliary techniques to address irregularities in FPGA interconnects.\nTargeted for Xilinx 7 Series: Optimizes traversal and net classification specifically for routing challenges in Xilinx devices.\n\nTwo-Phase Transistor Sizing for FPGAs via Bayesian Optimization\nSimulation-Driven Optimization: Frames transistor sizing as a black-box problem, using Bayesian optimization to navigate non-analytical delay measurements.\nObjective Function: Focuses on minimizing delay while satisfying the physical and performance constraints of the FPGA architecture.\nTool Enhancement: Enhances existing sizing tools with probabilistic methods, potentially reducing simulation time and improving design quality.\n\nTAPCA: An Interface-Aware Cache Management Framework for Task Partitioning on CPU-FPGA SoC Platforms (Short Paper)\nTask Partitioning: Uses LLVM IR as input to partition tasks between CPU and FPGA while considering coherent memory interfaces.\nReduced Communication Overhead: Identifies partitioning schemes that lower inter-component communication delays.\nSystem-Level Optimization: Provides insights for integrated SoC designs where cache management is critical for performance.\n\nHigh-Level Synthesis (HLS) and Code TransformationARIES: An Agile MLIR-Based Compilation Flow for Reconfigurable Devices with AI Engines\nMLIR Integration: Leverages the Multi-Level Intermediate Representation (MLIR) to streamline the compilation for FPGAs.\nAI Engine Compatibility: Tailors the flow to efficiently target AI engines embedded in reconfigurable devices.\nCandidate for Best Paper: Recognized for its potential to dramatically reduce development time and improve performance.\n\nStream-HLS: Towards Automatic Dataflow Acceleration (Best Paper Candidate)\nAutomation Focus: Transforms shared buffer accesses into FIFO-based dataflow streams, reducing manual intervention.\nGraph-Based DSE: Models computation as a dataflow graph where nodes represent loop nests, allowing for advanced design space exploration (DSE) via MINLP techniques.\nBenchmark Results: Shows significant acceleration on several matrix multiplication and neural network benchmarks, validating the approach.\n\nA Unified Framework for Automated Code Transformation and Pragma Insertion\nTemplate Generation: Automates code transformations like loop tiling, strip-mining, and permutation to enhance performance.\nFine-Grained Optimization: Reduces the complex loop ordering problem to a more manageable loop tiling issue, improving HLS productivity.\nPragma Insertion: Simplifies the process of guiding the HLS toolchain through standardized code annotations.\n\nLatency Insensitivity Testing for Dataflow HLS Designs\nTesting Framework: Provides automated test generation for latency-insensitive designs, enabling the early detection of scheduling bugs.\nPerformance Validation: Uses data arrival and production timing to assess and optimize dataflow schedules in HLS designs.\nRobust Debugging: Enhances overall design reliability through systematic latency testing.\n\nDynamic Loop Fusion in High-Level Synthesis\nFusion Strategy: Addresses the challenge of multi-loop kernels with dynamic memory access, proposing a method to fuse loops dynamically.\nChain of Recurrences: Represents loop dependencies through recurrence relations to better understand and optimize scheduling.\nDataflow Circuit Transformation: Enables more efficient dataflow mapping in scenarios where traditional static analysis fails.\n\nSecurity and Application-Specific EnhancementsFAST: FPGA Acceleration of Fully Homomorphic Encryption with Efficient Bootstrapping\nFocus on FHE: Targets the computational bottleneck in homomorphic encryption—bootstrapping and homomorphic linear transformation (HLT).\nCustomized Data Paths: Designs memory-efficient and computation-optimized data paths specifically for FHE operations.\nPervasive FHE: Discusses the potential timeline and improvements needed for FHE to become more widespread in practical applications.\n\nOLA: An FPGA-based Overlay Accelerator for Privacy Preserving Machine Learning with Homomorphic Encryption\nOverlay Approach: Combines a high-level DSL with a custom instruction set tailored for FHE operations.\nCompiler Innovations: Implements data reuse passes to optimize memory and computation within the HE domain.\nIntegrated Platform: Merges CPU and FPGA resources to provide a robust solution for privacy-preserving machine learning.\n\nCIVIC-FPGA: A Trusted FPGA Design Validation by Multi-Tenant Cloud Providers (Short Paper)\nSecurity Focus: Ensures the confidentiality and integrity of FPGA designs in cloud environments.\nAuthentication Mechanisms: Utilizes Trusted Execution Environments (TEEs) and Public Key Infrastructure (PKI) to secure design validation.\nMinimal Overhead: Achieves design security with overhead ranging from 6% to 17.5%, making it scalable for diverse applications.\n\nArchitectural Innovations and ApplicationsFRIDA: Reconfigurable Arrays for Dynamically Scheduled High-Level Synthesis\nHybrid Flexibility: Bridges the gap between the adaptability of FPGAs and the performance characteristics of ASICs.\nDynamic Scheduling: Emphasizes the ability to reconfigure resources on-the-fly, offering a balance between flexibility and performance.\n\nSystolic Sparse Tensor Slices: FPGA Building Blocks for Sparse and Dense AI Acceleration\nHigh-Frequency Operation: Demonstrates building blocks capable of running at frequencies up to ~600MHz.\nDual-Mode Acceleration: Designed for both sparse and dense computations, making it versatile for various AI workloads.\nIntegration Potential: Suitable for incorporation into larger AI systems requiring robust, high-speed tensor processing.\n\nTile-Level Pipeline for Linear Scalable Stencil Computation on AMD AI Engines (Short Paper)\nScalable Stencil Computation: Proposes a pipeline architecture optimized for linear and scalable stencil operations.\nAdaptation to AMD AI Engines: Tailors the design to leverage the specific features and capabilities of AMD’s AI hardware.\nOptimized Data Flow: Focuses on minimizing latency and maximizing throughput in repetitive, grid-based computations.\n\nHUMA: Heterogeneous, Ultra Low-Latency Model Accelerator for The Virtual Brain on a Versal Adaptive SoC\nBrain Simulation: Designed for real-time simulation and visualization of brain models, facilitating applications in medical imaging and surgery.\nPersonalization: Incorporates mechanisms to adapt to individual physiological signals (e.g., EEG) for tailored performance.\nScatter/Gather Operations: Efficiently handles complex data movements, essential for low-latency processing in biomedical applications.\n\nSAT-Accel: A Modern SAT Solver on FPGA\nSAT Solving on FPGA: Addresses challenges in Boolean satisfiability with specialized hardware optimizations.\nAdvanced Heuristics: Utilizes conflict-driven clause learning, clause minimization, and effective restart policies.\nPerformance Gains: Achieves up to 3× speedup over traditional CPU-based SAT solvers by replacing inefficient scan operations with parallel updates.\n\nFPGA-Only Implementation of MIPI C-PHY Receiver Using Blind Oversampling CDR for CMOS Image Sensors\nImage Sensor Testing: Applies FPGA technology to enhance the testing and validation of CMOS image sensors.\nBlind Oversampling: Introduces an innovative clock data recovery method that does not rely on prior knowledge of the signal.\nRobust Performance: Ensures reliable operation in environments where frequent updates and high-speed data capture are critical.\n\n\nThese additional summary points complement my initial notes by drawing on detailed insights from the FPGA’25 proceedings, offering a richer understanding of the diverse contributions presented at the conference.\n","dateCreated":"2025-03-04T00:00:00-05:00","dateModified":"2025-07-03T16:18:58-04:00","datePublished":"2025-03-04T00:00:00-05:00","description":"My experience attending and presenting at FPGA 2025 at Monterey.","headline":"FPGA 2025 at Monterey","image":["https://www.isfpga.org/wp-content/uploads/2020/06/montereybridge3-2048x520.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.zzzdavid.tech/fpga25/"},"publisher":{"@type":"Organization","name":"Niansong Zhang","sameAs":["https://github.com/zzzDavid","https://twitter.com/WW5bbaRC2F46nt6","https://www.linkedin.com/in/niansong-zhang-b7855a191","mailto:nz264@cornell.edu"],"image":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg","logo":{"@type":"ImageObject","url":"https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"}},"url":"https://www.zzzdavid.tech/fpga25/","thumbnailUrl":"https://www.isfpga.org/wp-content/uploads/2020/06/montereybridge3-2048x520.jpg"}</script>
+    <meta name="description" content="My experience attending and presenting at FPGA 2025 at Monterey.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="FPGA 2025 at Monterey">
+<meta property="og:url" content="https://www.zzzdavid.tech/fpga25/index.html">
+<meta property="og:site_name" content="Niansong Zhang">
+<meta property="og:description" content="My experience attending and presenting at FPGA 2025 at Monterey.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-03-04T05:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-03T20:18:58.739Z">
+<meta property="article:author" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong Zhang">
+<meta property="article:tag" content="Niansong">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg"/>
+    
+    
+        <meta property="og:image" content="https://www.isfpga.org/wp-content/uploads/2020/06/montereybridge3-2048x520.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://www.isfpga.org/wp-content/uploads/2020/06/montereybridge3-2048x520.jpg"/>
+    
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-ukwuipdjvn8pgheo9akimcfk3smwomq1lijwukzw99cjcuq7x7vcigohroks.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+    <script>
+        var scr = document.createElement('script');
+        var namespace = 'zzzdavid.tech.' + location.pathname;
+        // var src = "https://api.countapi.xyz/hit/" + namespace + "?callback=websiteVisits";
+        scr.setAttribute('src', src);
+        document.getElementsByTagName('head')[0].appendChild(scr)
+    </script>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            Niansong Zhang
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="/"
+                aria-label="Open the link: //"
+            >
+        
+        
+            <img class="header-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg" alt="Author&#39;s picture"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Read more about the author"
+                >
+                    <img class="sidebar-profile-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Niansong Zhang</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-address-card" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/blog/"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/zzzDavid" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/WW5bbaRC2F46nt6" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/niansong-zhang-b7855a191" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:nz264@cornell.edu" target="_blank" rel="noopener" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            FPGA 2025 at Monterey
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2025-03-04T00:00:00-05:00">
+	
+		    Mar 04, 2025
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/Conference-Journal/">Conference Journal</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <!-- <div style="overflow: hidden; white-space: nowrap;"">
+                <i> <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1658049100/book-alt_gzq2mb.svg" width="15" height="15" align="left"  style="position:relative;top:8px;" /> 
+                &nbsp;&nbsp;This page has been visited <span id="view_count_text"> </span> times </i>
+            </div> -->
+            <!-- excerpt -->
+<h1 id="Additional-Summary-Points-from-FPGA’25-Proceedings"><a href="#Additional-Summary-Points-from-FPGA’25-Proceedings" class="headerlink" title="Additional Summary Points from FPGA’25 Proceedings"></a>Additional Summary Points from FPGA’25 Proceedings</h1><p>Below are further distilled summary points for several papers where my personal notes were brief. These points are derived from the full conference proceedings and aim to capture key technical contributions and insights.</p>
+<h2 id="AI-Accelerators-and-Neural-Network-Architectures"><a href="#AI-Accelerators-and-Neural-Network-Architectures" class="headerlink" title="AI Accelerators and Neural Network Architectures"></a>AI Accelerators and Neural Network Architectures</h2><h3 id="TreeLUT-An-Efficient-Alternative-Using-Gradient-Boosted-Decision-Trees"><a href="#TreeLUT-An-Efficient-Alternative-Using-Gradient-Boosted-Decision-Trees" class="headerlink" title="TreeLUT: An Efficient Alternative Using Gradient Boosted Decision Trees"></a>TreeLUT: An Efficient Alternative Using Gradient Boosted Decision Trees</h3><ul>
+<li><strong>Efficient Mapping:</strong> Demonstrates how decision trees for classification/regression can be efficiently mapped to LUTs and adder trees.</li>
+<li><strong>Low-Cost Hardware:</strong> Uses no DSP resources, offering an extremely low hardware cost alternative for inference tasks.</li>
+<li><strong>Experimental Validation:</strong> Evaluated on standard benchmarks (e.g., MNIST, JSC, NID), underscoring its practical applicability for resource-constrained designs.</li>
+</ul>
+<h3 id="Greater-than-the-Sum-of-its-LUTs-Scaling-Up-LUT-based-Neural-Networks-with-AmigoLUT"><a href="#Greater-than-the-Sum-of-its-LUTs-Scaling-Up-LUT-based-Neural-Networks-with-AmigoLUT" class="headerlink" title="Greater than the Sum of its LUTs: Scaling Up LUT-based Neural Networks with AmigoLUT"></a>Greater than the Sum of its LUTs: Scaling Up LUT-based Neural Networks with AmigoLUT</h3><ul>
+<li><strong>Scalability Challenges:</strong> Addresses the exponential growth in LUT usage due to neuron fan-in limitations in conventional logic neural networks.</li>
+<li><strong>Ensemble Approach:</strong> Proposes an ensemble method where multiple weak models (via averaging) collectively enhance prediction accuracy.</li>
+<li><strong>Robustness Insight:</strong> Shows that simpler ensemble methods can sometimes yield more diversity than more complex bagging or boosting techniques.</li>
+</ul>
+<h3 id="ReducedLUT-Table-Decomposition-with-“Don’t-Care”-Conditions-Short-Paper"><a href="#ReducedLUT-Table-Decomposition-with-“Don’t-Care”-Conditions-Short-Paper" class="headerlink" title="ReducedLUT: Table Decomposition with “Don’t Care” Conditions (Short Paper)"></a>ReducedLUT: Table Decomposition with “Don’t Care” Conditions (Short Paper)</h3><ul>
+<li><strong>Optimization Goal:</strong> Aims to reduce the number of physical LUTs by exploiting inherent “don’t care” conditions in the logic representation.</li>
+<li><strong>Design Trade-Off:</strong> Balances between logic fidelity and hardware efficiency, ensuring that reduced resource usage does not significantly affect performance.</li>
+<li><strong>Methodology:</strong> Introduces a decomposition strategy that adapts table implementations to hardware constraints.</li>
+</ul>
+<h2 id="CAD-Verification-and-FPGA-Architecture-Exploration"><a href="#CAD-Verification-and-FPGA-Architecture-Exploration" class="headerlink" title="CAD, Verification, and FPGA Architecture Exploration"></a>CAD, Verification, and FPGA Architecture Exploration</h2><h3 id="Hercules-Efficient-Verification-of-HLS-Designs-with-FPGA-Acceleration"><a href="#Hercules-Efficient-Verification-of-HLS-Designs-with-FPGA-Acceleration" class="headerlink" title="Hercules: Efficient Verification of HLS Designs with FPGA Acceleration"></a>Hercules: Efficient Verification of HLS Designs with FPGA Acceleration</h3><ul>
+<li><strong>Dynamic Probing:</strong> Integrates probes into the HLS flow to dynamically compare software simulations with hardware execution.</li>
+<li><strong>Snapshot Recovery:</strong> Uses simulation snapshots to restart verification from intermediate points, enhancing debugging efficiency.</li>
+<li><strong>Caveats:</strong> Notes potential side effects where the insertion of probes may alter loop scheduling, impacting performance analysis.</li>
+</ul>
+<h3 id="An-Efficient-Traversal-Method-for-FPGA-Interconnect-Testing-Based-on-Regular-Routing"><a href="#An-Efficient-Traversal-Method-for-FPGA-Interconnect-Testing-Based-on-Regular-Routing" class="headerlink" title="An Efficient Traversal Method for FPGA Interconnect Testing Based on Regular Routing"></a>An Efficient Traversal Method for FPGA Interconnect Testing Based on Regular Routing</h3><ul>
+<li><strong>INT Tile Graph (ITG):</strong> Introduces a tile-based intermediate representation that confines routing searches to manageable subgraphs.</li>
+<li><strong>Regular Routing Approach:</strong> Leverages routing constraints and auxiliary techniques to address irregularities in FPGA interconnects.</li>
+<li><strong>Targeted for Xilinx 7 Series:</strong> Optimizes traversal and net classification specifically for routing challenges in Xilinx devices.</li>
+</ul>
+<h3 id="Two-Phase-Transistor-Sizing-for-FPGAs-via-Bayesian-Optimization"><a href="#Two-Phase-Transistor-Sizing-for-FPGAs-via-Bayesian-Optimization" class="headerlink" title="Two-Phase Transistor Sizing for FPGAs via Bayesian Optimization"></a>Two-Phase Transistor Sizing for FPGAs via Bayesian Optimization</h3><ul>
+<li><strong>Simulation-Driven Optimization:</strong> Frames transistor sizing as a black-box problem, using Bayesian optimization to navigate non-analytical delay measurements.</li>
+<li><strong>Objective Function:</strong> Focuses on minimizing delay while satisfying the physical and performance constraints of the FPGA architecture.</li>
+<li><strong>Tool Enhancement:</strong> Enhances existing sizing tools with probabilistic methods, potentially reducing simulation time and improving design quality.</li>
+</ul>
+<h3 id="TAPCA-An-Interface-Aware-Cache-Management-Framework-for-Task-Partitioning-on-CPU-FPGA-SoC-Platforms-Short-Paper"><a href="#TAPCA-An-Interface-Aware-Cache-Management-Framework-for-Task-Partitioning-on-CPU-FPGA-SoC-Platforms-Short-Paper" class="headerlink" title="TAPCA: An Interface-Aware Cache Management Framework for Task Partitioning on CPU-FPGA SoC Platforms (Short Paper)"></a>TAPCA: An Interface-Aware Cache Management Framework for Task Partitioning on CPU-FPGA SoC Platforms (Short Paper)</h3><ul>
+<li><strong>Task Partitioning:</strong> Uses LLVM IR as input to partition tasks between CPU and FPGA while considering coherent memory interfaces.</li>
+<li><strong>Reduced Communication Overhead:</strong> Identifies partitioning schemes that lower inter-component communication delays.</li>
+<li><strong>System-Level Optimization:</strong> Provides insights for integrated SoC designs where cache management is critical for performance.</li>
+</ul>
+<h2 id="High-Level-Synthesis-HLS-and-Code-Transformation"><a href="#High-Level-Synthesis-HLS-and-Code-Transformation" class="headerlink" title="High-Level Synthesis (HLS) and Code Transformation"></a>High-Level Synthesis (HLS) and Code Transformation</h2><h3 id="ARIES-An-Agile-MLIR-Based-Compilation-Flow-for-Reconfigurable-Devices-with-AI-Engines"><a href="#ARIES-An-Agile-MLIR-Based-Compilation-Flow-for-Reconfigurable-Devices-with-AI-Engines" class="headerlink" title="ARIES: An Agile MLIR-Based Compilation Flow for Reconfigurable Devices with AI Engines"></a>ARIES: An Agile MLIR-Based Compilation Flow for Reconfigurable Devices with AI Engines</h3><ul>
+<li><strong>MLIR Integration:</strong> Leverages the Multi-Level Intermediate Representation (MLIR) to streamline the compilation for FPGAs.</li>
+<li><strong>AI Engine Compatibility:</strong> Tailors the flow to efficiently target AI engines embedded in reconfigurable devices.</li>
+<li><strong>Candidate for Best Paper:</strong> Recognized for its potential to dramatically reduce development time and improve performance.</li>
+</ul>
+<h3 id="Stream-HLS-Towards-Automatic-Dataflow-Acceleration-Best-Paper-Candidate"><a href="#Stream-HLS-Towards-Automatic-Dataflow-Acceleration-Best-Paper-Candidate" class="headerlink" title="Stream-HLS: Towards Automatic Dataflow Acceleration (Best Paper Candidate)"></a>Stream-HLS: Towards Automatic Dataflow Acceleration (Best Paper Candidate)</h3><ul>
+<li><strong>Automation Focus:</strong> Transforms shared buffer accesses into FIFO-based dataflow streams, reducing manual intervention.</li>
+<li><strong>Graph-Based DSE:</strong> Models computation as a dataflow graph where nodes represent loop nests, allowing for advanced design space exploration (DSE) via MINLP techniques.</li>
+<li><strong>Benchmark Results:</strong> Shows significant acceleration on several matrix multiplication and neural network benchmarks, validating the approach.</li>
+</ul>
+<h3 id="A-Unified-Framework-for-Automated-Code-Transformation-and-Pragma-Insertion"><a href="#A-Unified-Framework-for-Automated-Code-Transformation-and-Pragma-Insertion" class="headerlink" title="A Unified Framework for Automated Code Transformation and Pragma Insertion"></a>A Unified Framework for Automated Code Transformation and Pragma Insertion</h3><ul>
+<li><strong>Template Generation:</strong> Automates code transformations like loop tiling, strip-mining, and permutation to enhance performance.</li>
+<li><strong>Fine-Grained Optimization:</strong> Reduces the complex loop ordering problem to a more manageable loop tiling issue, improving HLS productivity.</li>
+<li><strong>Pragma Insertion:</strong> Simplifies the process of guiding the HLS toolchain through standardized code annotations.</li>
+</ul>
+<h3 id="Latency-Insensitivity-Testing-for-Dataflow-HLS-Designs"><a href="#Latency-Insensitivity-Testing-for-Dataflow-HLS-Designs" class="headerlink" title="Latency Insensitivity Testing for Dataflow HLS Designs"></a>Latency Insensitivity Testing for Dataflow HLS Designs</h3><ul>
+<li><strong>Testing Framework:</strong> Provides automated test generation for latency-insensitive designs, enabling the early detection of scheduling bugs.</li>
+<li><strong>Performance Validation:</strong> Uses data arrival and production timing to assess and optimize dataflow schedules in HLS designs.</li>
+<li><strong>Robust Debugging:</strong> Enhances overall design reliability through systematic latency testing.</li>
+</ul>
+<h3 id="Dynamic-Loop-Fusion-in-High-Level-Synthesis"><a href="#Dynamic-Loop-Fusion-in-High-Level-Synthesis" class="headerlink" title="Dynamic Loop Fusion in High-Level Synthesis"></a>Dynamic Loop Fusion in High-Level Synthesis</h3><ul>
+<li><strong>Fusion Strategy:</strong> Addresses the challenge of multi-loop kernels with dynamic memory access, proposing a method to fuse loops dynamically.</li>
+<li><strong>Chain of Recurrences:</strong> Represents loop dependencies through recurrence relations to better understand and optimize scheduling.</li>
+<li><strong>Dataflow Circuit Transformation:</strong> Enables more efficient dataflow mapping in scenarios where traditional static analysis fails.</li>
+</ul>
+<h2 id="Security-and-Application-Specific-Enhancements"><a href="#Security-and-Application-Specific-Enhancements" class="headerlink" title="Security and Application-Specific Enhancements"></a>Security and Application-Specific Enhancements</h2><h3 id="FAST-FPGA-Acceleration-of-Fully-Homomorphic-Encryption-with-Efficient-Bootstrapping"><a href="#FAST-FPGA-Acceleration-of-Fully-Homomorphic-Encryption-with-Efficient-Bootstrapping" class="headerlink" title="FAST: FPGA Acceleration of Fully Homomorphic Encryption with Efficient Bootstrapping"></a>FAST: FPGA Acceleration of Fully Homomorphic Encryption with Efficient Bootstrapping</h3><ul>
+<li><strong>Focus on FHE:</strong> Targets the computational bottleneck in homomorphic encryption—bootstrapping and homomorphic linear transformation (HLT).</li>
+<li><strong>Customized Data Paths:</strong> Designs memory-efficient and computation-optimized data paths specifically for FHE operations.</li>
+<li><strong>Pervasive FHE:</strong> Discusses the potential timeline and improvements needed for FHE to become more widespread in practical applications.</li>
+</ul>
+<h3 id="OLA-An-FPGA-based-Overlay-Accelerator-for-Privacy-Preserving-Machine-Learning-with-Homomorphic-Encryption"><a href="#OLA-An-FPGA-based-Overlay-Accelerator-for-Privacy-Preserving-Machine-Learning-with-Homomorphic-Encryption" class="headerlink" title="OLA: An FPGA-based Overlay Accelerator for Privacy Preserving Machine Learning with Homomorphic Encryption"></a>OLA: An FPGA-based Overlay Accelerator for Privacy Preserving Machine Learning with Homomorphic Encryption</h3><ul>
+<li><strong>Overlay Approach:</strong> Combines a high-level DSL with a custom instruction set tailored for FHE operations.</li>
+<li><strong>Compiler Innovations:</strong> Implements data reuse passes to optimize memory and computation within the HE domain.</li>
+<li><strong>Integrated Platform:</strong> Merges CPU and FPGA resources to provide a robust solution for privacy-preserving machine learning.</li>
+</ul>
+<h3 id="CIVIC-FPGA-A-Trusted-FPGA-Design-Validation-by-Multi-Tenant-Cloud-Providers-Short-Paper"><a href="#CIVIC-FPGA-A-Trusted-FPGA-Design-Validation-by-Multi-Tenant-Cloud-Providers-Short-Paper" class="headerlink" title="CIVIC-FPGA: A Trusted FPGA Design Validation by Multi-Tenant Cloud Providers (Short Paper)"></a>CIVIC-FPGA: A Trusted FPGA Design Validation by Multi-Tenant Cloud Providers (Short Paper)</h3><ul>
+<li><strong>Security Focus:</strong> Ensures the confidentiality and integrity of FPGA designs in cloud environments.</li>
+<li><strong>Authentication Mechanisms:</strong> Utilizes Trusted Execution Environments (TEEs) and Public Key Infrastructure (PKI) to secure design validation.</li>
+<li><strong>Minimal Overhead:</strong> Achieves design security with overhead ranging from 6% to 17.5%, making it scalable for diverse applications.</li>
+</ul>
+<h2 id="Architectural-Innovations-and-Applications"><a href="#Architectural-Innovations-and-Applications" class="headerlink" title="Architectural Innovations and Applications"></a>Architectural Innovations and Applications</h2><h3 id="FRIDA-Reconfigurable-Arrays-for-Dynamically-Scheduled-High-Level-Synthesis"><a href="#FRIDA-Reconfigurable-Arrays-for-Dynamically-Scheduled-High-Level-Synthesis" class="headerlink" title="FRIDA: Reconfigurable Arrays for Dynamically Scheduled High-Level Synthesis"></a>FRIDA: Reconfigurable Arrays for Dynamically Scheduled High-Level Synthesis</h3><ul>
+<li><strong>Hybrid Flexibility:</strong> Bridges the gap between the adaptability of FPGAs and the performance characteristics of ASICs.</li>
+<li><strong>Dynamic Scheduling:</strong> Emphasizes the ability to reconfigure resources on-the-fly, offering a balance between flexibility and performance.</li>
+</ul>
+<h3 id="Systolic-Sparse-Tensor-Slices-FPGA-Building-Blocks-for-Sparse-and-Dense-AI-Acceleration"><a href="#Systolic-Sparse-Tensor-Slices-FPGA-Building-Blocks-for-Sparse-and-Dense-AI-Acceleration" class="headerlink" title="Systolic Sparse Tensor Slices: FPGA Building Blocks for Sparse and Dense AI Acceleration"></a>Systolic Sparse Tensor Slices: FPGA Building Blocks for Sparse and Dense AI Acceleration</h3><ul>
+<li><strong>High-Frequency Operation:</strong> Demonstrates building blocks capable of running at frequencies up to ~600MHz.</li>
+<li><strong>Dual-Mode Acceleration:</strong> Designed for both sparse and dense computations, making it versatile for various AI workloads.</li>
+<li><strong>Integration Potential:</strong> Suitable for incorporation into larger AI systems requiring robust, high-speed tensor processing.</li>
+</ul>
+<h3 id="Tile-Level-Pipeline-for-Linear-Scalable-Stencil-Computation-on-AMD-AI-Engines-Short-Paper"><a href="#Tile-Level-Pipeline-for-Linear-Scalable-Stencil-Computation-on-AMD-AI-Engines-Short-Paper" class="headerlink" title="Tile-Level Pipeline for Linear Scalable Stencil Computation on AMD AI Engines (Short Paper)"></a>Tile-Level Pipeline for Linear Scalable Stencil Computation on AMD AI Engines (Short Paper)</h3><ul>
+<li><strong>Scalable Stencil Computation:</strong> Proposes a pipeline architecture optimized for linear and scalable stencil operations.</li>
+<li><strong>Adaptation to AMD AI Engines:</strong> Tailors the design to leverage the specific features and capabilities of AMD’s AI hardware.</li>
+<li><strong>Optimized Data Flow:</strong> Focuses on minimizing latency and maximizing throughput in repetitive, grid-based computations.</li>
+</ul>
+<h3 id="HUMA-Heterogeneous-Ultra-Low-Latency-Model-Accelerator-for-The-Virtual-Brain-on-a-Versal-Adaptive-SoC"><a href="#HUMA-Heterogeneous-Ultra-Low-Latency-Model-Accelerator-for-The-Virtual-Brain-on-a-Versal-Adaptive-SoC" class="headerlink" title="HUMA: Heterogeneous, Ultra Low-Latency Model Accelerator for The Virtual Brain on a Versal Adaptive SoC"></a>HUMA: Heterogeneous, Ultra Low-Latency Model Accelerator for The Virtual Brain on a Versal Adaptive SoC</h3><ul>
+<li><strong>Brain Simulation:</strong> Designed for real-time simulation and visualization of brain models, facilitating applications in medical imaging and surgery.</li>
+<li><strong>Personalization:</strong> Incorporates mechanisms to adapt to individual physiological signals (e.g., EEG) for tailored performance.</li>
+<li><strong>Scatter/Gather Operations:</strong> Efficiently handles complex data movements, essential for low-latency processing in biomedical applications.</li>
+</ul>
+<h3 id="SAT-Accel-A-Modern-SAT-Solver-on-FPGA"><a href="#SAT-Accel-A-Modern-SAT-Solver-on-FPGA" class="headerlink" title="SAT-Accel: A Modern SAT Solver on FPGA"></a>SAT-Accel: A Modern SAT Solver on FPGA</h3><ul>
+<li><strong>SAT Solving on FPGA:</strong> Addresses challenges in Boolean satisfiability with specialized hardware optimizations.</li>
+<li><strong>Advanced Heuristics:</strong> Utilizes conflict-driven clause learning, clause minimization, and effective restart policies.</li>
+<li><strong>Performance Gains:</strong> Achieves up to 3× speedup over traditional CPU-based SAT solvers by replacing inefficient scan operations with parallel updates.</li>
+</ul>
+<h3 id="FPGA-Only-Implementation-of-MIPI-C-PHY-Receiver-Using-Blind-Oversampling-CDR-for-CMOS-Image-Sensors"><a href="#FPGA-Only-Implementation-of-MIPI-C-PHY-Receiver-Using-Blind-Oversampling-CDR-for-CMOS-Image-Sensors" class="headerlink" title="FPGA-Only Implementation of MIPI C-PHY Receiver Using Blind Oversampling CDR for CMOS Image Sensors"></a>FPGA-Only Implementation of MIPI C-PHY Receiver Using Blind Oversampling CDR for CMOS Image Sensors</h3><ul>
+<li><strong>Image Sensor Testing:</strong> Applies FPGA technology to enhance the testing and validation of CMOS image sensors.</li>
+<li><strong>Blind Oversampling:</strong> Introduces an innovative clock data recovery method that does not rely on prior knowledge of the signal.</li>
+<li><strong>Robust Performance:</strong> Ensures reliable operation in environments where frequent updates and high-speed data capture are critical.</li>
+</ul>
+<hr>
+<p><em>These additional summary points complement my initial notes by drawing on detailed insights from the FPGA’25 proceedings, offering a richer understanding of the diverse contributions presented at the conference.</em></p>
+<!-- flag of hidden posts -->
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/fpga25/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/fpga25/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+    <script type="application/javascript">
+        function websiteVisits(response) {
+          document.getElementById("view_count_text").textContent = response.value;
+        }
+    </script>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2025 Niansong Zhang. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/fpga25/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/fpga25/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a
+                        class="post-action-btn btn btn--default"
+                        href="#disqus_thread"
+                        aria-label="Leave a comment"
+                    >
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://www.zzzdavid.tech/fpga25/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://www.zzzdavid.tech/fpga25/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg" alt="Author&#39;s picture"/>
+        
+            <h4 id="about-card-name">Niansong Zhang</h4>
+        
+            <div id="about-card-bio"><p>I am an MS/PhD  student at Computer System Lab, Cornell University.<br>This website is a personal/academic blog for me to write  about my projects, readings, also thoughts, and retrospectives.</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>Cornell University</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                Ithaca, NY
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1603335200/posts/gradient_rbcdse.png');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ildyypobrv9qzoyty7ownq72ohmsn0yx3wvnupnrgh54cb7f5o3n3tpgv6fs.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+        <script>
+          var disqus_config = function() {
+            this.page.url = 'https://www.zzzdavid.tech/fpga25/';
+              
+            this.page.identifier = 'fpga25/';
+              
+          };
+          (function() {
+            var d = document, s = d.createElement('script');
+            var disqus_shortname = 'niansong-zhangs-blog';
+            s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+          })();
+        </script>
+    
+
+
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

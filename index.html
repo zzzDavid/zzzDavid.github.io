@@ -6,14 +6,15 @@
   <title>Niansong Zhang</title>
 
   <meta name="author" content="Niansong Zhang">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
   <link rel="stylesheet" type="text/css" href="stylesheet.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png"
-    href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603300538/github/computer_pdu3z6.svg">
-  <!-- <script async src="https://api.countapi.xyz/hit/zzzdavid.tech/visits?callback=websiteVisits"></script> -->
+  <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+  <link rel="shortcut icon" href="favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="manifest" href="favicon/site.webmanifest" />
 </head>
 
 
@@ -36,7 +37,7 @@
                   <p>
                     Hi there! I am an MS/PhD student at <a ref="https://www.cornell.edu">Cornell University</a>.
                     I am advised by <a href="https://www.csl.cornell.edu/~zhiruz/">Prof. Zhiru Zhang</a>. I am interested in Electronic
-                    Design Automation, Domain-Specific Language for hardware design, and hardware accelerators.
+                    Design Automation, Domain-Specific Languages for hardware design and programming, and hardware accelerators.
                   </p>
 
                   <p>
@@ -47,17 +48,16 @@
                       style="position:relative;top:4px;" /> Lab: <a ref="https://www.csl.cornell.edu">Computer Systems
                       Laboratory</a> <br>
                     <img src="https://img.icons8.com/color/96/000000/link-company-parent.png" width="20" height="20"
-                      style="position:relative;top:4px;" /> Office: 471D Rhodes Hall
+                      style="position:relative;top:4px;" /> Office: 471D Rhodes Hall <br>
+                    <img
+                      src="https://img.icons8.com/?size=100&id=19408&format=png&color=000000"
+                      width="20" height="20" style="position:relative;top:4px;" /> Email: nz264 [at] cornell [dot] edu <br>
                   </p>
 
                   <p style="text-align:center">
-                    <img
-                      src="https://img.icons8.com/external-kiranshastry-gradient-kiranshastry/64/000000/external-email-interface-kiranshastry-gradient-kiranshastry-1.png"
-                      width="20" height="20" style="position:relative;top:6px;" /> <a
-                      href="mailto:nz264@cornell.edu">Email</a> &nbsp/&nbsp
-                    <img src="https://img.icons8.com/nolan/64/github.png" width="20" height="20"
+                    <img src="https://img.icons8.com/?size=100&id=AZOZNnY73haj&format=png&color=000000" width="20" height="20"
                       style="position:relative;top:4px;" /> <a href="https://github.com/zzzDavid">GitHub</a> &nbsp/&nbsp
-                    <img src="https://img.icons8.com/nolan/64/linkedin.png" width="20" height="20"
+                    <img src="https://img.icons8.com/?size=100&id=13930&format=png&color=000000" width="20" height="20"
                       style="position:relative;top:4px;" /> <a
                       href="https://www.linkedin.com/in/niansongz">LinkedIn</a> &nbsp/&nbsp
                     <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661547261/posts/Google_Scholar_logo.svg_hi4axr.png" width="20" height="20"
@@ -67,7 +67,7 @@
 
                   <p style="text-align:center">
                     <img
-                      src="https://img.icons8.com/external-tal-revivo-tritone-tal-revivo/64/000000/external-blog-article-fetched-from-an-online-website-wireframe-tritone-tal-revivo.png"
+                      src="https://img.icons8.com/?size=100&id=cXYUoqPdbtbr&format=png&color=000000"
                       width="25" height="25" style="position:relative;top:6px;" /> <a
                       href="https://www.zzzdavid.tech/blog/">Blog Posts</a>
                   </p>
@@ -81,7 +81,13 @@
                   // Array of image URLs
                   const images = [
                       'https://res.cloudinary.com/dxzx2bxch/image/upload/v1716933963/profile_qqb5sx.jpg',
-                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1718927264/pfp-cloud_ruoon2.png' // Add your second image URL here
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228095/pfp/IMG_1018_t9ljbt.jpg',
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228095/pfp/IMG_0291_shw7lw.jpg', // Add your second image URL here
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746227083/pfp/IMG_2930_Medium_ebwk21.jpg',
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228101/pfp/IMG_5881_w0rk1c.jpg',
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228097/pfp/IMG_2498_bxczap.jpg',
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746227214/pfp/IMG_2717_wujvf1.jpg',
+                      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228093/pfp/IMG_0156_z3xfdt.jpg'
                   ];
           
                   // Function to get the next image index
@@ -112,16 +118,22 @@
                     News
                   </heading>
                   <p>
-                    &#x1F3C5; Our FPGA 2024 paper <a href="https://dl.acm.org/doi/10.1145/3626202.3637563">HLS Formal Verification</a> won the Best Paper Award. <a href="https://www.isfpga.org">[News]</a> (03/05/24)
+                    &#x1F3C6; Our ISPD 2025 paper <a href="https://dl.acm.org/doi/pdf/10.1145/3698364.3705346">Cypress</a> won the Best Paper Award. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228958/work/ispd_award_ofbpuj.jpg">[Award]</a> (3/19/25)
                   </p>
                   <p>
-                    &#x1F38A; Our journal paper <a href="https://dl.acm.org/doi/10.1145/3501803">RapidLayout</a> won the Best Paper Award for ACM TRETS in 2023. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1690679896/IMG_8702_zyhgkc.jpg">[Award Plaque]</a> (07/13/23)
+                    &#x2728; <a href="https://dl.acm.org/doi/10.1145/3706628.3708870">ARIES</a> nominated for Best Paper Award at FPGA 2025.  (03/01/25)
+                  </p>
+                  <p>
+                    &#x1F3C6; Our FPGA 2024 paper <a href="https://dl.acm.org/doi/10.1145/3626202.3637563">HLS Formal Verification</a> won the Best Paper Award. <a href="https://isfpga.org/past/fpga2024/">[News]</a> (03/05/24)
+                  </p>
+                  <p>
+                    &#x1F3C6; Our ACM TRETS 2023 paper <a href="https://dl.acm.org/doi/10.1145/3501803">RapidLayout</a> won the Best Paper Award. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1690679896/IMG_8702_zyhgkc.jpg">[Award]</a> (07/13/23)
                   </p>
                   <p>
                     Donated my hair to <a href="https://locksoflove.org">Locks of Love</a> to support children suffering from hair loss. <a href="pdf/locks-of-love.pdf">[Certificate]</a> (07/04/23)
                   </p>
                   <p>
-                    Our <a href="https://ieeexplore.ieee.org/document/9917279">journal paper </a> has been selected as the <em>Featured Paper</em> of IEEE Trans. on Computers. (05/11/23)
+                    &#x2728; <a href="https://ieeexplore.ieee.org/document/9917279">Serving Multi-DNN Workloads on FPGAs</a> selected as the <em>Featured Paper</em> of IEEE Trans. on Computers. (05/11/23)
                   </p>
                   <p>
                     Our patent CN109658402B has been granted. <a href="pdf/patent.pdf">[Certificate]</a> <a href="https://patents.google.com/patent/CN109658402B/en">[Google Patents]</a> (04/18/23)
@@ -200,10 +212,11 @@
                 <td style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
                   <subheading> NVIDIA Research </subheading>
                   <p style="line-height: 150%;">
-                    Research Intern <br>
+                    PhD Research Intern <br>
                     Design Automation Research <br>
-                    Mentor/Manager: Anthony Agnesina, Mark Ren <br>
-                    <em> May 2024 — Aug 2024 </em>
+                    Mentor/Manager: Anthony Agnesina, Chenhui Deng, Mark Ren <br>
+                    <em> May 2024 — Aug 2024</em> <br>
+                    <em> Jan 2025 — May 2025 </em>
                   </p>
                 </td>
                 <td style="padding:0%; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%; padding-left: 1%;">
@@ -346,8 +359,7 @@
                     Research & Publication
                   </heading>
                   <p>
-                    My research interests include EDA (Electronic Design Automation) for FPGA, DSL (Domain-Specific
-                    Language), and efficient machine learning.
+                    My research spans hardware design automation and compute‑in‑SRAM accelerators, accelerator design and programming languages, and energy‑efficient machine‑learning systems.
                   </p>
                 </td>
               </tr>
@@ -358,9 +370,72 @@
             style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
             <tbody>
               <tr>
+                <td style="padding:20px;width:25%;vertical-align:middle">
+                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1751576352/work/aspen-3_gkcfsu.png"
+                    width=100% />
+                </td>
+                <td style="padding:20px;width:75%;vertical-align:middle">
+                  <p>
+                    <papertitle> ASPEN: LLM-Guided E-Graph Rewriting for RTL Datapath Optimization </papertitle>
+                  </p>
+                  <p>
+                    <strong>Niansong Zhang</strong>, Chenhui Deng, Johannes Maximilian Kuehn, Chia-Tung Ho, Cunxi Yu, Zhiru Zhang, Haoxing Ren
+                  </p>
+                  <em>MLCAD 2025</em> | <em>To appear</em>
+                  <p>
+                    We propose ASPEN, a system that combines LLM-guided e-graph rewriting with real PPA feedback to automate RTL optimization, achieving 16.51% area and 6.65% delay improvements over prior methods.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px;width:25%;vertical-align:middle">
+                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228955/work/cypress_eriinx.jpg"
+                    width=100% />
+                </td>
+                <td style="padding:20px;width:75%;vertical-align:middle">
+                  <p>
+                    <papertitle> Cypress: VLSI-Inspired PCB Placement with GPU Acceleration </papertitle>
+                  </p>
+                  <p>
+                    <strong>Niansong Zhang</strong>, Anthony Agnesina, Noor Shbat, Yuval Leader, Zhiru Zhang, Haoxing Ren
+                  </p>
+                  <em>ISPD 2025</em> | <a href="https://dl.acm.org/doi/pdf/10.1145/3698364.3705346">paper</a> | <a href="https://github.com/NVlabs/Cypress">code</a>
+                  <p>
+                    &#x1F3C6; <strong-orange>Best Paper Award</strong-orange>
+                  </p>
+                  <p>
+                    We present Cypress, a GPU‑accelerated, VLSI‑inspired PCB placer that boosts routability by up to 5.9×, cuts track length by 19.7×, and runs up to 492× faster on new realistic benchmarks.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px;width:25%;vertical-align:middle">
+                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228953/work/aries_riyren.png"
+                    width=100% />
+                </td>
+                <td style="padding:20px;width:75%;vertical-align:middle">
+                  <p>
+                    <papertitle> ARIES: An Agile MLIR-Based Compilation Flow for Reconfigurable Devices with AI Engines </papertitle>
+                  </p>
+                  <p>
+                    Jinming Zhuang*, Shaojie Xiang*, Hongzheng Chen, <strong>Niansong Zhang</strong>, Zhuoping Yang, Tony Mao, Zhiru Zhang, Peipei Zhou
+                  </p>
+                  <p style="font-size: smaller;">
+                    * Equal Contribution
+                  </p>
+                  <em>FPGA 2025</em> | <a href="https://dl.acm.org/doi/pdf/10.1145/3706628.3708870">paper</a> | <a href="https://github.com/arc-research-lab/Aries">code</a>
+                  <p>
+                    &#x1F3C5; <strong-purple>Best Paper Nominee</strong-purple>
+                  </p>
+                  <p>
+                    We propose ARIES, a unified MLIR‑based compilation flow that abstracts task, tile, and instruction‑level parallelism across AMD AI Engine arrays (and optional FPGA fabric), boosting Versal VCK190 GEMM throughput by up to 1.6× over prior work.
+                  </p>
+                </td>
+              </tr>
+              <tr>
                 <td style="padding:20px;width:25%;vertical-align:middle;text-align:center">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1719036488/posts/allo-icon_dfja8k-removebg-preview_myzg6w.png"
-                    width=60% />
+                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000107/allo_hts0oi.png"
+                    width=100% />
                 </td>
                 <td style="padding:20px;width:75%;vertical-align:middle">
                   <p>
@@ -374,7 +449,7 @@
                   </p>
                   <em>PLDI 2024</em> | <a href="https://dl.acm.org/doi/10.1145/3656401">paper</a> | <a href="https://github.com/cornell-zhang/allo/tree/main">code</a>
                   <p>
-                    Special-purpose hardware accelerators are vital for performance improvements, but current tools are inadequate for complex designs. Allo, a new composable programming model, decouples hardware customizations from algorithms and outperforms existing tools, showing significant improvements in benchmarks and deep learning models like GPT-2.
+                    Specialized hardware accelerators are vital for performance improvements, but current design languages are inadequate for complex accelerators. Allo, a new composable programming model, decouples hardware customizations from algorithms and outperforms existing languages in performance and productivity.
                   </p>
                 </td>
               </tr>
@@ -392,12 +467,31 @@
                   </p>
                   <em>FPGA 2024</em> | <a href="https://dl.acm.org/doi/10.1145/3626202.3637563">paper</a> | <a href="https://sourceforge.net/projects/pocc/">code</a>
                   <p>
-                    <strong-red>Best Paper Award</strong-red>
+                    &#x1F3C6; <strong-orange>Best Paper Award</strong-orange>
                   </p>
                   <p>
                     We target the problem of efficiently checking the semantics equivalence between two programs written in C/C++ as a means to 
                     ensuring the correctness of the description provided to the HLS toolchain, by proving an optimized code version fully 
                     preserves the semantics of the unoptimized one.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px;width:25%;vertical-align:middle">
+                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228961/work/understanding_tqh4zw.png"
+                    width=100% />
+                </td>
+                <td style="padding:20px;width:75%;vertical-align:middle">
+                  <p>
+                    <papertitle> Understanding the Potential of FPGA-based Spatial Acceleration for Large Language Model Inference </papertitle>
+                  </p>
+                  <p>
+                    Hongzheng Chen, Jiahao Zhang, Yixiao Du, Shaojie Xiang, Zichao Yue, <strong>Niansong Zhang</strong>, Yaohui Cai, Zhiru Zhang
+                  </p>
+                  <em>ACM Transactions on Reconfigurable Technology and Systems (TRETS)</em> <br>
+                  <a href="https://dl.acm.org/doi/pdf/10.1145/3656177">Vol. 18, No 1, Article 5.</a>
+                  <p>
+                    We design a spatial FPGA accelerator for LLM inference that assigns each operator its own hardware block and connects them with on‑chip dataflow to cut memory traffic and latency. An analytical model guides parallelization and scaling, showing when FPGAs can outpace GPUs.
                   </p>
                 </td>
               </tr>
@@ -436,7 +530,7 @@
                   <em>IEEE Transactions on Computers</em> |
                   <a href="https://ieeexplore.ieee.org/document/9917279">paper</a>
                   <p>
-                    <strong-red>Featured Paper in the May 2023 Issue</strong-red>
+                    &#x1F3C5; <strong-purple>Featured Paper in the May 2023 Issue</strong-purple>
                   </p>
                   <p>
                     This paper proposes a Design Space Exploration framework to jointly optimize heterogeneous multi-core architecture, 
@@ -534,7 +628,7 @@
                     <strong>Niansong Zhang</strong>, Xiang Chen, Nachiket Kapre
                   </p>
                   <p>
-                    <strong-red>ACM TRETS Best Paper Award</strong-red>
+                    &#x1F3C6; <strong-orange>Best Paper Award</strong-orange>
                   </p>
                   <em>Invited Paper, ACM Transactions on Reconfigurable Technology and Systems (TRETS)</em> <br>
                   <a href="https://dl.acm.org/doi/10.1145/3501803">Volume 15, Issue 4, Article No.: 38, pp 1–23</a>
@@ -587,7 +681,7 @@
                   <a href="https://www.computer.org/csdl/proceedings-article/fpl/2020/990200a145/1nTu6iN2wCc">paper</a> |
                   <a href="https://github.com/watcag/RapidLayout">code</a>
                   <p>
-                    <strong-red>Michal Servit Best Paper Award Nominee</strong-red>
+                    &#x1F3C5; <strong-purple>Michal Servit Best Paper Award Nominee</strong-purple>
                   </p>
                   <p>
                     We build a fast and high-performance evolutionary placer for FPGA-optimized hard block designs that
@@ -733,16 +827,22 @@
                   Awards and Honors
                 </heading>
                 <p>
-                  Best Paper Award for FPGA 2024
+                  Best Paper Award at ISPD 2025
+                </p>
+                <p>
+                  Best Paper Nomination at FPGA 2025
+                </p>
+                <p>
+                  Best Paper Award at FPGA 2024
                 </p>
                 <p>
                   Best Paper Award for ACM TRETS in 2023
                 </p>
                 <p>
-                  DAC Young Fellow 2021 & 2023
+                  Best Paper Nomination (Michal Servit Award) at FPL 2020
                 </p>
                 <p>
-                  FPL 2020 Best Paper Nomination (Michal Servit Award)
+                  DAC Young Fellow 2021 & 2023
                 </p>
                 <p>
                   Outstanding Bachelor Thesis Award | Sun Yat-sen University
@@ -771,13 +871,17 @@
                   Patents
                 </heading>
                 <p>
+                  <strong>Niansong Zhang</strong>, Haoxing Ren, Brucek Khailany,
+                  <em>"Printed Circuit Board Component Placement."</em> US Patent 24-0963US2, filed in Feburary 2025.
+                </p>
+                <p>
                   <strong>Niansong Zhang</strong>, Songyi Yang, Shun Fu, Xiang Chen,
                   <em>"Industry Profile Geometric Dimension Automatic Measuring Method Based on Computer Vision
-                    Imaging."</em> Chinese Patent CN201811539019.8A, filed December 17, 2018, and issued April 19, 2019.
+                    Imaging."</em> Chinese Patent CN201811539019.8A, filed on December 17, 2018, and issued on April 19, 2019.
                 </p>
                 <p>
                   <strong>Niansong Zhang</strong> (at Novauto Technology), <em>"A Pruning Method and Device of
-                    Multi-task Neural Network Models"</em>, Chinese Patent 202010805327.1, filed August 12, 2020.
+                    Multi-task Neural Network Models"</em>, Chinese Patent 202010805327.1, filed on August 12, 2020.
                 </p>
               </td>
             </tr>
@@ -792,7 +896,7 @@
   style="width:100%;max-width:1000px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto">
   <link rel="stylesheet" type="text/css" href="stylesheet.css">
   <td style="padding:20px;width:25%;vertical-align:right">
-    <p> Last updated: May, 2024</p>
+    <p> Last updated: May, 2025</p>
     <!-- <p> This page has been visited <span id="view_count_text"></span> times</p> -->
     <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&cl=ffffff&w=a"></script>    <!-- <p> Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a -->
         <!-- href="https://www.flaticon.com/authors/retro-neon/lineal-color" title="Flaticon"> flaticon</a> </p> -->

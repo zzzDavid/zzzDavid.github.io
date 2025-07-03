@@ -60,7 +60,27 @@ strong{
 strong-red{
     font-family: 'Optima', 'Noto Sans';
     font-size: 100%;
-    color: red;
+    color: #FF5964;
+}
+strong-orange{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+    color: #FF9505;
+}
+strong-blue{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+    color: #84DCCF;
+}
+strong-purple{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+    color: #A288E3;
+}
+strong-less{
+    font-family: 'Optima', 'Noto Sans';
+    font-size: 100%;
+    color: #ff5a02;
 }
 em{
     font-family: 'Optima', 'Noto Sans';
