@@ -2,14 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.zzzdavid.tech/ta/</loc>
+    <loc>https://www.zzzdavid.tech/quartus-apple/</loc>
     
     <lastmod>2025-07-14T02:14:08.929Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/quartus-apple/</loc>
+    <loc>https://www.zzzdavid.tech/ta/</loc>
     
     <lastmod>2025-07-14T02:14:08.929Z</lastmod>
     
@@ -30,13 +30,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
-    
-    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/all-tags/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
@@ -45,6 +38,13 @@
   
   <url>
     <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
+    
+    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
     
@@ -65,14 +65,14 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
+    <loc>https://www.zzzdavid.tech/cvpr22/</loc>
     
     <lastmod>2022-08-26T19:32:11.149Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/cvpr22/</loc>
+    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
     
     <lastmod>2022-08-26T19:32:11.149Z</lastmod>
     
@@ -86,13 +86,6 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/Readings/</loc>
-    
-    <lastmod>2022-08-26T19:32:11.147Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.zzzdavid.tech/NAS/</loc>
     
     <lastmod>2022-08-26T19:32:11.147Z</lastmod>
@@ -100,14 +93,21 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
+    <loc>https://www.zzzdavid.tech/Readings/</loc>
+    
+    <lastmod>2022-08-26T19:32:11.147Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/Goodbye-to-All-That/</loc>
     
     <lastmod>2022-08-26T19:32:11.146Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/Goodbye-to-All-That/</loc>
+    <loc>https://www.zzzdavid.tech/HeteroCL/</loc>
     
     <lastmod>2022-08-26T19:32:11.146Z</lastmod>
     
