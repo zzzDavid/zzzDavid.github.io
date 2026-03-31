@@ -1,717 +1,383 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Niansong Zhang</title>
-
   <meta name="author" content="Niansong Zhang">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <meta name="description" content="Niansong Zhang - PhD student at Cornell University. I build compilers, programming models, and design automation tools for specialized hardware.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="stylesheet.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png"
-    href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603300538/github/computer_pdu3z6.svg">
-  <script async src="https://api.countapi.xyz/hit/zzzdavid.tech/visits?callback=websiteVisits"></script>
+  <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
+  <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="manifest" href="favicon/site.webmanifest">
 </head>
 
-
 <body>
-  <table
-    style="width:100%;max-width:1000px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-    <tbody>
-      <tr style="padding:0px">
-        <td style="padding:0px">
+  <main class="container">
 
-          <!-- Headings -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tbody>
-              <tr style="padding:0px">
-                <td style="padding:2.5%;width:63%;vertical-align:middle">
-                  <p style="text-align:center">
-                    <name>Niansong Zhang</name>
-                  </p>
-                  <p>
-                    Hi there! I am an MS/PhD student at <a ref="https://www.cornell.edu">Cornell University</a>.
-                    I am advised by <a href="https://www.csl.cornell.edu/~zhiruz/">Prof. Zhiru Zhang</a>. I am interested in Electronic
-                    Design Automation, Domain-Specific Language for hardware design, and hardware accelerators.
-                  </p>
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-text">
+        <h1 class="name">Niansong Zhang</h1>
+        <p class="bio">
+          Hi there! I am an MS/PhD student at <a href="https://www.cornell.edu">Cornell University</a>,
+          advised by <a href="https://www.csl.cornell.edu/~zhiruz/">Prof. Zhiru Zhang</a>. I am interested in Electronic
+          Design Automation, Domain-Specific Languages for hardware design and programming, and hardware accelerators.
+        </p>
+        <ul class="info-list">
+          <li><span class="info-label">Dept</span> <a href="https://www.ece.cornell.edu/ece">Electrical &amp; Computer Engineering</a></li>
+          <li><span class="info-label">Lab</span> <a href="https://www.csl.cornell.edu">Computer Systems Laboratory</a></li>
+          <li><span class="info-label">Office</span> 471D Rhodes Hall</li>
+          <li><span class="info-label">Email</span> nz264 [at] cornell [dot] edu</li>
+        </ul>
+        <nav class="social-links">
+          <a href="https://github.com/zzzDavid">GitHub</a>
+          <a href="https://www.linkedin.com/in/niansongz">LinkedIn</a>
+          <a href="https://scholar.google.com/citations?hl=en&user=jakQwdcAAAAJ">Google Scholar</a>
+          <a href="https://www.zzzdavid.tech/blog/">Blog</a>
+        </nav>
+      </div>
+      <div class="hero-photo">
+        <img id="profileImage" alt="Niansong Zhang" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="profile-img">
+      </div>
+    </header>
 
-                  <p>
-                    <img src="https://img.icons8.com/color-glass/96/000000/department.png" width="18" height="18"
-                      style="position:relative;top:4px;" /> Department: <a
-                      ref="https://www.ece.cornell.edu/ece">Electrical & Computer Engineering</a> <br>
-                    <img src="https://img.icons8.com/color-glass/48/000000/circuit.png" / width="18" height="18"
-                      style="position:relative;top:4px;" /> Lab: <a ref="https://www.csl.cornell.edu">Computer Systems
-                      Laboratory</a> <br>
-                    <img src="https://img.icons8.com/color/96/000000/link-company-parent.png" width="20" height="20"
-                      style="position:relative;top:4px;" /> Office: 471B Rhodes Hall
-                  </p>
+    <!-- News -->
+    <section class="section" id="news">
+      <h2 class="section-title">News</h2>
+      <ul class="news-list">
+        <li>Selected as <a href="https://iclad.ai/lad25-fellows">LAD'25 Fellow</a> at the International Conference on LLM-Aided Design. <time>12/2025</time></li>
+        <li>Our ISPD 2025 paper <a href="https://dl.acm.org/doi/pdf/10.1145/3698364.3705346">Cypress</a> won the Best Paper Award. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228958/work/ispd_award_ofbpuj.jpg">[Photo]</a> <time>3/2025</time></li>
+        <li><a href="https://dl.acm.org/doi/10.1145/3706628.3708870">ARIES</a> nominated for Best Paper Award at FPGA 2025. <time>3/2025</time></li>
+        <li>Our FPGA 2024 paper <a href="https://dl.acm.org/doi/10.1145/3626202.3637563">HLS Formal Verification</a> won the Best Paper Award. <a href="https://isfpga.org/past/fpga2024/">[News]</a> <time>3/2024</time></li>
+        <li>Our ACM TRETS 2023 paper <a href="https://dl.acm.org/doi/10.1145/3501803">RapidLayout</a> won the Best Paper Award. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1690679896/IMG_8702_zyhgkc.jpg">[Photo]</a> <time>7/2023</time></li>
+        <li>Donated hair to <a href="https://locksoflove.org">Locks of Love</a> to support children suffering from hair loss. <a href="pdf/locks-of-love.pdf">[Certificate]</a> <time>7/2023</time></li>
+        <li><a href="https://ieeexplore.ieee.org/document/9917279">Serving Multi-DNN Workloads on FPGAs</a> selected as <em>Featured Paper</em> of IEEE Trans. on Computers. <time>5/2023</time></li>
+        <li>Patent CN109658402B granted. <a href="pdf/patent.pdf">[Certificate]</a> <a href="https://patents.google.com/patent/CN109658402B/en">[Google Patents]</a> <time>4/2023</time></li>
+        <li>Selected as DAC Young Fellow. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1690679896/IMG_8739_uxxdro.jpg">[Certificate]</a> <time>4/2023</time></li>
+      </ul>
+    </section>
 
-                  <p style="text-align:center">
-                    <img
-                      src="https://img.icons8.com/external-kiranshastry-gradient-kiranshastry/64/000000/external-email-interface-kiranshastry-gradient-kiranshastry-1.png"
-                      width="20" height="20" style="position:relative;top:6px;" /> <a
-                      href="mailto:nz264@cornell.edu">Email</a> &nbsp/&nbsp
-                    <img src="https://img.icons8.com/nolan/64/github.png" width="20" height="20"
-                      style="position:relative;top:4px;" /> <a href="https://github.com/zzzDavid">GitHub</a> &nbsp/&nbsp
-                    <img src="https://img.icons8.com/nolan/64/linkedin.png" width="20" height="20"
-                      style="position:relative;top:4px;" /> <a
-                      href="https://www.linkedin.com/in/niansongz">LinkedIn</a> &nbsp/&nbsp
-                    <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661547261/posts/Google_Scholar_logo.svg_hi4axr.png" width="20" height="20"
-                      style="position:relative;top:4px;" /> <a href="https://scholar.google.com/citations?hl=en&user=jakQwdcAAAAJ">Google
-                      Scholar</a>
-                  </p>
+    <!-- Education -->
+    <section class="section" id="education">
+      <h2 class="section-title">Education</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <img src="images/cornell_seal.png" alt="Cornell" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>Cornell University</h3>
+            <p class="timeline-role">M.S./Ph.D. in Electrical and Computer Engineering</p>
+            <p class="timeline-detail">Advisor: Prof. Zhiru Zhang</p>
+          </div>
+          <span class="timeline-date">2021 &mdash; Present</span>
+        </div>
+        <div class="timeline-item">
+          <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638059779/github/Sun_Yat-sen_University_Logo_yianmq.png" alt="SYSU" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>Sun Yat-sen University</h3>
+            <p class="timeline-role">B.Eng. in Telecommunication Engineering</p>
+            <p class="timeline-detail">Advisor: Prof. Xiang Chen &middot; Outstanding thesis</p>
+          </div>
+          <span class="timeline-date">2016 &mdash; 2020</span>
+        </div>
+      </div>
+    </section>
 
-                  <p style="text-align:center">
-                    <img
-                      src="https://img.icons8.com/external-tal-revivo-tritone-tal-revivo/64/000000/external-blog-article-fetched-from-an-online-website-wireframe-tritone-tal-revivo.png"
-                      width="25" height="25" style="position:relative;top:6px;" /> <a
-                      href="https://www.zzzdavid.tech/blog/">Blog Posts</a>
-                  </p>
-                </td>
-                <td style="padding:0%;width:30%;max-width:50%">
-                  <img alt="profile photo"
-                    src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1703675947/pfp_square_k4ebtv.jpg"
-                    class="circle_image" style="position:relative;left:80px">
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- Work Experience -->
+    <section class="section" id="experience">
+      <h2 class="section-title">Work Experience</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1716934351/Nvidia_logo_mdpmsj.png" alt="NVIDIA" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>NVIDIA Research</h3>
+            <p class="timeline-role">PhD Research Intern &middot; Design Automation Research</p>
+            <p class="timeline-detail">Mentor: Anthony Agnesina, Chenhui Deng, Mark Ren</p>
+          </div>
+          <span class="timeline-date">2024 &mdash; 2025</span>
+        </div>
+        <div class="timeline-item">
+          <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1685564657/posts/amd1_jkxb6p.png" alt="AMD" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>Advanced Micro Devices</h3>
+            <p class="timeline-role">Compiler Intern &middot; ACDC, CTO</p>
+            <p class="timeline-detail">Manager: Stephen Neuendorffer</p>
+          </div>
+          <span class="timeline-date">Summer 2023</span>
+        </div>
+        <div class="timeline-item">
+          <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638061680/github/Intel-logo_xyj463.png" alt="Intel" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>Intel Labs</h3>
+            <p class="timeline-role">Exempt Tech Employee &middot; SAVE Group</p>
+            <p class="timeline-detail">Manager: Jin Yang, Sunny Zhang</p>
+          </div>
+          <span class="timeline-date">2021</span>
+        </div>
+        <div class="timeline-item">
+          <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603287964/github/1200px-Tsinghua_University_Logo.svg_zzzlho.png" alt="Tsinghua" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>Tsinghua University</h3>
+            <p class="timeline-role">Research Assistant &middot; <a href="https://nicsefc.ee.tsinghua.edu.cn">NICS-EFC</a></p>
+            <p class="timeline-detail">Advisor: <a href="https://nicsefc.ee.tsinghua.edu.cn/people/YuWang">Prof. Yu Wang</a></p>
+          </div>
+          <span class="timeline-date">2019 &mdash; 2021</span>
+        </div>
+        <div class="timeline-item">
+          <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1607669548/github/waterloo_g8u1qm.png" alt="Waterloo" class="timeline-logo">
+          <div class="timeline-content">
+            <h3>University of Waterloo</h3>
+            <p class="timeline-role"><a href="https://www.mitacs.ca/en/programs/globalink/globalink-research-internship">MITACS</a> Research Intern &middot; <a href="https://nachiket.github.io/research.html">WatCAG</a></p>
+            <p class="timeline-detail">Advisor: <a href="https://nachiket.github.io">Prof. Nachiket Kapre</a></p>
+          </div>
+          <span class="timeline-date">2019</span>
+        </div>
+      </div>
+    </section>
 
-          <!-- News -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tbody>
-              <tr>
-                <td style="padding:20px;width:100%;vertical-align:middle">
-                  <heading>
-                    <img
-                      src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1685563912/posts/news-2_cscqry.png"
-                      height="40" style="position:relative;top:8px;" />
-                    News
-                  </heading>
-                  <p>
-                    &#x1F38A; Our journal paper <a href="https://dl.acm.org/doi/10.1145/3501803">RapidLayout</a> won the Best Paper Award for ACM TRETS in 2023. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1690679896/IMG_8702_zyhgkc.jpg">[Award Plaque]</a> (07/13/23)
-                  </p>
-                  <p>
-                    Donated my hair to <a href="https://locksoflove.org">Locks of Love</a> to support children suffering from hair loss. <a href="pdf/locks-of-love.pdf">[Certificate of Appreciation]</a> (07/04/23)
-                  </p>
-                  <p>
-                    Our <a href="https://ieeexplore.ieee.org/document/9917279">journal paper </a> has been selected as the <em>Featured Paper</em> of IEEE Trans. on Computers. (05/11/23)
-                  </p>
-                  <p>
-                    Our patent CN109658402B has been granted. <a href="pdf/patent.pdf">[Certificate]</a> <a href="https://patents.google.com/patent/CN109658402B/en">[Google Patents]</a> (04/18/23)
-                  </p>
-                  <p>
-                    Selected as DAC Young Fellow <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1690679896/IMG_8739_uxxdro.jpg">[Certificate]</a> (04/08/23)
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- Research & Publications -->
+    <section class="section" id="publications">
+      <h2 class="section-title">Research &amp; Publications</h2>
+      <p class="section-intro">I build compilers, programming models, and design automation tools that make it easier to design and program specialized hardware.</p>
 
-          <!-- Education -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tbody>
-              <tr>
-                <td style="padding:20px;width:100%;vertical-align:middle">
-                  <heading>
-                    <img
-                      src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638058322/github/mortarboard_it5eau.png"
-                      height="40" style="position:relative;top:10px;" />
-                    Education
-                  </heading>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%; width:80%">
-                  <subheading> Cornell University </subheading>
-                  <p style="line-height: 150%;">
-                    M.S./Ph.D. in Electrical and Computer Engineering <br>
-                    Advisor: Prof. Zhiru Zhang <br>
-                    <em> Aug 2021 — Present </em>
-                  </p>
-                </td>
-                <td style="padding:0%; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603287620/github/cornell_jvchu2.png"
-                    height="80" style="position:relative;right:30px">
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%; width: 80%;">
-                  <subheading> Sun Yat-sen University </subheading>
-                  <p style="line-height: 150%;">
-                    B.Eng. in Telecommunication Engineering <br>
-                    Advisor: Prof. Xiang Chen <br>
-                    Outstanding thesis<br>
-                    <em> Aug 2016 — Jun 2020 </em>
-                  </p>
-                </td>
-                <td style="padding:0%;  padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <img
-                    src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638059779/github/Sun_Yat-sen_University_Logo_yianmq.png"
-                    height="80" style="position:relative;right:30px">
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="pub-list">
 
-          <!-- Working Experience -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tbody>
-              <tr>
-                <td style="padding:20px;width:100%;vertical-align:middle">
-                  <heading>
-                    <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638057507/github/suitcase_mc0eer.png"
-                      height="40" style="position:relative;top:10px;" />
-                    Work Experience
-                  </heading>
-                </td>
-              </tr>
-              <tr style="margin-bottom: 0%; margin-top: 0%; padding-top: 0%; padding-bottom: 0%;">
-                <td style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <subheading> Advanced Micro Devices </subheading>
-                  <p style="line-height: 150%;">
-                    Compiler Intern <br>
-                    Advanced Compilers for Distribution and Computation (ACDC) <br>
-                    Chief Technology Organization (CTO) <br>
-                    Manager: Stephen Neuendorffer <br>
-                    <em> May 2023 — Aug 2023 </em>
-                  </p>
-                </td>
-                <td style="padding:0%; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1685564657/posts/amd1_jkxb6p.png"
-                    height="35">
-                </td>
-              </tr>
-              <tr style="margin-bottom: 0%; margin-top: 0%; padding-top: 0%; padding-bottom: 0%;">
-                <td style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <subheading> Intel Labs </subheading>
-                  <p style="line-height: 150%;">
-                    Exempt Tech Employee <br>
-                    Specification and Validation End-to-End (SAVE) Group, SCL/ADR/IL <br>
-                    Manager: Jin Yang, Sunny Zhang <br>
-                    <em> Feb 2021 — Aug 2021 </em>
-                  </p>
-                </td>
-                <td style="padding:0%; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638061680/github/Intel-logo_xyj463.png"
-                    height="80">
-                </td>
-              </tr>
-              <tr style="margin-bottom: 5.5%; margin-top: 0%; padding-top: 0%; padding-bottom: 0%;">
-                <td style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <subheading> Tsinghua University </subheading>
-                  <p style="line-height: 150%;">
-                    Research Assistant <br>
-                    Nanoscale Integrated Circuits and System Lab <a href="https://nicsefc.ee.tsinghua.edu.cn">
-                      (NICS-EFC) </a> <br>
-                    Advisor: <a href="https://nicsefc.ee.tsinghua.edu.cn/people/YuWang">Prof. Yu Wang</a> <br>
-                    <em> Nov 2019 — Aug 2021 </em> <br>
-                  </p>
-                </td>
-                <td style="padding:0%;  padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;"">
-                <img src="
-                  https://res.cloudinary.com/dxzx2bxch/image/upload/v1603287964/github/1200px-Tsinghua_University_Logo.svg_zzzlho.png"
-                  height="80" style="position:relative;left:20px;">
-                </td>
-              </tr>
-              <tr style="margin-bottom: 5.5%; margin-top: 0%; padding-top: 0%; padding-bottom: 0%;">
-                <td style="padding:20px; padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;">
-                  <subheading> The University of Waterloo </subheading>
-                  <p style="line-height: 150%;">
-                    <a href="https://www.mitacs.ca/en/programs/globalink/globalink-research-internship">MITACS</a>
-                    Research Intern <br>
-                    <a href="https://nachiket.github.io/research.html">WatCAG</a> <br>
-                    Advisor: <a href="https://nachiket.github.io">Prof. Nachiket Kapre</a> <br>
-                    <em> Jul 2019 — Oct 2019 </em>
-                  </p>
-                </td>
-                <td style="padding:0%;  padding-top: 0%; padding-bottom: 0%; margin-top: 0%; margin-bottom: 0%;"">
-                <img src=" https://res.cloudinary.com/dxzx2bxch/image/upload/v1607669548/github/waterloo_g8u1qm.png"
-                  height="80">
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <article class="pub">
+          <h3 class="pub-title">From Loop Nests to Silicon: Mapping AI Workloads onto AMD NPUs with MLIR-AIR</h3>
+          <p class="pub-authors">Erwei Wang, Samuel Bayliss, Andra Bisca, Zachary Blair, Sangeeta Chowdhary, Kristof Denolf, Jeff Fifield, Brandon Freiberger, Erika Hunhoff, Phil James-Roxby, Jack Lo, Joseph Melber, Stephen Neuendorffer, Eddie Richter, Andr&eacute; R&ouml;sti, Javier Setoain, Gagandeep Singh, Endri Taka, Pranathi Vasireddy, Zhewen Yu, <strong>Niansong Zhang</strong>, Jinming Zhuang</p>
+          <p class="pub-venue">ACM TRETS · <a href="https://dl.acm.org/doi/10.1145/3785670">paper</a> · <a href="https://github.com/Xilinx/mlir-air">code</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We introduce MLIR-AIR, an open-source compiler stack built on MLIR that bridges the semantic gap between high-level workloads and fine-grained spatial architectures such as AMD's NPUs, achieving up to 78.7% compute efficiency on matrix multiplication.</p></details>
+        </article>
 
-          <!-- What I'm working on  -->
-          <!-- <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-          <tbody>
-            <tr>
-              <td style="padding:20px;width:100%;vertical-align:middle">
-                <heading>
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603289024/github/rainbow_smywp9.svg" height="40"/> 
-                  What I'm Working on
-                </heading>
-                <p>
-                  Currently, I'm working on a few interesting projects at the following labs:
-                </p>
+        <article class="pub">
+          <h3 class="pub-title">Characterizing and Optimizing Realistic Workloads on a Commercial Compute-in-SRAM Device</h3>
+          <p class="pub-authors"><strong>Niansong Zhang</strong>, Wenbo Zhu, Courtney Golden, Dan Ilan, Hongzheng Chen, Christopher Batten, Zhiru Zhang</p>
+          <p class="pub-venue">MICRO 2025 · <a href="https://dl.acm.org/doi/10.1145/3725843.3756132">paper</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>This paper characterizes a commercial compute-in-SRAM device using realistic workloads, proposes key data management optimizations, and demonstrates that it can match GPU-level performance on retrieval-augmented generation tasks while achieving over 46x energy savings.</p></details>
+        </article>
 
-                <p>
-                  &#8212 <a href=http://nicsefc.ee.tsinghua.edu.cn/> NICS-EFC </a> at Tsinghua University <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603287964/github/1200px-Tsinghua_University_Logo.svg_zzzlho.png" width="15" height="15" style="position:relative;top:2px;"/> 
-                </p>
-                <p>
-                  &#8212 <a href=https://www.csl.cornell.edu/> CSL </a> at Cornell University <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603287620/github/cornell_jvchu2.png" width="15" height="15" style="position:relative;top:2px;"/>
-                </p>
-                <p>
-                  &#8212 <a href=https://nachiket.github.io/research.html> WatCAG </a> at the University of Waterloo <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603288150/github/Screen_Shot_2020-10-21_at_21.49.00_nkhilm.png" height="15" style="position:relative;top:2px;"/>
-                </p>
+        <article class="pub">
+          <h3 class="pub-title">ASPEN: LLM-Guided E-Graph Rewriting for RTL Datapath Optimization</h3>
+          <p class="pub-authors"><strong>Niansong Zhang</strong>, Chenhui Deng, Johannes Maximilian Kuehn, Chia-Tung Ho, Cunxi Yu, Zhiru Zhang, Haoxing Ren</p>
+          <p class="pub-venue">MLCAD 2025 · <a href="https://www.csl.cornell.edu/~zhiruz/pdfs/aspen-mlcad2025.pdf">paper</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>ASPEN uses LLM-guided e-graph rewriting with real PPA feedback for RTL optimization. With 16.51% area and 6.65% delay improvements over prior methods, ASPEN shows you can have both smart and sound&mdash;and it's fully automated.</p></details>
+        </article>
 
-                <p>
-                  Also, I'm working as an intern at <a href=https://www.novauto.com.cn/>NOVAUTO</a> Technology.
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
+        <article class="pub">
+          <h3 class="pub-title">Cypress: VLSI-Inspired PCB Placement with GPU Acceleration</h3>
+          <p class="pub-authors"><strong>Niansong Zhang</strong>, Anthony Agnesina, Noor Shbat, Yuval Leader, Zhiru Zhang, Haoxing Ren</p>
+          <p class="pub-venue">ISPD 2025 · <a href="https://dl.acm.org/doi/pdf/10.1145/3698364.3705346">paper</a> · <a href="https://github.com/NVlabs/Cypress">code</a></p>
+          <p class="pub-award"><span class="award-icon">&#x1F3C6;</span> Best Paper Award</p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We present Cypress, a GPU-accelerated, VLSI-inspired PCB placer that boosts routability by up to 5.9x, cuts track length by 19.7x, and runs up to 492x faster on new realistic benchmarks.</p></details>
+        </article>
 
-          <!-- <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-          <tbody>
-            <tr>
-              <td style="padding:20px;width:100%;vertical-align:middle">
-                <subheading> &#8226 FPGA Compiler </subheading>
-                <p>
-                  I worked on an automatic hard block placer <a href="https://arxiv.org/abs/2002.06998">RapidLayout</a> with Prof. Nachiket Kapre at the University of Waterloo. We want to make placement for large-scale accelerators easier and faster. This project is still active as we work to bring RapidLayout more general.
-                </p>
+        <article class="pub">
+          <h3 class="pub-title">ARIES: An Agile MLIR-Based Compilation Flow for Reconfigurable Devices with AI Engines</h3>
+          <p class="pub-authors">Jinming Zhuang*, Shaojie Xiang*, Hongzheng Chen, <strong>Niansong Zhang</strong>, Zhuoping Yang, Tony Mao, Zhiru Zhang, Peipei Zhou <span class="pub-note">* Equal Contribution</span></p>
+          <p class="pub-venue">FPGA 2025 · <a href="https://dl.acm.org/doi/pdf/10.1145/3706628.3708870">paper</a> · <a href="https://github.com/arc-research-lab/Aries">code</a></p>
+          <p class="pub-award pub-award--nominee"><span class="award-icon">&#x1F3C5;</span> Best Paper Nominee</p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We propose ARIES, a unified MLIR-based compilation flow that abstracts task, tile, and instruction-level parallelism across AMD AI Engine arrays (and optional FPGA fabric), boosting Versal VCK190 GEMM throughput by up to 1.6x over prior work.</p></details>
+        </article>
 
-                <subheading> &#8226 Deep Learning Tool Chain </subheading>
-                <p>
-                  At NICS lab and Novauto Technology, I work on deploying neural networks on FPGAs. Specifically, this process includes network pruning, quantization and compilation. I am maintaining a set of tools to deploy TensorFlow, PyTorch and Caffe neural network models on Xilinx FPGA.
-                </p>
+        <article class="pub">
+          <h3 class="pub-title">Allo: A Programming Model for Composable Accelerator Design</h3>
+          <p class="pub-authors">Hongzheng Chen*, <strong>Niansong Zhang</strong>*, Shaojie Xiang, Zhichen Zeng, Mengjia Dai, Zhiru Zhang <span class="pub-note">* Equal Contribution</span></p>
+          <p class="pub-venue">PLDI 2024 · <a href="https://dl.acm.org/doi/10.1145/3656401">paper</a> · <a href="https://github.com/cornell-zhang/allo/tree/main">code</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>Allo, a new composable programming model, decouples hardware customizations from algorithms and outperforms existing languages in performance and productivity for specialized hardware accelerator design.</p></details>
+        </article>
 
-                <subheading> &#8226 Domain Specific Language </subheading>
-                <p>
-                  At Cornell, I work on developing hardwares with the next-generation heterogeneous DSL: <a href="https://heterocl.csl.cornell.edu/">HeteroCL</a>.
-                </p>
+        <article class="pub">
+          <h3 class="pub-title">Formal Verification of Source-to-Source Transformations for HLS</h3>
+          <p class="pub-authors">Louis-No&euml;l Pouchet, Emily Tucker, <strong>Niansong Zhang</strong>, Hongzheng Chen, Debjit Pal, Gaberiel Rodr&iacute;guez, Zhiru Zhang</p>
+          <p class="pub-venue">FPGA 2024 · <a href="https://dl.acm.org/doi/10.1145/3626202.3637563">paper</a> · <a href="https://sourceforge.net/projects/pocc/">code</a></p>
+          <p class="pub-award"><span class="award-icon">&#x1F3C6;</span> Best Paper Award</p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We target the problem of efficiently checking the semantics equivalence between two programs written in C/C++ as a means to ensuring the correctness of the description provided to the HLS toolchain.</p></details>
+        </article>
 
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
+        <article class="pub">
+          <h3 class="pub-title">Understanding the Potential of FPGA-based Spatial Acceleration for Large Language Model Inference</h3>
+          <p class="pub-authors">Hongzheng Chen, Jiahao Zhang, Yixiao Du, Shaojie Xiang, Zichao Yue, <strong>Niansong Zhang</strong>, Yaohui Cai, Zhiru Zhang</p>
+          <p class="pub-venue">ACM TRETS, Vol. 18, No 1, Article 5 · <a href="https://dl.acm.org/doi/pdf/10.1145/3656177">paper</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We design a spatial FPGA accelerator for LLM inference that assigns each operator its own hardware block and connects them with on-chip dataflow to cut memory traffic and latency.</p></details>
+        </article>
 
+        <article class="pub">
+          <h3 class="pub-title">Supporting a Virtual Vector Instruction Set on a Commercial Compute-in-SRAM Accelerator</h3>
+          <p class="pub-authors">Courtney Golden, Dan Ilan, Caroline Huang, <strong>Niansong Zhang</strong>, Zhiru Zhang, Christopher Batten</p>
+          <p class="pub-venue">IEEE Computer Architecture Letters · <a href="https://ieeexplore.ieee.org/document/10352918">paper</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We implement a virtual vector instruction set on a commercial Compute-in-SRAM device, and perform detailed instruction microbenchmarking to identify performance benefits and overheads.</p></details>
+        </article>
 
-          <!-- Research -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tbody>
-              <tr>
-                <td style="padding:20px;width:100%;vertical-align:middle">
-                  <heading>
-                    <img src=https://res.cloudinary.com/dxzx2bxch/image/upload/v1603290048/github/3d-glasses_abxm4x.svg
-                      height=40 style="position:relative;top:10px;" />
-                    Research & Publication
-                  </heading>
-                  <p>
-                    My research interests include EDA (Electronic Design Automation) for FPGA, DSL (Domain-Specific
-                    Language), and efficient machine learning.
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <article class="pub">
+          <h3 class="pub-title">Serving Multi-DNN Workloads on FPGAs: a Coordinated Architecture, Scheduling, and Mapping Perspective</h3>
+          <p class="pub-authors">Shulin Zeng, Guohao Dai, <strong>Niansong Zhang</strong>, Xinhao Yang, Haoyu Zhang, Zhenhua Zhu, Huazhong Yang, Yu Wang</p>
+          <p class="pub-venue">IEEE Transactions on Computers · <a href="https://ieeexplore.ieee.org/document/9917279">paper</a></p>
+          <p class="pub-award pub-award--nominee"><span class="award-icon">&#x1F3C5;</span> Featured Paper in the May 2023 Issue</p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>This paper proposes a Design Space Exploration framework to jointly optimize heterogeneous multi-core architecture, layer scheduling, and compiler mapping for serving DNN workloads on cloud FPGAs.</p></details>
+        </article>
 
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tbody>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1701577686/Leda-E-2022-reflection2_nefhtn.jpg"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle> Supporting a Virtual Vector Instruction Set on a Commercial Compute-in-SRAM Accelerator </papertitle>
-                  </p>
-                  <p>
-                    Courtney Golden, Dan Ilan, Caroline Huang, <strong>Niansong Zhang</strong>, Zhiru Zhang, Christopher Batten
-                  </p>
-                  <em>IEEE Computer Architecture Letters</em> |
-                  <a href="https://ieeexplore.ieee.org/document/10352918">paper</a>
-                  <p>
-                    We implement a virtual vector instruction set on a commercial Compute-in-SRAM device, 
-                    and perform detailed instruction microbenchmarking to identify performance benefits and overheads. 
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661574452/posts/h3m_ftkttw.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle> Serving Multi-DNN Workloads on FPGAs: a Coordinated Architecture, Scheduling, and Mapping Perspective</papertitle>
-                  </p>
-                  <p>
-                    Shulin Zeng, Guohao Dai, <strong>Niansong Zhang</strong>, Xinhao Yang, Haoyu Zhang, Zhenhua Zhu, Huazhong Yang, Yu Wang
-                  </p>
-                  <em>IEEE Transactions on Computers</em> |
-                  <a href="https://ieeexplore.ieee.org/document/9917279">paper</a>
-                  <p>
-                    <strong-red>Featured Paper in the May 2023 Issue</strong-red>
-                  </p>
-                  <p>
-                    This paper proposes a Design Space Exploration framework to jointly optimize heterogeneous multi-core architecture, 
-                    layer scheduling, and compiler mapping for serving DNN workloads on cloud FPGAs.
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661574844/posts/hcl_ynthy9.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle>Accelerator Design with Decoupled Hardware Customizations: Benefits and Challenges</papertitle>
-                  </p>
-                  <p>
-                    Debjit Pal, Yi-Hsiang Lai, Shaojie Xiang, <strong>Niansong Zhang</strong>, Hongzheng Chen, Jeremy Casas, Pasquale Cocchini, Zhenkun Yang, Jin Yang, Louis-Noël Pouchet, Zhiru Zhang
-                  </p>
-                  <em>Invited Paper, DAC 2022, </em>
-                  <a href="https://www.csl.cornell.edu/~zhiruz/pdfs/hcl-invited-dac2022.pdf">paper</a>
-                  <!-- <a href="https://dl.acm.org/doi/10.1145/3490422.3502369">paper</a> | -->
-                  <!-- <a href="https://github.com/cornell-zhang/heterocl">code</a> -->
-                  <p>
-                    We show the advantages of the decoupled programming model and further discuss some of our recent efforts to enable a robust and viable verification solution in the future.
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1646247688/cs6120/pc_o0id3u.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle>CodedVTR: Codebook-Based Sparse Voxel Transformer with Geometric Guidance</papertitle>
-                  </p>
-                  <p>
-                    Tianchen Zhao, <strong>Niansong Zhang</strong>, Xuefei Ning, He Wang, Li Yi, Yu Wang
-                  </p>
-                  <em>CVPR 2022, </em>
-                  <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Zhao_CodedVTR_Codebook-Based_Sparse_Voxel_Transformer_With_Geometric_Guidance_CVPR_2022_paper.pdf">paper</a> |
-                  <!-- <a href="https://github.com/cornell-zhang/heterocl">code</a> -->
-                  <a href="https://a-suozhang.xyz/codedvtr.github.io/">website</a> |
-                  <a href="pdf/codedvtr-cvpr22.pdf">slides</a> |
-                  <a href="pdf/cvpr22_poster.pdf">poster</a> |
-                  <a href="https://www.youtube.com/watch?v=eJgardvIp7A">video</a>
-                  <p>
-                    We propose a flexible 3D Transformer on sparse voxels to address transformer's generalization issue.
-                    CodedVTR (<strong>Code</strong>book-based <strong>V</strong>oxel <strong>TR</strong>ansformer)
-                    decomposes attention space into linear combinations of learnable prototypes to regularize attention
-                    learning.
-                    We also propose geometry-aware self-attention to guide training with geometric pattern and voxel
-                    density.
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638063649/github/heteroflow_ilfrwp.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle>HeteroFlow: An Accelerator Programming Model with Decoupled Data Placement for
-                      Software-Defined FPGAs</papertitle>
-                  </p>
-                  <p>
-                    Shaojie Xiang, Yi-Hsiang Lai, Yuan Zhou, Hongzheng Chen, <strong>Niansong Zhang</strong>, Debjit
-                    Pal, Zhiru Zhang
-                  </p>
-                  <em>FPGA 2022, </em>
-                  <a href="https://dl.acm.org/doi/10.1145/3490422.3502369">paper</a> |
-                  <a href="https://github.com/cornell-zhang/heterocl">code</a>
-                  <p>
-                    We propose an FPGA accelerator programming model that decouples the algorithm specification from
-                    optimizations related to
-                    orchestrating the placement of data across a customized memory hierarchy.
-                  </p>
-                </td>
-              </tr>
+        <article class="pub">
+          <h3 class="pub-title">Accelerator Design with Decoupled Hardware Customizations: Benefits and Challenges</h3>
+          <p class="pub-authors">Debjit Pal, Yi-Hsiang Lai, Shaojie Xiang, <strong>Niansong Zhang</strong>, Hongzheng Chen, Jeremy Casas, Pasquale Cocchini, Zhenkun Yang, Jin Yang, Louis-No&euml;l Pouchet, Zhiru Zhang</p>
+          <p class="pub-venue">Invited Paper, DAC 2022 · <a href="https://www.csl.cornell.edu/~zhiruz/pdfs/hcl-invited-dac2022.pdf">paper</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We show the advantages of the decoupled programming model and further discuss some of our recent efforts to enable a robust and viable verification solution in the future.</p></details>
+        </article>
 
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img
-                    src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638063351/github/Screen_Shot_2021-11-27_at_20.35.43_im38nq.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle>RapidLayout: Fast Hard Block Placement of FPGA-optimized Systolic Arrays using
-                      Evolutionary Algorithms</papertitle>
-                  </p>
-                  <p>
-                    <strong>Niansong Zhang</strong>, Xiang Chen, Nachiket Kapre
-                  </p>
-                  <p>
-                    <strong-red>ACM TRETS Best Paper Award</strong-red>
-                  </p>
-                  <em>Invited Paper, ACM Transactions on Reconfigurable Technology and Systems (TRETS)</em> <br>
-                  <a href="https://dl.acm.org/doi/10.1145/3501803">Volume 15, Issue 4, Article No.: 38, pp 1–23</a>
-                  <!-- <a href="https://git.uwaterloo.ca/watcag-public/rapidlayout">code</a>   -->
-                  <p>
-                    We extend the previous work on RapidLayout with cross-SLR routing, placement transfer learning, and
-                    placement bootstrapping from a much
-                    smaller device to improve runtime and design quality.
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img
-                    src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638063555/github/Screen_Shot_2021-11-27_at_20.38.57_ntxk2f.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle>aw_nas: A Modularized and Extensible NAS Framework</papertitle>
-                  </p>
-                  <p>
-                    Xuefei Ning, Changcheng Tang, Wenshuo Li, Songyi Yang, Tianchen Zhao, <strong>Niansong
-                      Zhang</strong>, Tianyi Lu, Shuang Liang, Huazhong Yang, Yu Wang
-                  </p>
-                  <em>Arxiv Preprint</em>,
-                  <a href="https://arxiv.org/abs/2012.10388">paper</a> |
-                  <a href="https://github.com/walkerning/aw_nas">code</a>
-                  <p>
-                    We build an open-source Python framework implementing various NAS algorithms in a modularized and
-                    extensible manner.
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding:20px;width:25%;vertical-align:middle">
-                  <img
-                    src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1603745949/github/rapidlayout-placed_lcj2z7.png"
-                    width=100% />
-                </td>
-                <td style="padding:20px;width:75%;vertical-align:middle">
-                  <p>
-                    <papertitle>RapidLayout: Fast Hard Block Placement of FPGA-optimized Systolic Arrays using
-                      Evolutionary Algorithms</papertitle>
-                  </p>
-                  <p>
-                    <strong>Niansong Zhang</strong>, Xiang Chen, Nachiket Kapre
-                  </p>
-                  <em>FPL 2020</em>,
-                  <a href="https://www.computer.org/csdl/proceedings-article/fpl/2020/990200a145/1nTu6iN2wCc">paper</a> |
-                  <a href="https://github.com/watcag/RapidLayout">code</a>
-                  <p>
-                    <strong-red>Michal Servit Best Paper Award Nominee</strong-red>
-                  </p>
-                  <p>
-                    We build a fast and high-performance evolutionary placer for FPGA-optimized hard block designs that
-                    targets high clock frequency such as 650+MHz.
-                  </p>
-                </td>
-              </tr>
+        <article class="pub">
+          <h3 class="pub-title">CodedVTR: Codebook-Based Sparse Voxel Transformer with Geometric Guidance</h3>
+          <p class="pub-authors">Tianchen Zhao, <strong>Niansong Zhang</strong>, Xuefei Ning, He Wang, Li Yi, Yu Wang</p>
+          <p class="pub-venue">CVPR 2022 · <a href="https://openaccess.thecvf.com/content/CVPR2022/papers/Zhao_CodedVTR_Codebook-Based_Sparse_Voxel_Transformer_With_Geometric_Guidance_CVPR_2022_paper.pdf">paper</a> · <a href="https://a-suozhang.xyz/codedvtr.github.io/">website</a> · <a href="pdf/codedvtr-cvpr22.pdf">slides</a> · <a href="pdf/cvpr22_poster.pdf">poster</a> · <a href="https://www.youtube.com/watch?v=eJgardvIp7A">video</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We propose CodedVTR, a flexible 3D Transformer on sparse voxels that decomposes attention space into linear combinations of learnable prototypes to regularize attention learning, with geometry-aware self-attention to guide training.</p></details>
+        </article>
 
-            </tbody>
-          </table>
+        <article class="pub">
+          <h3 class="pub-title">HeteroFlow: An Accelerator Programming Model with Decoupled Data Placement for Software-Defined FPGAs</h3>
+          <p class="pub-authors">Shaojie Xiang, Yi-Hsiang Lai, Yuan Zhou, Hongzheng Chen, <strong>Niansong Zhang</strong>, Debjit Pal, Zhiru Zhang</p>
+          <p class="pub-venue">FPGA 2022 · <a href="https://dl.acm.org/doi/10.1145/3490422.3502369">paper</a> · <a href="https://github.com/cornell-zhang/heterocl">code</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We propose an FPGA accelerator programming model that decouples the algorithm specification from optimizations related to orchestrating the placement of data across a customized memory hierarchy.</p></details>
+        </article>
 
-          <!-- Workshops -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tr>
-              <heading>
-                <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661575168/posts/audio_olvnsf.png"
-                  height=40 style="position:relative;top:10px;" />
-                Workshops & Talks
-              </heading>
-            </tr>
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle">
-                <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661573035/posts/mlir_oif9th.png"
-                  width=100% />
-              </td>
-              <td style="padding:20px;width:75%;vertical-align:middle">
-                <p>
-                  <papertitle>An MLIR-based Intermediate Representation for Accelerator Design with Decoupled Customizations</papertitle>
-                </p>
-                <p>
-                  Hongzheng Chen*, <strong>Niansong Zhang*</strong>, Shaojie Xiang, Zhiru Zhang
-                </p>
-                <em>MLIR Open Design Meeting (08/11/2022) </em> |
-                <a
-                  href="https://www.youtube.com/watch?v=yOk63LWbkqk">video</a> |
-                <a href="https://mlir.llvm.org/OpenMeetings/2022-08-11-HeteroCL.pdf">slides</a>  |
-                <a href="https://mlir.llvm.org/talks/">website</a>
-                <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1664466805/posts/Screenshot_2022-09-29_at_11.53.13_AM_uuhi6o.png" width="60" height="20"
-                      style="position:relative;top:5px;" />
-                <br>
-                <em>CRISP Liaison Meeting (09/28/2022) </em> |
-                <a
-                  href="https://crispreasearch.blogspot.com/2022/09/an-mlir-based-intermediate.html">news</a> |
-                <a href="https://mlir.llvm.org/OpenMeetings/2022-08-11-HeteroCL.pdf">slides</a> |
-                <a href="https://crisp.engineering.virginia.edu">website</a>
-                &nbsp;
-                <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1664466593/posts/crisp-logo_jws3lg.jpg" width="60" height="16"
-                      style="position:relative;top:4px;" />
-                <p>
-                  We decouple hardware customizations from the algorithm specifications <em>at the IR level</em> to:
-                  (1) provide a general platform for high-level DSLs, (2) boost performance and productivity, and (3)
-                  make customization verification scalable.
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle">
-                <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1661575291/posts/micro_qe7voi.png"
-                  width=100% />
-              </td>
-              <td style="padding:20px;width:75%;vertical-align:middle">
-                <p>
-                  <papertitle>Enabling Fast Deployment and Efficient Scheduling for Multi-Node and Multi-Tenant DNN
-                    Accelerators in the Cloud</papertitle>
-                </p>
-                <p>
-                  Shulin Zeng, Guohao Dai, <strong>Niansong Zhang</strong>, Yu Wang
-                </p>
-                <em>MICRO 2021 ASCMD Workshop</em>,
-                <a
-                  href="https://research.fb.com/wp-content/uploads/2021/11/Enabling-Fast-Deployment-and-Efficient-Scheduling-for-Multi-Node-and-Multi-Tenant-DNN-Accelerators-in-the-Cloud.pdf">paper</a>
-                |
-                <a
-                  href="https://cloud.tsinghua.edu.cn/seafhttp/files/13497d08-2ede-4c6c-8c0d-cc487e941b31/workshop.mp4">video</a>
-                <p>
-                  We propose a multi-node and multi-core accelerator architecture and a decoupled compiler for
-                  cloud-backed INFerence-as-a-Service (INFaaS).
-                </p>
-              </td>
-            </tr>
-          </table>
+        <article class="pub">
+          <h3 class="pub-title">RapidLayout: Fast Hard Block Placement of FPGA-optimized Systolic Arrays using Evolutionary Algorithms</h3>
+          <p class="pub-authors"><strong>Niansong Zhang</strong>, Xiang Chen, Nachiket Kapre</p>
+          <p class="pub-venue">Invited Paper, ACM TRETS, Vol. 15, Issue 4, Article 38 · <a href="https://dl.acm.org/doi/10.1145/3501803">paper</a></p>
+          <p class="pub-award"><span class="award-icon">&#x1F3C6;</span> Best Paper Award</p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We extend the previous work on RapidLayout with cross-SLR routing, placement transfer learning, and placement bootstrapping from a much smaller device to improve runtime and design quality.</p></details>
+        </article>
 
-          <!-- Services -->
-          <table
-          style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-          <tr>
-            <td style="padding:20px;width:25%;vertical-align:middle">
-              <heading>
-                <img src=https://res.cloudinary.com/dxzx2bxch/image/upload/v1653372669/cs6120/compass_dmxnlw.png
-                  height=40 style="position:relative;top:10px;" />
-                Professional Services
-              </heading>
-              <p>
-                Student Volunteer:
-                <a href="https://www.fccm.org/volunteer-2022/">FCCM’22</a>
-              </p>
-              <p>
-                Reviewer:
-                <a href="https://iccad.com">ICCAD 2022, 2023</a>,
-                <a href="https://dl.acm.org/journal/trets">TRETS</a>, 
-                <a href="https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=8920">TCAS II</a>
-            </td>
-          </tr>
-          </table>
+        <article class="pub">
+          <h3 class="pub-title">RapidLayout: Fast Hard Block Placement of FPGA-optimized Systolic Arrays using Evolutionary Algorithms</h3>
+          <p class="pub-authors"><strong>Niansong Zhang</strong>, Xiang Chen, Nachiket Kapre</p>
+          <p class="pub-venue">FPL 2020 · <a href="https://www.computer.org/csdl/proceedings-article/fpl/2020/990200a145/1nTu6iN2wCc">paper</a> · <a href="https://github.com/watcag/RapidLayout">code</a></p>
+          <p class="pub-award pub-award--nominee"><span class="award-icon">&#x1F3C5;</span> Michal Servit Best Paper Award Nominee</p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We build a fast and high-performance evolutionary placer for FPGA-optimized hard block designs that targets high clock frequency such as 650+MHz.</p></details>
+        </article>
 
-          <!-- Teaching -->
-          <table
-          style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-          <tr>
-            <td style="padding:20px;width:25%;vertical-align:middle">
-              <heading>
-                <img src="https://res.cloudinary.com/dxzx2bxch/image/upload/v1638064807/github/blackboard_mq4nwn.png"
-                  height=40 style="position:relative;top:10px;" />
-                Teaching
-              </heading>
-              <p>
-                <strong>[ECE 5775]</strong>
-                <a href="https://www.csl.cornell.edu/courses/ece5775/">High-Level Digital Design Automation</a>
-              </p>
-              <p>
-                Part-time TA, Fall 2022
-              </p>
-            </td>
-          </tr>
-          </table>
+      </div>
+    </section>
 
-          <!-- Awards -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle">
-                <heading>
-                  <img src=https://res.cloudinary.com/dxzx2bxch/image/upload/v1603749754/github/diamond_my5b7u.svg
-                    height=40 style="position:relative;top:10px;" />
-                  Awards and Honors
-                </heading>
-                <p>
-                  Best Paper Award for ACM TRETS in 2023
-                </p>
-                <p>
-                  DAC Young Fellow 2021 & 2023
-                </p>
-                <p>
-                  FPL 2020 Best Paper Nomination (Michal Servit Award)
-                </p>
-                <p>
-                  Outstanding Bachelor Thesis Award | Sun Yat-sen University
-                </p>
-                <p>
-                  Mitacs Globalink Research Internship Award | Mitacs, Canada
-                </p>
-                <p>
-                  First-class Merit Scholarship x2 | Sun Yat-sen University
-                </p>
-                <p>
-                  Lin and Liu Foundation Scholarship | SEIT, Sun Yat-sen University
-                </p>
-              </td>
-            </tr>
-          </table>
+    <!-- Preprints -->
+    <section class="section" id="preprints">
+      <h2 class="section-title">Preprints</h2>
+      <div class="pub-list">
 
-          <!-- Patents -->
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
-            <tr>
-              <td style="padding:20px;width:25%;vertical-align:middle">
-                <heading>
-                  <img src=https://res.cloudinary.com/dxzx2bxch/image/upload/v1603750514/github/cellphone_srrfq6.svg
-                    height=40 style="position:relative;top:10px;" />
-                  Patents
-                </heading>
-                <p>
-                  <strong>Niansong Zhang</strong>, Songyi Yang, Shun Fu, Xiang Chen,
-                  <em>"Industry Profile Geometric Dimension Automatic Measuring Method Based on Computer Vision
-                    Imaging."</em> Chinese Patent CN201811539019.8A, filed December 17, 2018, and issued April 19, 2019.
-                </p>
-                <p>
-                  <strong>Niansong Zhang</strong> (at Novauto Technology), <em>"A Pruning Method and Device of
-                    Multi-task Neural Network Models"</em>, Chinese Patent 202010805327.1, filed August 12, 2020.
-                </p>
-              </td>
-            </tr>
-          </table>
+        <article class="pub">
+          <h3 class="pub-title">Dato: A Task-Based Programming Model for Dataflow Accelerators</h3>
+          <p class="pub-authors">Shihan Fang, Hongzheng Chen, <strong>Niansong Zhang</strong>, Jiajie Li, Han Meng, Adrian Liu, Zhiru Zhang</p>
+          <p class="pub-venue">arXiv 2025 · <a href="https://arxiv.org/abs/2509.06794">paper</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We introduce Dato, a Python-based programming framework for dataflow accelerators that treats data communication as a first-class language feature. On AMD Ryzen AI, Dato achieves up to 84% hardware utilization for GEMM and a 2.81x speedup on attention kernels compared to state-of-the-art commercial frameworks.</p></details>
+        </article>
 
-        </td>
-      </tr>
-  </table>
+        <article class="pub">
+          <h3 class="pub-title">aw_nas: A Modularized and Extensible NAS Framework</h3>
+          <p class="pub-authors">Xuefei Ning, Changcheng Tang, Wenshuo Li, Songyi Yang, Tianchen Zhao, <strong>Niansong Zhang</strong>, Tianyi Lu, Shuang Liang, Huazhong Yang, Yu Wang</p>
+          <p class="pub-venue">arXiv 2020 · <a href="https://arxiv.org/abs/2012.10388">paper</a> · <a href="https://github.com/walkerning/aw_nas">code</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We build an open-source Python framework implementing various NAS algorithms in a modularized and extensible manner.</p></details>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Workshops & Talks -->
+    <section class="section" id="talks">
+      <h2 class="section-title">Workshops &amp; Talks</h2>
+      <div class="pub-list">
+
+        <article class="pub">
+          <h3 class="pub-title">An MLIR-based Intermediate Representation for Accelerator Design with Decoupled Customizations</h3>
+          <p class="pub-authors">Hongzheng Chen*, <strong>Niansong Zhang*</strong>, Shaojie Xiang, Zhiru Zhang</p>
+          <p class="pub-venue">MLIR Open Design Meeting (08/11/2022) · <a href="https://www.youtube.com/watch?v=yOk63LWbkqk">video</a> · <a href="https://mlir.llvm.org/OpenMeetings/2022-08-11-HeteroCL.pdf">slides</a> · <a href="https://mlir.llvm.org/talks/">website</a></p>
+          <p class="pub-venue">CRISP Liaison Meeting (09/28/2022) · <a href="https://crispreasearch.blogspot.com/2022/09/an-mlir-based-intermediate.html">news</a> · <a href="https://mlir.llvm.org/OpenMeetings/2022-08-11-HeteroCL.pdf">slides</a> · <a href="https://crisp.engineering.virginia.edu">website</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We decouple hardware customizations from the algorithm specifications <em>at the IR level</em> to: (1) provide a general platform for high-level DSLs, (2) boost performance and productivity, and (3) make customization verification scalable.</p></details>
+        </article>
+
+        <article class="pub">
+          <h3 class="pub-title">Enabling Fast Deployment and Efficient Scheduling for Multi-Node and Multi-Tenant DNN Accelerators in the Cloud</h3>
+          <p class="pub-authors">Shulin Zeng, Guohao Dai, <strong>Niansong Zhang</strong>, Yu Wang</p>
+          <p class="pub-venue">MICRO 2021 ASCMD Workshop · <a href="https://research.fb.com/wp-content/uploads/2021/11/Enabling-Fast-Deployment-and-Efficient-Scheduling-for-Multi-Node-and-Multi-Tenant-DNN-Accelerators-in-the-Cloud.pdf">paper</a> · <a href="https://cloud.tsinghua.edu.cn/seafhttp/files/13497d08-2ede-4c6c-8c0d-cc487e941b31/workshop.mp4">video</a></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>We propose a multi-node and multi-core accelerator architecture and a decoupled compiler for cloud-backed INFerence-as-a-Service (INFaaS).</p></details>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Bottom Grid: Services, Teaching, Awards, Patents -->
+    <div class="bottom-grid">
+
+      <section class="section section--compact" id="services">
+        <h2 class="section-title">Professional Services</h2>
+        <p><strong>Student Volunteer:</strong> <a href="https://www.fccm.org/volunteer-2022/">FCCM'22</a></p>
+        <p><strong>Reviewer:</strong> <a href="https://iccad.com">ICCAD 2022, 2023</a>, <a href="https://dl.acm.org/journal/trets">TRETS</a>, <a href="https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=8920">TCAS II</a></p>
+      </section>
+
+      <section class="section section--compact" id="teaching">
+        <h2 class="section-title">Teaching</h2>
+        <p><strong>[ECE 2300]</strong> <a href="https://www.csl.cornell.edu/courses/ece2300/">Digital Logic and Computer Organization</a><br><span class="text-muted">Head TA, Spring 2024</span></p>
+        <p><strong>[ECE 5775]</strong> <a href="https://www.csl.cornell.edu/courses/ece6775/">High-Level Digital Design Automation</a><br><span class="text-muted">Part-time TA, Fall 2022</span></p>
+      </section>
+
+    </div>
+
+    <div class="bottom-grid">
+
+      <section class="section section--compact" id="awards">
+        <h2 class="section-title">Awards &amp; Honors</h2>
+        <ul class="compact-list">
+          <li>Best Paper Award at ISPD 2025</li>
+          <li>Best Paper Nomination at FPGA 2025</li>
+          <li>Best Paper Award at FPGA 2024</li>
+          <li>Best Paper Award for ACM TRETS in 2023</li>
+          <li>Best Paper Nomination (Michal Servit Award) at FPL 2020</li>
+          <li>DAC Young Fellow 2021 &amp; 2023</li>
+          <li>Outstanding Bachelor Thesis Award, Sun Yat-sen University</li>
+          <li>Mitacs Globalink Research Internship Award, Canada</li>
+          <li>First-class Merit Scholarship x2, Sun Yat-sen University</li>
+          <li>Lin and Liu Foundation Scholarship, SEIT, Sun Yat-sen University</li>
+        </ul>
+      </section>
+
+      <section class="section section--compact" id="patents">
+        <h2 class="section-title">Patents</h2>
+        <ul class="compact-list">
+          <li>Anthony Agnesina, Haoxing Ren, <strong>Niansong Zhang</strong>, <em>"Printed Circuit Board Component Placement."</em> US Patent App. US20260044660A1, filed Feb 2025, published Feb 12, 2026. <a href="https://patents.google.com/patent/US20260044660A1/en">[Google Patents]</a></li>
+          <li><strong>Niansong Zhang</strong>, Songyi Yang, Shun Fu, Xiang Chen, <em>"Industry Profile Geometric Dimension Automatic Measuring Method Based on Computer Vision Imaging."</em> Chinese Patent CN201811539019.8A, filed Dec 17, 2018, issued Apr 19, 2019.</li>
+          <li><strong>Niansong Zhang</strong> (at Novauto Technology), <em>"A Pruning Method and Device of Multi-task Neural Network Models"</em>, Chinese Patent 202010805327.1, filed Aug 12, 2020.</li>
+        </ul>
+      </section>
+
+    </div>
+
+    <footer class="site-footer">
+      <p>Last updated: July, 2025</p>
+      <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&cl=ffffff&w=a"></script>
+    </footer>
+
+  </main>
+
+  <script>
+    const images = [
+      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984403/pfp/2_b6ruqx.jpg',
+      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984399/pfp/3_amx33p.jpg',
+      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984399/pfp/4_us0zlo.jpg',
+      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746227083/pfp/IMG_2930_Medium_ebwk21.jpg',
+      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228101/pfp/IMG_5881_w0rk1c.jpg',
+      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984900/pfp/1-edit_atfdfm.png'
+    ];
+
+    function getNextImageIndex() {
+      const lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
+      const nextIndex = (lastIndex + 1) % images.length;
+      localStorage.setItem('lastImageIndex', nextIndex);
+      return nextIndex;
+    }
+
+    document.getElementById('profileImage').src = images[getNextImageIndex()];
+  </script>
 </body>
-
-<table
-  style="width:100%;max-width:1000px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto">
-  <link rel="stylesheet" type="text/css" href="stylesheet.css">
-  <td style="padding:20px;width:25%;vertical-align:right">
-    <p> Last updated: Dec 2, 2023</p>
-    <!-- <p> This page has been visited <span id="view_count_text"></span> times</p> -->
-    <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&cl=ffffff&w=a"></script>    <!-- <p> Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a -->
-        <!-- href="https://www.flaticon.com/authors/retro-neon/lineal-color" title="Flaticon"> flaticon</a> </p> -->
-  </td>
-</table>
-
-<script type="application/javascript">
-  function websiteVisits(response) {
-    document.getElementById("view_count_text").textContent = response.value;
-  }
-</script>
 </html>

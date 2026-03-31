@@ -1,73 +1,594 @@
-@font-face {
-    font-family: 'KingHwa';
-    src: url('fonts/KingHwa.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+/* ============================================
+   Niansong Zhang - Personal Homepage
+   Rothko-inspired: warm color fields,
+   soft edges, gallery atmosphere
+   ============================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@font-face {
-    font-family: 'Optima';
-    src: url('fonts/Optima-Regular-01.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+:root {
+  /* Rothko palette — deep warmth */
+  --color-bg: #f6f1eb;
+  --color-text: #2c2420;
+  --color-text-secondary: #5c524a;
+  --color-text-muted: #9a8e84;
+  --color-accent: #b44a2d;
+  --color-accent-hover: #933d25;
+  --color-border: #e4ddd5;
+  --color-border-light: #ede8e2;
+
+  /* Award colors */
+  --color-award-gold: #b8860b;
+
+  /* Typography — gallery feel */
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-content: 'EB Garamond', Georgia, serif;
+  --font-body: 'Libre Franklin', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --text-micro: 0.75rem;
+  --text-small: 0.875rem;
+  --text-body: 1rem;
+  --text-subtitle: 1.2rem;
+  --text-section: 1.6rem;
+  --text-display: 2.75rem;
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 3.5rem;
+  --space-3xl: 5rem;
+
+  --radius-lg: 12px;
+  --shadow-md: 0 3px 12px rgba(44, 36, 32, 0.07);
+
+  --transition: 0.25s ease;
 }
 
-  
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-    background-color: rgb(255, 255, 255);
-}
-heading {
-    color: rgb(0,0,0);
-    font-family: 'Cormorant Garamond', serif; 
-    font-size: 180%;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.65;
+  font-weight: 400;
+  font-kerning: normal;
 }
 
-subheading {
-    color: rgb(0,0,0);
-    font-family: 'Cormorant Garamond', serif; 
-    font-size: 170%; 
-}  
+/* --- Typography --- */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+h2 { font-size: var(--text-section); }
+h3 { font-size: var(--text-subtitle); }
+
 p {
-    color: rgb(0, 0, 0);
-    font-family: 'Optima', 'Noto Sans';
-    font-size: 120%;
-  }
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
 
 a {
-    color: rgb(15, 155, 236);
-    font-family: 'Optima', 'Noto Sans';
-    font-size: 100%;
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+strong {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+em {
+  font-style: italic;
+  font-family: var(--font-display);
+}
+
+/* --- Container --- */
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
+}
+
+/* --- Hero Section --- */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xl);
+  padding-bottom: var(--space-2xl);
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin-bottom: var(--space-lg);
+  color: var(--color-text);
+}
+
+.bio {
+  font-size: var(--text-body);
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+  max-width: 58ch;
+}
+
+.info-list {
+  list-style: none;
+  margin-bottom: var(--space-lg);
+}
+
+.info-list li {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  padding: 0.3rem 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.info-label {
+  font-size: var(--text-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  min-width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.25rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-body);
+}
+
+.social-links a {
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  text-decoration-color: rgba(180, 74, 45, 0.3);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  transition: color var(--transition), text-decoration-color var(--transition);
+}
+
+.social-links a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.hero-photo {
+  flex-shrink: 0;
+  width: 190px;
+}
+
+.profile-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- Sections --- */
+.section {
+  padding: var(--space-2xl) 0 0;
+}
+
+#publications,
+#preprints,
+#talks {
+  padding-top: var(--space-3xl);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-section);
+  font-style: italic;
+  font-weight: 400;
+  margin-bottom: var(--space-lg);
+  color: var(--color-text);
+}
+
+.section-intro {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+  max-width: 58ch;
+  line-height: 1.75;
+}
+
+/* --- News --- */
+.news-list {
+  list-style: none;
+}
+
+.news-list li {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+  line-height: 1.6;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-sm);
+}
+
+.news-list li:last-child {
+  border-bottom: none;
+}
+
+.news-list time {
+  font-size: var(--text-micro);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* --- Timeline (Education & Experience) --- */
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  padding: var(--space-lg) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.timeline-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.timeline-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline-content h3 {
+  font-family: var(--font-content);
+  font-size: var(--text-subtitle);
+  font-weight: 400;
+  margin-bottom: 0.2rem;
+  color: var(--color-text);
+}
+
+.timeline-role {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  margin-bottom: 0.15rem;
+}
+
+.timeline-detail {
+  font-size: var(--text-small);
+  font-weight: 300;
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.timeline-date {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  white-space: nowrap;
+}
+
+/* --- Publications --- */
+.pub-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pub {
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.pub-title {
+  font-family: var(--font-content);
+  font-size: var(--text-subtitle);
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+  color: var(--color-text);
+}
+
+.pub-authors {
+  font-family: var(--font-content);
+  font-size: var(--text-small);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 0.3rem;
+}
+
+.pub-note {
+  font-size: var(--text-micro);
+  font-style: italic;
+  font-family: var(--font-display);
+  color: var(--color-text-muted);
+}
+
+.pub-venue {
+  font-family: var(--font-content);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-accent);
+  margin-bottom: 0.3rem;
+}
+
+.pub-venue a {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.pub-venue a:hover {
+  color: var(--color-text-secondary);
+}
+
+.pub-award {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-small);
+  color: var(--color-award-gold);
+  margin-bottom: 0.2rem;
+}
+
+.pub-award--nominee {
+  color: var(--color-text-secondary);
+}
+
+.award-icon {
+  margin-right: 0.2rem;
+}
+
+/* Toggle abstract */
+.pub-toggle {
+  margin-top: 0.35rem;
+}
+
+.pub-toggle summary {
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline;
+  font-family: var(--font-display);
+  font-style: italic;
+  transition: color var(--transition);
+}
+
+.pub-toggle summary:hover {
+  color: var(--color-accent);
+}
+
+.pub-toggle summary::marker {
+  content: '';
+}
+
+.pub-toggle summary::before {
+  content: '+ ';
+  font-family: var(--font-body);
+  font-style: normal;
+}
+
+.pub-toggle[open] summary::before {
+  content: '- ';
+}
+
+.pub-toggle p {
+  font-size: var(--text-small);
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+  padding-left: 0.1rem;
+}
+
+/* --- Bottom Grid --- */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2xl) var(--space-xl);
+  padding-top: var(--space-2xl);
+}
+
+.bottom-grid + .bottom-grid {
+  padding-top: 0;
+}
+
+.section--compact {
+  padding-top: 0;
+}
+
+.section--compact .section-title {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-md);
+}
+
+.section--compact p {
+  font-size: var(--text-small);
+  margin-bottom: 0.6rem;
+}
+
+.compact-list {
+  list-style: none;
+}
+
+.compact-list li {
+  font-size: var(--text-small);
+  color: var(--color-text-secondary);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+  line-height: 1.55;
+}
+
+.compact-list li:last-child {
+  border-bottom: none;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+  font-size: var(--text-small);
+  font-weight: 300;
+}
+
+/* --- Footer --- */
+.site-footer {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.site-footer p {
+  font-size: var(--text-micro);
+  color: var(--color-text-muted);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-xl) var(--space-md);
   }
 
-name {
-      font-family:  'Optima', 'Noto Sans';
-      font-size: 200%
+  .hero {
+    flex-direction: column-reverse;
+    gap: var(--space-lg);
+    align-items: center;
+    text-align: center;
   }
-  .circle_image {
-    width: 80%;
-    border-radius: 80%;
+
+  .hero-photo {
+    width: 140px;
+  }
+
+  .info-list li {
+    justify-content: center;
+  }
+
+  .social-links {
+    justify-content: center;
+    gap: 0.2rem 1rem;
+  }
+
+  .name {
+    font-size: 2rem;
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .timeline-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .timeline-item {
+    gap: var(--space-md);
+  }
+
+  .timeline-date {
+    font-size: var(--text-micro);
+  }
+
+  #publications,
+  #talks {
+    padding-top: var(--space-2xl);
+  }
 }
 
-papertitle {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 140%
+@media (max-width: 480px) {
+  .name {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .hero-photo {
+    width: 120px;
+  }
+
 }
 
-strong{
-    font-family: 'Optima', 'Noto Sans';
-    font-size: 100%;
-}
-strong-red{
-    font-family: 'Optima', 'Noto Sans';
-    font-size: 100%;
-    color: red;
-}
-em{
-    font-family: 'Optima', 'Noto Sans';
-    font-size: 100%;
+/* --- Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .pub:hover,
+  .timeline-item:hover {
+    transform: none;
+  }
 }
 
-large{
-    font-family: 'Cormorant Garamond';
-    font-size: 120%;
+/* --- Print --- */
+@media print {
+  body { background: white; }
+  .container { max-width: 100%; padding: 0; }
+  .pub:hover, .timeline-item:hover { transform: none; box-shadow: none; }
 }
