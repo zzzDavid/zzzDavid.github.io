@@ -30,6 +30,13 @@
   </url>
   
   <url>
+    <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
+    
+    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
@@ -44,9 +51,9 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
+    <loc>https://www.zzzdavid.tech/three-d/</loc>
     
-    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
+    <lastmod>2022-08-26T19:32:11.150Z</lastmod>
     
   </url>
   
@@ -58,21 +65,14 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/three-d/</loc>
-    
-    <lastmod>2022-08-26T19:32:11.150Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/cvpr22/</loc>
+    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
     
     <lastmod>2022-08-26T19:32:11.149Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
+    <loc>https://www.zzzdavid.tech/cvpr22/</loc>
     
     <lastmod>2022-08-26T19:32:11.149Z</lastmod>
     

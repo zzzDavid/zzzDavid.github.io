@@ -370,9 +370,7 @@
 
     <footer class="site-footer">
       <p>Last updated: July, 2025</p>
-      <div id="clustrmaps-container">
-        <script type="text/javascript" id="clustrmaps-initial" src="//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=a&t=n&d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&co=e0e0e0&cmo=787878&cmn=6600ff&ct=121212"></script>
-      </div>
+      <script type='text/javascript' id='clustrmaps' src='//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=a&t=n&d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&co=e0e0e0&cmo=787878&cmn=6600ff&ct=121212'></script>
     </footer>
 
   </main>
@@ -391,29 +389,11 @@
     // Default image per theme
     var themeImage = { warm: 0, blue: 3, contemporary: 4 };
 
-    // ClustrMaps colors per theme
-    var clustrColors = {
-      warm:         { cl: 'f6f1eb', co: 'e4ddd5', cmo: '9a8e84', cmn: 'b44a2d', ct: '2c2420' },
-      blue:         { cl: 'ffffff', co: 'd8dce8', cmo: '8690a6', cmn: '002FA7', ct: '1a1e2e' },
-      contemporary: { cl: 'ffffff', co: 'e0e0e0', cmo: '787878', cmn: '6600ff', ct: '121212' }
-    };
-
     // On page load: rotate image as before
     var lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
     var nextIndex = (lastIndex + 1) % images.length;
     localStorage.setItem('lastImageIndex', nextIndex);
     document.getElementById('profileImage').src = images[nextIndex];
-
-    // Reload ClustrMaps widget with theme colors
-    function reloadClustrMaps(theme) {
-      var container = document.getElementById('clustrmaps-container');
-      container.innerHTML = '';
-      var c = clustrColors[theme];
-      var s = document.createElement('script');
-      s.type = 'text/javascript';
-      s.src = '//cdn.clustrmaps.com/map_v2.js?cl=' + c.cl + '&w=a&t=n&d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&co=' + c.co + '&cmo=' + c.cmo + '&cmn=' + c.cmn + '&ct=' + c.ct;
-      container.appendChild(s);
-    }
 
     // Theme switcher
     function setTheme(theme, fromClick) {
@@ -435,17 +415,11 @@
     // Apply saved theme (don't override the rotated image on load)
     var savedTheme = localStorage.getItem('theme') || 'contemporary';
     setTheme(savedTheme, false);
-    // If saved theme isn't the default, reload ClustrMaps with correct colors
-    if (savedTheme !== 'contemporary') {
-      reloadClustrMaps(savedTheme);
-    }
 
     // Click handlers
     document.querySelectorAll('.theme-dot').forEach(function(dot) {
       dot.addEventListener('click', function() {
-        var theme = this.dataset.theme;
-        setTheme(theme, true);
-        reloadClustrMaps(theme);
+        setTheme(this.dataset.theme, true);
       });
     });
   </script>
