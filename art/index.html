@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art — Niansong Zhang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #ede8df;
+      color: #3a3632;
+      font-family: 'Special Elite', cursive;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ---- hero landing ---- */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('https://res.cloudinary.com/dxzx2bxch/image/upload/v1776743536/art/bg_ex0lfp.jpg') center/cover no-repeat;
+      z-index: 0;
+    }
+
+
+    .hero-nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 2.5rem;
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    .hero-nav a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      margin-right: 1.2rem;
+      transition: color 0.3s;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-nav a:hover { color: #fff; }
+    .hero-nav a[aria-current] { color: #fff; }
+
+    .hero-content {
+      position: absolute;
+      bottom: 12%;
+      left: 2.5rem;
+      z-index: 5;
+    }
+
+    .hero-title {
+      font-family: 'Special Elite', cursive;
+      font-weight: 400;
+      font-size: clamp(5rem, 12vw, 10rem);
+      line-height: 0.9;
+      color: #fff;
+      text-shadow: 0 2px 30px rgba(0, 0, 0, 0.3), 0 1px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-sub {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.65);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      letter-spacing: 0.05em;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: lowercase;
+      animation: nudge 2.5s ease-in-out infinite;
+    }
+
+    .scroll-cue svg {
+      width: 18px;
+      height: 18px;
+      stroke: rgba(255, 255, 255, 0.45);
+    }
+
+    @keyframes nudge {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+      50% { transform: translateX(-50%) translateY(6px); opacity: 1; }
+    }
+
+    /* ---- gallery section ---- */
+    nav.gallery-nav {
+      padding: 2rem 2.5rem;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    nav.gallery-nav a {
+      color: #a09889;
+      text-decoration: none;
+      margin-right: 1.2rem;
+      transition: color 0.3s;
+    }
+
+    nav.gallery-nav a:hover { color: #3a3632; }
+    nav.gallery-nav a[aria-current] { color: #3a3632; }
+
+    header {
+      padding: 3rem 2.5rem 0;
+      max-width: 600px;
+    }
+
+    header h1 {
+      font-family: 'Caveat', cursive;
+      font-weight: 400;
+      font-size: 4.5rem;
+      line-height: 1;
+      color: #3a3632;
+      display: none;
+    }
+
+    header p {
+      margin-top: 0;
+      font-size: 0.9rem;
+      color: #8a8079;
+      line-height: 1.7;
+      max-width: 380px;
+    }
+
+    /* scattered layout — placed by hand on a grid canvas */
+    .scatter {
+      position: relative;
+      max-width: 1200px;
+      margin: 3rem auto 0;
+      padding: 0 1rem;
+      /* tall enough to hold all the pieces */
+      height: 2600px;
+    }
+
+    .card {
+      position: absolute;
+      text-decoration: none;
+      color: inherit;
+      transition: z-index 0s, transform 0.3s ease;
+      z-index: 1;
+    }
+
+    .card:hover {
+      z-index: 10;
+      transform: scale(1.03);
+    }
+
+    .card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .card .info {
+      padding: 0.5rem 0.2rem 0;
+    }
+
+    .card .info h2 {
+      font-family: 'Caveat', cursive;
+      font-weight: 400;
+      font-size: 1.3rem;
+      color: #3a3632;
+    }
+
+    .card .info .meta {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.68rem;
+      color: #a09889;
+      margin-top: 0.1rem;
+    }
+
+    /* each card placed individually — sizes, positions, rotations */
+
+    .card:nth-child(1) {
+      width: 38%;
+      left: 5%;
+      top: 0;
+      transform: rotate(-2deg);
+    }
+    .card:nth-child(1):hover { transform: rotate(-2deg) scale(1.03); }
+
+    .card:nth-child(2) {
+      width: 30%;
+      right: 8%;
+      top: 60px;
+      transform: rotate(1.5deg);
+    }
+    .card:nth-child(2):hover { transform: rotate(1.5deg) scale(1.03); }
+
+    .card:nth-child(3) {
+      width: 42%;
+      right: 3%;
+      top: 620px;
+      transform: rotate(-1deg);
+    }
+    .card:nth-child(3):hover { transform: rotate(-1deg) scale(1.03); }
+
+    .card:nth-child(4) {
+      width: 28%;
+      left: 8%;
+      top: 700px;
+      transform: rotate(2.5deg);
+    }
+    .card:nth-child(4):hover { transform: rotate(2.5deg) scale(1.03); }
+
+    .card:nth-child(5) {
+      width: 35%;
+      left: 2%;
+      top: 1300px;
+      transform: rotate(-1.5deg);
+    }
+    .card:nth-child(5):hover { transform: rotate(-1.5deg) scale(1.03); }
+
+    .card:nth-child(6) {
+      width: 40%;
+      right: 5%;
+      top: 1500px;
+      transform: rotate(1deg);
+    }
+    .card:nth-child(6):hover { transform: rotate(1deg) scale(1.03); }
+
+    /* overlapping: some cards deliberately overlap their neighbors */
+    .card:nth-child(2) { z-index: 2; }
+    .card:nth-child(4) { z-index: 3; }
+
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 2.5rem 3rem;
+      font-size: 0.8rem;
+      color: #a09889;
+    }
+
+    footer a { color: #a09889; text-decoration: none; }
+    footer a:hover { color: #3a3632; }
+
+    /* mobile: stack with slight rotations, no absolute positioning */
+    @media (max-width: 700px) {
+      .hero-content { bottom: 16%; left: 1.5rem; }
+      .hero-sub { font-size: 0.8rem; }
+      header h1 { font-size: 3rem; }
+
+      .scatter {
+        position: static;
+        height: auto;
+        padding: 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .card {
+        position: relative !important;
+        width: 100% !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+      }
+
+      .card:nth-child(1) { transform: rotate(-1deg); }
+      .card:nth-child(2) { transform: rotate(0.8deg); }
+      .card:nth-child(3) { transform: rotate(-0.5deg); }
+      .card:nth-child(4) { transform: rotate(1.2deg); }
+      .card:nth-child(5) { transform: rotate(-0.8deg); }
+      .card:nth-child(6) { transform: rotate(0.5deg); }
+
+      .card:nth-child(odd) { margin-left: -0.5rem; }
+      .card:nth-child(even) { margin-left: 0.5rem; }
+
+      .card img { height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- hero landing -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <nav class="hero-nav">
+      <a href="/">home</a>
+      <a href="/blog/">blog</a>
+      <a href="/art/" aria-current="page">art</a>
+    </nav>
+    <div class="hero-content">
+      <h1 class="hero-title">Undone</h1>
+      <p class="hero-sub">objects and the stories of making them</p>
+    </div>
+    <div class="scroll-cue">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- gallery -->
+  <header>
+    <p>works</p>
+  </header>
+
+  <main class="scatter">
+
+    <a class="card" href="works/ceramic-vessel.html">
+      <img
+        src="https://www.artic.edu/iiif/2/61b66906-0e3d-cdbb-2012-1ea21731608c/full/1200,/0/default.jpg"
+        alt="Tea bowl with hare's fur glaze">
+      <div class="info">
+        <h2>Tea Bowl</h2>
+        <div class="meta">stoneware, hare's fur glaze</div>
+      </div>
+    </a>
+
+    <a class="card" href="works/ink-studies.html">
+      <img
+        src="https://www.artic.edu/iiif/2/4cd0df33-7209-e7cd-a2a1-9d3eedaaa48d/full/1200,/0/default.jpg"
+        alt="Gauguin stoneware vase">
+      <div class="info">
+        <h2>Sculptural Vase</h2>
+        <div class="meta">stoneware painted with slip</div>
+      </div>
+    </a>
+
+    <a class="card" href="works/woven-form.html">
+      <img
+        src="https://www.artic.edu/iiif/2/d0042a79-ccf5-6442-f237-8b39152e153a/full/1200,/0/default.jpg"
+        alt="Tapestry weaving">
+      <div class="info">
+        <h2>Woven Form</h2>
+        <div class="meta">wool and silk tapestry</div>
+      </div>
+    </a>
+
+    <a class="card" href="works/carved-wood.html">
+      <img
+        src="https://www.artic.edu/iiif/2/eba33400-22e2-1511-4d12-365adbddd5a3/full/1200,/0/default.jpg"
+        alt="Cloud-shaped pillow, carved stoneware">
+      <div class="info">
+        <h2>Cloud Pillow</h2>
+        <div class="meta">stoneware, carved and inlaid</div>
+      </div>
+    </a>
+
+    <a class="card" href="works/glaze-experiments.html">
+      <img
+        src="https://www.artic.edu/iiif/2/288118db-838c-1cee-5731-d3d26b99d737/full/1200,/0/default.jpg"
+        alt="Tea bowl with hare's fur glaze, metal rim">
+      <div class="info">
+        <h2>Glaze Studies</h2>
+        <div class="meta">stoneware, dark brown glaze</div>
+      </div>
+    </a>
+
+    <a class="card" href="works/paper-forms.html">
+      <img
+        src="https://www.artic.edu/iiif/2/cc5fce96-3635-35da-e7fd-a68f4b2a26c3/full/1200,/0/default.jpg"
+        alt="Hokusai woodblock print">
+      <div class="info">
+        <h2>Cranes in Snow</h2>
+        <div class="meta">woodblock print</div>
+      </div>
+    </a>
+
+  </main>
+
+  <footer>
+    <a href="/">niansong zhang</a>
+  </footer>
+
+</body>
+</html>

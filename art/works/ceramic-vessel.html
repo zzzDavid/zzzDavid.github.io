@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tea Bowl — Art — Niansong Zhang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #ede8df;
+      color: #3a3632;
+      font-family: 'Special Elite', cursive;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ---- two-panel layout ---- */
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: 100vh;
+    }
+
+    /* left panel — sticky info */
+    .left {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .left-top {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .back {
+      font-size: 0.85rem;
+      color: #a09889;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .back:hover { color: #3a3632; }
+
+    .work-info h1 {
+      font-family: 'Caveat', cursive;
+      font-weight: 400;
+      font-size: 3rem;
+      line-height: 1.1;
+      color: #3a3632;
+    }
+
+    .work-info .medium {
+      font-size: 0.8rem;
+      color: #a09889;
+      margin-top: 0.6rem;
+      line-height: 1.6;
+    }
+
+    .work-info .description {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      line-height: 1.85;
+      color: #6b6560;
+    }
+
+    .left-bottom {
+      font-size: 0.75rem;
+      color: #a09889;
+    }
+
+    .left-bottom a {
+      color: #a09889;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .left-bottom a:hover { color: #3a3632; }
+
+    /* right panel — scrollable content */
+    .right {
+      padding: 2.5rem 3rem 4rem;
+      max-width: 860px;
+    }
+
+    .section {
+      margin-bottom: 4rem;
+    }
+
+    .section img {
+      width: 100%;
+      display: block;
+    }
+
+    .section h2 {
+      font-family: 'Caveat', cursive;
+      font-weight: 400;
+      font-size: 1.5rem;
+      color: #3a3632;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section p {
+      font-size: 0.85rem;
+      line-height: 1.85;
+      color: #6b6560;
+      max-width: 560px;
+    }
+
+    .section-text-only {
+      padding: 2rem 0;
+    }
+
+    .section-text-only p {
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: #6b6560;
+      max-width: 520px;
+    }
+
+    .section-text-only p::first-line {
+      color: #3a3632;
+    }
+
+    /* ---- mobile: stack vertically ---- */
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .left {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 2rem 1.5rem;
+      }
+
+      .left-top { gap: 1.5rem; }
+
+      .work-info h1 { font-size: 2.5rem; }
+
+      .right {
+        padding: 2rem 1.5rem 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- left panel: info -->
+    <aside class="left">
+      <div class="left-top">
+        <a class="back" href="/art/">&larr; back</a>
+        <div class="work-info">
+          <h1>Tea Bowl</h1>
+          <div class="medium">stoneware, hare's fur glaze &mdash; jian ware</div>
+          <p class="description">
+            This vessel took three weeks from wedging to unloading. It is one of
+            eight that survived the firing &mdash; the kiln decides what it keeps.
+          </p>
+        </div>
+      </div>
+      <div class="left-bottom">
+        <a href="/">niansong zhang</a>
+      </div>
+    </aside>
+
+    <!-- right panel: scrollable content -->
+    <main class="right">
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/61b66906-0e3d-cdbb-2012-1ea21731608c/full/1200,/0/default.jpg" alt="Tea bowl with hare's fur glaze">
+      </div>
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/eba33400-22e2-1511-4d12-365adbddd5a3/full/1200,/0/default.jpg" alt="Preparing the clay">
+        <h2>the clay</h2>
+        <p>
+          It begins with the material itself. The stoneware clay is wedged by hand
+          to remove air pockets and align the particles — a meditative, repetitive
+          motion that sets the rhythm for everything that follows.
+        </p>
+      </div>
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/4cd0df33-7209-e7cd-a2a1-9d3eedaaa48d/full/1200,/0/default.jpg" alt="Throwing on the wheel">
+        <h2>throwing</h2>
+        <p>
+          Centered on the wheel, the clay opens into a cylinder and then slowly
+          expands outward. The vessel emerges not from a plan but from a conversation between
+          intention and the clay's willingness to move.
+        </p>
+      </div>
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/288118db-838c-1cee-5731-d3d26b99d737/full/1200,/0/default.jpg" alt="The bowl taking shape">
+        <h2>trimming</h2>
+        <p>
+          Once leather-hard, the vessel is inverted and the excess clay at the
+          base is carved away. This reveals the foot ring — the quiet detail
+          that gives the piece its stance.
+        </p>
+      </div>
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/97cc0bab-666f-dcee-02e9-0d2e1d3e0d7b/full/1200,/0/default.jpg" alt="Surface detail">
+        <h2>the surface</h2>
+        <p>
+          Still raw, still waiting. The surface before glazing holds the memory
+          of every touch — the trimming tool's concentric marks that will
+          catch the ash glaze later.
+        </p>
+      </div>
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/c00d3c91-9130-a1c3-a8af-3a08e4059670/full/1200,/0/default.jpg" alt="Glazing">
+        <h2>glazing</h2>
+        <p>
+          A wood-ash glaze is mixed from the kiln's own residue — a closed loop
+          between fire and surface. The vessel is dipped quickly; the porous
+          bisqueware absorbs the water and leaves behind an even coat of mineral
+          dust that will melt into glass.
+        </p>
+      </div>
+
+      <div class="section">
+        <img src="https://www.artic.edu/iiif/2/f18f7064-fb9a-7074-1f1c-f8009eecaec7/full/1200,/0/default.jpg" alt="After the firing">
+        <h2>the firing</h2>
+        <p>
+          Forty-eight hours in a wood-fired kiln. The temperature climbs past
+          1280 degrees and the ash carried by the flame settles on the shoulders
+          of each piece, creating unpredictable pools and drips. This is the
+          moment where control is surrendered entirely.
+        </p>
+      </div>
+
+      <div class="section section-text-only">
+        <p>
+          What remains is an object shaped equally by hand and by forces
+          beyond the hand's reach.
+        </p>
+      </div>
+
+    </main>
+
+  </div>
+
+
+</body>
+</html>

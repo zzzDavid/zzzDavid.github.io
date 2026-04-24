@@ -9,16 +9,29 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="stylesheet.css">
   <link rel="icon" href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1745000979/favicon/favicon.ico">
   <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
   <link rel="shortcut icon" href="favicon/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
   <link rel="manifest" href="favicon/site.webmanifest">
+  <script>
+    // Apply saved theme before paint to prevent flash
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t && t !== 'contemporary') document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 
 <body>
+  <nav class="theme-switcher" aria-label="Theme">
+    <button class="theme-dot theme-dot--warm" data-theme="warm" aria-label="Warm theme"></button>
+    <button class="theme-dot theme-dot--blue" data-theme="blue" aria-label="Blue theme"></button>
+    <button class="theme-dot theme-dot--contemporary active" data-theme="contemporary" aria-label="Contemporary theme"></button>
+  </nav>
+
   <main class="container">
 
     <!-- Hero Section -->
@@ -355,13 +368,14 @@
 
     <footer class="site-footer">
       <p>Last updated: July, 2025</p>
-      <script type='text/javascript' id='clustrmaps' src='//cdn.clustrmaps.com/map_v2.js?cl=f6f1eb&w=a&t=n&d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&co=e4ddd5&cmo=9a8e84&cmn=b44a2d&ct=2c2420'></script>
+      <div id="clustrmaps-container"></div>
     </footer>
 
   </main>
 
   <script>
-    const images = [
+    // Profile images
+    var images = [
       'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984403/pfp/2_b6ruqx.jpg',
       'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984399/pfp/3_amx33p.jpg',
       'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984399/pfp/4_us0zlo.jpg',
@@ -370,14 +384,63 @@
       'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984900/pfp/1-edit_atfdfm.png'
     ];
 
-    function getNextImageIndex() {
-      const lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
-      const nextIndex = (lastIndex + 1) % images.length;
-      localStorage.setItem('lastImageIndex', nextIndex);
-      return nextIndex;
+    // Default image per theme
+    var themeImage = { warm: 0, blue: 3, contemporary: 4 };
+
+    // ClustrMaps colors per theme
+    var clustrColors = {
+      warm:         { cl: 'f6f1eb', co: 'e4ddd5', cmo: '9a8e84', cmn: 'b44a2d', ct: '2c2420' },
+      blue:         { cl: 'ffffff', co: 'd8dce8', cmo: '8690a6', cmn: '002FA7', ct: '1a1e2e' },
+      contemporary: { cl: 'ffffff', co: 'e0e0e0', cmo: '787878', cmn: '6600ff', ct: '121212' }
+    };
+
+    // On page load: rotate image as before
+    var lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
+    var nextIndex = (lastIndex + 1) % images.length;
+    localStorage.setItem('lastImageIndex', nextIndex);
+    document.getElementById('profileImage').src = images[nextIndex];
+
+    // Load ClustrMaps widget
+    function loadClustrMaps(theme) {
+      var container = document.getElementById('clustrmaps-container');
+      container.innerHTML = '';
+      var c = clustrColors[theme];
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.src = '//cdn.clustrmaps.com/map_v2.js?cl=' + c.cl + '&w=a&t=n&d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&co=' + c.co + '&cmo=' + c.cmo + '&cmn=' + c.cmn + '&ct=' + c.ct;
+      container.appendChild(s);
     }
 
-    document.getElementById('profileImage').src = images[getNextImageIndex()];
+    // Theme switcher
+    function setTheme(theme, fromClick) {
+      if (theme === 'contemporary') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+      localStorage.setItem('theme', theme);
+      document.querySelectorAll('.theme-dot').forEach(function(dot) {
+        dot.classList.toggle('active', dot.dataset.theme === theme);
+      });
+      // Switch profile pic on theme click
+      if (fromClick) {
+        document.getElementById('profileImage').src = images[themeImage[theme]];
+      }
+    }
+
+    // Apply saved theme (don't override the rotated image on load)
+    var savedTheme = localStorage.getItem('theme') || 'contemporary';
+    setTheme(savedTheme, false);
+    loadClustrMaps(savedTheme);
+
+    // Click handlers
+    document.querySelectorAll('.theme-dot').forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        var theme = this.dataset.theme;
+        setTheme(theme, true);
+        loadClustrMaps(theme);
+      });
+    });
   </script>
 </body>
 </html>
