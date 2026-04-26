@@ -457,7 +457,9 @@ em {
 }
 
 .bottom-grid + .bottom-grid {
-  padding-top: 0;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .section--compact {
@@ -556,7 +558,7 @@ em {
   --shadow-md: 0 3px 12px rgba(44, 36, 32, 0.07);
 }
 
-/* --- Theme: Blue (Klein) --- */
+/* --- Theme: Blue (Klein) — Bauhaus Editorial --- */
 [data-theme="blue"] {
   --color-bg: #ffffff;
   --color-text: #1a1e2e;
@@ -566,8 +568,11 @@ em {
   --color-accent-hover: #00247d;
   --color-border: #d8dce8;
   --color-border-light: #e6e9f1;
-  --color-heading-display: #0b1d51;
-  --font-display: 'Instrument Serif', Georgia, serif;
+  --color-heading-display: #002FA7;
+  --font-display: 'Big Shoulders Display', 'Helvetica Neue', Impact, sans-serif;
+  --font-content: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-italic: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --shadow-md: 0 3px 12px rgba(26, 30, 46, 0.08);
 }
 
@@ -639,6 +644,68 @@ em {
   font-family: var(--font-display);
 }
 
+/* Klein blue diverges from Warm: heavy condensed display + Inter body */
+[data-theme="blue"] h1,
+[data-theme="blue"] h2,
+[data-theme="blue"] h3 {
+  font-weight: 600;
+}
+
+[data-theme="blue"] .name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-style: normal;
+  font-size: 4.5rem;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+[data-theme="blue"] .section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: normal;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+[data-theme="blue"] .section--compact .section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+[data-theme="blue"] .timeline-content h3,
+[data-theme="blue"] .pub-title {
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+[data-theme="blue"] em,
+[data-theme="blue"] .pub-note,
+[data-theme="blue"] .pub-award,
+[data-theme="blue"] .pub-toggle summary {
+  font-family: var(--font-italic);
+  font-style: italic;
+}
+
+[data-theme="blue"] .social-links {
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+[data-theme="blue"] .timeline-date {
+  font-family: var(--font-body);
+  font-style: normal;
+  font-weight: 400;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .container {
@@ -666,6 +733,14 @@ em {
   }
 
   .name {
+    font-size: 2rem;
+  }
+
+  [data-theme="blue"] .name {
+    font-size: 3rem;
+  }
+
+  [data-theme="blue"] .section-title {
     font-size: 2rem;
   }
 
@@ -705,6 +780,18 @@ em {
   [data-theme="warm"] .section-title,
   [data-theme="blue"] .section-title {
     font-size: 1.2rem;
+  }
+
+  [data-theme="blue"] .name {
+    font-size: 2.25rem;
+  }
+
+  [data-theme="blue"] .section-title {
+    font-size: 1.5rem;
+  }
+
+  [data-theme="blue"] .section--compact .section-title {
+    font-size: 1.125rem;
   }
 
   .hero-photo {
