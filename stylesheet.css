@@ -31,6 +31,7 @@
   /* Typography — gallery bold */
   --font-display: 'Libre Franklin', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-content: 'EB Garamond', Georgia, serif;
+  --font-italic: 'Libre Franklin', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Libre Franklin', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --text-micro: 0.75rem;
@@ -110,7 +111,7 @@ strong {
 
 em {
   font-style: italic;
-  font-family: var(--font-content);
+  font-family: var(--font-italic);
 }
 
 /* --- Container --- */
@@ -366,7 +367,7 @@ em {
 .pub-note {
   font-size: var(--text-micro);
   font-style: italic;
-  font-family: var(--font-content);
+  font-family: var(--font-italic);
   color: var(--color-text-muted);
 }
 
@@ -389,7 +390,7 @@ em {
 }
 
 .pub-award {
-  font-family: var(--font-content);
+  font-family: var(--font-italic);
   font-style: italic;
   font-size: var(--text-small);
   color: var(--color-award-gold);
@@ -414,7 +415,7 @@ em {
   color: var(--color-text-muted);
   cursor: pointer;
   display: inline;
-  font-family: var(--font-content);
+  font-family: var(--font-italic);
   font-style: italic;
   transition: color var(--transition);
 }
