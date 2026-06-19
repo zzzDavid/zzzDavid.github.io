@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swizzle by Hand, Swizzle by Algebra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F6F1;
+    --card:#FFFFFF;
+    --ink:#22282C;
+    --muted:#66727A;
+    --rule:#DDE1D6;
+    --accent:#2C4FC0;
+    --bad:#CE4628;
+    --warn:#B07A12;
+    --good:#208757;
+    --code-bg:#EDEFE6;
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --body:'Source Serif 4',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(to right, rgba(34,40,44,.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(34,40,44,.045) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:17.5px;
+    line-height:1.65;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+  .prose{max-width:700px;margin-left:auto;margin-right:auto}
+
+  /* ---------- hero ---------- */
+  header{padding:72px 0 30px;border-bottom:1px solid var(--rule)}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(2.3rem,5.8vw,3.7rem);line-height:1.04;letter-spacing:-.02em;margin:14px 0 18px}
+  h1 .alt{color:var(--accent)}
+  .dek{font-size:1.22rem;line-height:1.5;max-width:64ch}
+  .byline{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .byline a{color:var(--muted)}
+
+  .motif{margin:34px 0 6px;display:flex;flex-wrap:wrap;gap:26px}
+  .motif .panel{flex:1 1 270px;min-width:250px}
+  .motif .panel-title{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+  .motif .panel-title b{font-weight:600}
+  .motif .rows8{display:grid;grid-template-columns:repeat(32,1fr);gap:1.5px}
+  .motif .rows8 span{display:block;aspect-ratio:1/1;border-radius:1.5px}
+  .motif .verdict{font-family:var(--mono);font-size:11px;margin-top:6px}
+  .motif .verdict.bad{color:var(--bad)} .motif .verdict.mid{color:var(--warn)} .motif .verdict.good{color:var(--good)}
+  .motif-caption{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:14px;max-width:76ch}
+
+  /* ---------- sections / prose ---------- */
+  section{padding:46px 0 6px}
+  .sec-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px}
+  .part-label{font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+    border:1.5px solid var(--ink);display:inline-block;padding:4px 14px;border-radius:999px;margin-bottom:14px;background:var(--card)}
+  h2{font-family:var(--display);font-weight:700;font-size:1.75rem;letter-spacing:-.01em;margin-bottom:16px;line-height:1.15}
+  h3{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:26px 0 8px}
+  p{margin-bottom:14px}
+  p.note{font-size:.95rem;color:var(--muted)}
+  a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2.5px}
+  code,.m{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:1.5px 5px;border-radius:4px;white-space:nowrap}
+  .formula{font-family:var(--mono);font-size:1.02rem;background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--accent);
+    padding:14px 18px;margin:20px 0;border-radius:6px;overflow-x:auto;white-space:nowrap}
+  .chip{display:inline-block;font-family:var(--mono);font-size:.82em;font-weight:600;background:var(--card);border:1px solid var(--ink);
+    border-radius:5px;padding:0 7px;margin:1px 1px;white-space:nowrap}
+  .chip.ghost{border-color:var(--rule);color:var(--muted);font-weight:400}
+  .chip.hot{border-color:var(--accent);color:var(--accent)}
+  .chip.dim{border-color:var(--rule);color:var(--muted)}
+  sub{font-size:.72em}
+  ul.checks{list-style:none;margin:14px 0}
+  ul.checks li{padding-left:26px;position:relative;margin-bottom:10px}
+  ul.checks li::before{content:'▸';position:absolute;left:6px;color:var(--accent)}
+  ol.derive{margin:18px 0 18px 0;list-style:none;counter-reset:dv}
+  ol.derive li{counter-increment:dv;padding-left:44px;position:relative;margin-bottom:16px}
+  ol.derive li::before{content:counter(dv);position:absolute;left:0;top:2px;width:28px;height:28px;border:1.5px solid var(--ink);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;background:var(--card)}
+
+  /* algorithm steps (reused) */
+  .steps{counter-reset:st;margin:26px 0;border-top:1px solid var(--rule)}
+  .step{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .step .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:4px}
+  .step .tag b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
+  .step .tag b::before{counter-increment:st;content:'Step ' counter(st);color:var(--accent)}
+  .step p{margin-bottom:8px}
+  .step p:last-child{margin-bottom:0}
+  @media (max-width:640px){.step{grid-template-columns:1fr;gap:6px}}
+
+  /* matrices */
+  .matrix-row{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;margin:22px 0}
+  .matrix-wrap{overflow-x:auto;margin:22px 0}
+  table.matrix{border-collapse:collapse;font-family:var(--mono);font-size:12px;margin:0 auto;background:var(--card)}
+  table.matrix td,table.matrix th{width:27px;height:27px;text-align:center;border:1px solid var(--rule);font-weight:400}
+  table.matrix th{background:var(--paper);color:var(--muted);font-weight:600;font-size:10.5px}
+  table.matrix th.title{font-family:var(--display);font-size:13px;color:var(--ink);height:32px}
+  table.matrix td.one{background:var(--accent);color:#fff;font-weight:600}
+  table.matrix td.cone{background:var(--ink);color:#fff;font-weight:600}
+  table.matrix td.zero{color:#C6CCC0}
+  table.matrix .blockL{border-left:2px solid var(--ink)}
+  table.matrix .blockT{border-top:2px solid var(--ink)}
+  .fig-caption{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;margin-top:10px;max-width:74ch;margin-left:auto;margin-right:auto}
+
+  /* score / mapping tables */
+  table.score{border-collapse:collapse;width:100%;margin:20px 0;font-size:.93rem;background:var(--card)}
+  table.score th,table.score td{border:1px solid var(--rule);padding:9px 13px;text-align:left;vertical-align:top}
+  table.score th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--paper);font-weight:600}
+  table.score .bad{color:var(--bad);font-weight:600}
+  table.score .mid{color:var(--warn);font-weight:600}
+  table.score .good{color:var(--good);font-weight:600}
+
+  /* pairing diagram */
+  .pairing{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:22px 24px;margin:24px auto;overflow-x:auto}
+  .pairing .ptitle{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .pairing .setline{font-family:var(--mono);font-size:13px;margin-bottom:8px;white-space:nowrap}
+  .pairing .setline .nm{display:inline-block;width:64px;color:var(--muted)}
+  .pairing .bridge{font-family:var(--mono);font-size:11.5px;color:var(--accent);margin:6px 0 16px 64px}
+  .pairs{display:grid;grid-template-columns:repeat(4,max-content);gap:10px 34px;margin-top:6px}
+  .pairs .pr{font-family:var(--mono);font-size:13px;white-space:nowrap}
+  .pairs .pr .op{color:var(--muted);padding:0 4px}
+  .pairs .pr .to{color:var(--accent);padding:0 6px}
+  @media (max-width:760px){.pairs{grid-template-columns:repeat(2,max-content)}}
+
+  /* ---------- workbench ---------- */
+  .bench{background:var(--card);border:1px solid var(--ink);border-radius:10px;margin:36px 0 10px;overflow:hidden}
+  .bench-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 18px;
+    border-bottom:1px solid var(--ink);background:linear-gradient(to bottom,#FBFBF8,#F2F3EC)}
+  .bench-head .name{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.02em}
+  .bench-head .sub{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .bench-top{display:flex;flex-wrap:wrap;gap:24px;padding:18px;border-bottom:1px solid var(--rule)}
+  .ctl-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+
+  .cgrid{border-collapse:collapse;font-family:var(--mono)}
+  .cgrid th{font-size:11px;color:var(--muted);font-weight:600;padding:4px 6px}
+  .cgrid td{padding:2px}
+  .cgrid button.bit{
+    width:34px;height:34px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);
+    font-family:var(--mono);font-size:13px;font-weight:600;color:#C0C6BA;cursor:pointer;
+  }
+  .cgrid button.bit[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .cgrid button.bit:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .cgrid .rowlab{font-size:12px;font-weight:600;padding-right:10px;text-align:right;white-space:nowrap}
+  .cgrid .rowmask{font-size:11.5px;color:var(--muted);padding-left:12px;white-space:nowrap}
+
+  .presets{display:flex;flex-direction:column;gap:8px}
+  .presets button{font-family:var(--mono);font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;
+    border:1px solid var(--ink);border-radius:6px;background:var(--card);text-align:left}
+  .presets button:hover{background:var(--paper)}
+  .presets button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .verdicts{padding:12px 18px;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:8px 32px;font-family:var(--mono);font-size:13px}
+  .verdicts .v{display:flex;gap:10px;align-items:baseline}
+  .verdicts .k{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .verdicts b.good{color:var(--good)} .verdicts b.mid{color:var(--warn)} .verdicts b.bad{color:var(--bad)}
+
+  .algebra{padding:12px 18px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:12.5px;background:#F8F9F4}
+  .algebra.hidden{display:none}
+  .algebra .row{margin-bottom:6px}
+  .algebra .k{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-right:8px}
+  .algebra .agree{font-weight:600}
+  .algebra .agree.good{color:var(--good)} .algebra .agree.mid{color:var(--warn)} .algebra .agree.bad{color:var(--bad)}
+
+  .bench-mid{display:flex;flex-wrap:wrap;gap:10px 30px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--rule)}
+  .seg{display:inline-flex;border:1px solid var(--ink);border-radius:6px;overflow:hidden}
+  .seg button{font-family:var(--mono);font-size:12px;font-weight:600;padding:6px 12px;border:none;background:var(--card);color:var(--ink);cursor:pointer;border-right:1px solid var(--rule)}
+  .seg button:last-child{border-right:none}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .stepper{display:flex;align-items:center;gap:10px;font-family:var(--mono)}
+  .stepper input[type=range]{accent-color:var(--accent);width:140px}
+  .stepper .rval{font-size:13px;font-weight:600;min-width:46px}
+  .switch{font-family:var(--mono);font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer}
+  .switch input{accent-color:var(--accent);width:16px;height:16px}
+
+  .bench-body{padding:16px 18px 8px;overflow-x:auto}
+  .gridbox{min-width:760px}
+  .axis-top{display:grid;grid-template-columns:34px repeat(32,1fr);gap:1px;margin-bottom:3px}
+  .axis-top div{font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center}
+  .grow{display:grid;grid-template-columns:34px repeat(32,1fr);gap:1px;margin-bottom:1px}
+  .rlab{font-family:var(--mono);font-size:9px;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+  .cell{aspect-ratio:1/1;min-width:0;border-radius:2px}
+  .cell.hitA{box-shadow:inset 0 0 0 2px var(--ink)}
+  .cell.hitB{box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 3.5px #fff}
+  .legend{font-family:var(--mono);font-size:11px;color:var(--muted);margin:10px 0 4px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;min-width:760px}
+  .legend .sw{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:5px}
+  .legend .ringA{box-shadow:inset 0 0 0 2px var(--ink);background:#fff}
+  .legend .ringB{box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 3.5px #fff;background:#cfd6cb}
+  .trace{padding:6px 18px 18px;overflow-x:auto}
+  .trace-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;min-width:760px}
+  .bars{display:grid;grid-template-columns:34px repeat(32,1fr);gap:1px;align-items:end;height:56px;min-width:760px;border-bottom:1px solid var(--ink)}
+  .bars .blab{font-family:var(--mono);font-size:9px;color:var(--muted);align-self:end;padding-right:6px;text-align:right}
+  .bar{border-radius:2px 2px 0 0;background:#D7DBD0}
+  .bar.ok{background:var(--good)} .bar.conf{background:var(--bad)}
+  .bars-axis{display:grid;grid-template-columns:34px repeat(32,1fr);gap:1px;min-width:760px;margin-top:3px}
+  .bars-axis div{font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center}
+
+  /* ---------- derivation figures & ownership grids ---------- */
+  .dfig{margin:18px 0 6px;overflow-x:auto}
+  .dfig-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:16px 0 8px;color:var(--ink)}
+  .dfig-cap{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:8px 0 2px;max-width:76ch;line-height:1.55}
+  .lg-axis,.lg-row{display:grid;gap:1.5px;margin-bottom:1.5px;min-width:620px}
+  .lg-axis div{font-family:var(--mono);font-size:8.5px;color:var(--muted);text-align:center}
+  .lg-left{font-family:var(--mono);font-size:9px;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+  .lg-cell{aspect-ratio:1/1;min-width:0;border-radius:2px;font-family:var(--mono);font-size:8.5px;display:flex;align-items:center;justify-content:center}
+  .lg-cell.ring{box-shadow:inset 0 0 0 2px var(--ink);font-weight:600}
+  .lg-cell.padcell{background:repeating-linear-gradient(45deg,#E7E9E1 0 4px,#D3D6CC 4px 8px);color:#80897F;font-weight:600}
+  .lg-cell.empty{background:transparent}
+  .maskrow{margin-bottom:16px}
+  .maskrow .mr-label{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:2px}
+  .maskrow .mr-label b{color:var(--ink)}
+  .maskstrip{width:525px}
+  .maskstrip svg{display:block}
+  .maskstrip .slots{display:grid;grid-template-columns:repeat(16,30px);gap:3px}
+  .maskstrip .slots div{height:26px;border-radius:2px;font-family:var(--mono);font-size:9px;display:flex;align-items:center;justify-content:center}
+  .layout-pair{display:flex;flex-wrap:wrap;gap:10px 30px;justify-content:center;align-items:center;margin:28px 0 4px}
+  .layout-pair .dfig{margin:0}
+  .layout-pair .lg-axis,.layout-pair .lg-row{min-width:560px}
+
+  footer{margin-top:60px;padding:34px 0 70px;border-top:1px solid var(--rule)}
+  footer .refs{font-size:.95rem}
+  footer .refs li{margin-bottom:8px;margin-left:20px}
+  .fin{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:26px}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;animation:none !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Bank conflicts · swizzling · linear layouts</div>
+    <h1>Swizzle by Hand,<br><span class="alt">Swizzle by Algebra</span></h1>
+    <p class="dek">First we derive a conflict-free shared-memory layout for a 16×32 transpose with nothing but
+    intuition and bit-flips. Then we rebuild the very same answer with linear layouts over F₂ —
+    and watch the hand-derivation turn into an algorithm that works for layouts no one could eyeball.</p>
+    <div class="byline">Companion to <a href="./one-bit-off.html">One Bit Off</a> ·
+    example after <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Lei Zhang</a> ·
+    algorithm from <a href="https://arxiv.org/abs/2505.23819">Zhou et&nbsp;al., ASPLOS&nbsp;'26</a></div>
+
+    <div class="motif" id="motif" aria-hidden="true"></div>
+    <div class="motif-caption">The first eight rows of the tensor in shared memory, colored by bank
+    (hue = bank ÷ 2, darker = odd bank). Left: row-major — every column is one vertical color, one bank.
+    Middle: XOR each row by its row index — the staircase appears. Right: XOR by twice the row index —
+    the staircase moves in column pairs, and the read pattern threads it perfectly.</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section id="setup">
+  <div class="prose">
+    <div class="sec-label">§ 01 · The setup</div>
+    <h2>One tensor, two opinions about it</h2>
+    <p>The running example: one warp of 32 threads transposes a <strong>16×32 tensor of 32-bit floats</strong>
+    through shared memory. Shared memory is <strong>32 banks, 4 bytes wide</strong>, dealt out round-robin:
+    <code>bank = (addr / 4) % 32</code>. Within one warp access, a bank can serve one address per cycle —
+    if two threads want different addresses in the same bank, the access serializes into extra
+    <em>wavefronts</em>.</p>
+    <p>Global memory dictates both access patterns, and they disagree about the tensor:</p>
+    <ul class="checks">
+      <li><strong>The store thinks in rows.</strong> After a coalesced load, thread <span class="m">t</span> holds column
+      <span class="m">t</span>; at register step <span class="m">r</span> the warp writes row <span class="m">r</span> —
+      element <span class="m">(m=r, n=t)</span>, all 32 columns at once.</li>
+      <li><strong>The read thinks in columns.</strong> To write the transposed result coalesced, thread <span class="m">t</span> must
+      fetch element <span class="m">(m = t mod 16, n = 2r + ⌊t/16⌋)</span> at step <span class="m">r</span>:
+      threads 0–15 walk column <span class="m">2r</span>, threads 16–31 walk column <span class="m">2r+1</span>.
+      (A column has only 16 elements, so the warp takes columns two at a time.)</li>
+    </ul>
+    <p>We get to choose exactly one thing: <em>where in shared memory element (m, n) lives</em>. The whole game is
+    finding an arrangement that keeps both the row-writers and the column-readers out of each other's banks.</p>
+  </div>
+</section>
+
+<section id="part1">
+  <div class="prose">
+    <div class="part-label">Part I — By hand</div>
+    <div class="sec-label">§ 02 · The pileup</div>
+    <h2>Why columns collide</h2>
+    <div class="formula">row-major:&nbsp;&nbsp;offset(m, n) = 32·m + n&nbsp;&nbsp;⇒&nbsp;&nbsp;bank = n</div>
+    <p>Store row-major and the bank of an element is just its column index. Rows are horizontal, banks are
+    vertical — so the store sweeps all 32 banks per step (perfect), while a logical column stacks all 16 of its
+    elements into <em>one</em> bank. Reading the pair <span class="m">{2r, 2r+1}</span> jams sixteen threads onto
+    one bank and sixteen onto its neighbor: a <strong>16-way conflict</strong>, thirty banks idle.</p>
+
+    <div class="sec-label" style="margin-top:38px">§ 03 · The derivation</div>
+    <h2>Deriving the swizzle, step by step</h2>
+    <ol class="derive">
+      <li><strong>Find the freedom.</strong> The store writes one row per step, and a row occupies one 32-slot stripe of
+      shared memory. Permute the slots <em>within</em> each row however you like — the store still touches 32 distinct
+      banks, because a permutation of 32 slots is still 32 distinct slots. So we own sixteen free knobs:
+      <em>one within-row permutation per row</em>. Nothing we do with them can ever hurt the store.</li>
+
+      <li><strong>Make the rows disagree.</strong> A column collides because all sixteen rows agree to put position
+      <span class="m">n</span> in the same place. So the per-row permutations must <em>disagree on every position</em>.
+      The oldest trick is a shift: rotate row <span class="m">m</span> by <span class="m">m</span> slots, so a column hits
+      banks <span class="m">n+m mod 32</span> — sixteen different banks. (Padding each row by one element does this
+      by accident: <span class="m">offset = 33m + n</span> gives <span class="m">bank = (n + m) mod 32</span>.) It works,
+      but rotation drags in adds and modulos, padding burns shared memory, and neither composes nicely with the
+      power-of-two world everything else lives in.
+      <div class="dfig" id="figRotate"></div>
+      <div class="dfig" id="figPad"></div></li>
+
+      <li><strong>Shift with XOR instead.</strong> Replace the rotation with a bit-flip:
+      send position <span class="m">n</span> of row <span class="m">m</span> to slot <span class="m">n ⊕ m</span>.
+      For a fixed row this is a permutation (XOR is its own inverse), different rows get different permutations
+      (<span class="m">n⊕m = n⊕m′</span> forces <span class="m">m = m′</span>), and it costs one instruction.
+      Watch it build: row 1 swaps neighbors (⊕1), row 2 swaps across pairs (⊕2), row 3 does both (⊕3) — the
+      staircase below. A single column now lands in sixteen distinct banks:
+      <span class="m">{n ⊕ m : m = 0…15}</span>. By all appearances, we're done.
+      <div class="dfig" id="figXor"></div></li>
+
+      <li><strong>Run the actual read — and find the leftover.</strong> Our read is not one column; it's a
+      <em>pair</em>. Column <span class="m">2r</span> occupies banks <span class="m">{2r ⊕ m}</span> and column
+      <span class="m">2r+1</span> occupies <span class="m">{2r ⊕ m ⊕ 1}</span> — and flipping the last bit of a set
+      that already contains both parities gives back <em>the same sixteen banks</em>. The two half-warps double-book
+      every bank in one half of shared memory while the other half idles: a <strong>2-way conflict on every read
+      step</strong>. Set the workbench below to <em>Classic XOR m</em> and watch the trace.</li>
+
+      <li><strong>Diagnose it.</strong> The read pattern already spent the column's lowest bit: parity
+      (<span class="m">n₀</span>) is what separates thread 0–15 from thread 16–31 <em>within the same cycle</em>.
+      Our swizzle XORs <span class="m">m₀</span> into that very bit — it scrambles the one coordinate the read was
+      using to keep its threads apart. The swizzle stepped on the read's toes.</li>
+
+      <li><strong>Respect the read's bits.</strong> The fix writes itself: fold the row index into column bits the
+      read <em>isn't</em> using for simultaneous threads — bits 1 through 4. Shift the mask up by one:</li>
+    </ol>
+    <div class="formula">offset(m, n) = 32·m + (n ⊕ 2m)&nbsp;&nbsp;⇒&nbsp;&nbsp;bank = n ⊕ 2m</div>
+    <p>Now the swizzle moves <em>column pairs</em> instead of columns. Parity survives: column <span class="m">2r</span>
+    spreads over the sixteen <em>even</em> banks, column <span class="m">2r+1</span> over the sixteen <em>odd</em> banks —
+    disjoint by construction. Store: still a permutation per row, still perfect. Read: 32 banks, one hit each,
+    every step. Conflict-free both ways.</p>
+    <p>So the hand-derivation distills to three rules: <em>permute within rows</em> (store-safe by construction),
+    <em>make the rows disagree</em> (columns spread), and <em>leave alone the bits the read assigns to simultaneous
+    threads</em> (pairs stay apart). Try to break the rules below.</p>
+  </div>
+
+  <!-- ============ THE SWIZZLE WORKBENCH ============ -->
+  <div class="bench" id="bench">
+    <div class="bench-head">
+      <span class="name">THE SWIZZLE WORKBENCH</span>
+      <span class="sub">design your own: row m's slots get XORed by mask(m)</span>
+    </div>
+
+    <div class="bench-top">
+      <div>
+        <span class="ctl-label">Fold row bit … into column bits … &nbsp;(this is your swizzle)</span>
+        <table class="cgrid" id="cgrid"></table>
+      </div>
+      <div>
+        <span class="ctl-label">Presets</span>
+        <div class="presets">
+          <button data-preset="none">Unswizzled &nbsp;·&nbsp; all off</button>
+          <button data-preset="xorm">Classic XOR m &nbsp;·&nbsp; m<sub>j</sub> → n<sub>j</sub></button>
+          <button data-preset="xor2m">Optimal XOR 2m &nbsp;·&nbsp; m<sub>j</sub> → n<sub>j+1</sub></button>
+          <button data-preset="random">Surprise me</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdicts" id="verdicts"></div>
+
+    <div class="algebra hidden" id="algebra"></div>
+
+    <div class="bench-mid">
+      <div>
+        <span class="ctl-label" id="lbl-ac">Access</span>
+        <div class="seg" role="group" aria-labelledby="lbl-ac">
+          <button data-ac="store" aria-pressed="false">Store row</button>
+          <button data-ac="read"  aria-pressed="true">Read column pair</button>
+        </div>
+      </div>
+      <div>
+        <span class="ctl-label">Register step r</span>
+        <div class="stepper">
+          <input type="range" id="rstep" min="0" max="15" value="0" aria-label="register step r">
+          <span class="rval" id="rval">r = 0</span>
+        </div>
+      </div>
+      <label class="switch" style="align-self:end;padding-bottom:4px">
+        <input type="checkbox" id="algToggle"> show the algebra <span style="color:var(--muted)">(Part II)</span>
+      </label>
+    </div>
+
+    <div class="bench-body">
+      <div class="gridbox">
+        <div class="axis-top" id="axisTop"></div>
+        <div id="grid"></div>
+        <div class="legend">
+          <span><span class="sw ringA"></span>accessed by thread 0–15</span>
+          <span><span class="sw ringB"></span>accessed by thread 16–31</span>
+          <span>cell hue = bank ÷ 2 · darker = odd bank · hover for details</span>
+        </div>
+      </div>
+    </div>
+    <div class="trace">
+      <div class="trace-label">Bank hits this step</div>
+      <div class="bars" id="bars"></div>
+      <div class="bars-axis" id="barsAxis"></div>
+    </div>
+  </div>
+  <p class="note prose" style="margin-top:14px">The workbench restricts each row's permutation to "XOR by a mask",
+  with the mask depending linearly on the row bits — one toggle per (row bit, column bit) pair. That restriction is
+  not innocent, and Part II is about why it's exactly the right one. The store verdict, you'll notice, is green no
+  matter what you do: rule one, enforced by construction.</p>
+</section>
+
+<section id="part2">
+  <div class="prose">
+    <div class="part-label">Part II — By algebra</div>
+    <div class="sec-label">§ 04 · From knobs to vectors</div>
+    <h2>What we actually just did</h2>
+    <p>Step back from the derivation and look at the moves. Every index in sight is a power of two — 16 rows,
+    32 columns, 32 threads, 32 banks — so every index is a <em>bit-vector</em>: the element coordinate
+    <span class="m">(m, n)</span> is 9 bits, a thread id is 5, a shared-memory offset is 9 (5 bank bits + 4 segment
+    bits, where a segment is one 128-byte stripe of all 32 banks). And every map we built had the same special shape:
+    <strong>each input bit has one fixed job</strong>. Flip thread bit 2 of the store and the element's
+    <span class="m">n₂</span> flips — always, regardless of the other bits. Flip segment bit 0 of our final swizzle
+    and <span class="m">m₀</span> and <span class="m">n₁</span> flip together. Nothing carries, nothing depends on
+    context.</p>
+    <p>A map where flipping one input bit always XORs the same fixed pattern into the output is exactly a
+    <strong>linear map over F₂</strong> — the field {0, 1} where addition is XOR and multiplication is AND.
+    Such a map is completely determined by where it sends each single-bit input, and those images, stacked side
+    by side, are the columns of a <strong>binary matrix</strong>. This is the entire idea of a
+    <em>linear layout</em>: a layout is a matrix; applying it is a matrix–vector product over F₂.</p>
+    <p>Here are our two distributed layouts, each shown twice: as the matrix, and as the layout it encodes — every
+    tensor cell colored by its owning <em>thread</em> and numbered by its <em>register</em>. Same information, two
+    notations; read each matrix column as "this input bit lands here", and check it against the picture.</p>
+  </div>
+
+  <div class="layout-pair">
+    <div class="matrix-wrap" id="matrixA"></div>
+    <div class="dfig" id="ownA"></div>
+  </div>
+  <div class="fig-caption"><b>A — the store.</b> Color = owning thread (hue walks t₀…t₃₁; odd threads darker),
+  number = register. Threads run <em>across</em> the columns — the Thr→n identity block — and registers run
+  <em>down</em> the rows — the Reg→m block. Flip thread bit t₂ and ownership jumps 4 columns right, exactly the
+  n₂ entry in column t₂. Thread 9's sixteen elements are ringed: one column, registers 0–15.</div>
+
+  <div class="layout-pair">
+    <div class="matrix-wrap" id="matrixB"></div>
+    <div class="dfig" id="ownB"></div>
+  </div>
+  <div class="fig-caption"><b>B — the read.</b> Same encoding. Now the low thread bits run <em>down</em> the rows
+  (t₀…t₃→m), the top thread bit selects column parity (the lone t₄→n₀ entry — threads 0–15 own even columns,
+  16–31 own odd ones), and registers stride <em>across</em> column pairs (r_i→n_{i+1}). Thread 9's elements are
+  ringed: row 9 of every even column, registers 0–15.</div>
+
+  <div class="prose">
+    <p>And the memory layout — offset bits in, logical bits out. The bank bits map straight onto the column bits;
+    the segment bits carry the row <em>plus whatever masks you toggled in the workbench</em>. That toggle grid was
+    never a toy: it is, cell for cell, the off-diagonal block of this matrix. The figure below is live — go flip a
+    workbench toggle and watch a dark cell appear here.</p>
+  </div>
+
+  <div class="matrix-wrap" id="matrixM"></div>
+  <div class="fig-caption"><b>M — your current swizzle, live.</b> Blue cells are the fixed identity structure
+  (banks→columns, segments→rows); dark cells are the workbench's C block — which column bits each row bit folds into.
+  All three named swizzles share this <span style="font-family:var(--mono)">[[I, C], [0, I]]</span> shape; they differ
+  only in C.</div>
+
+  <div class="prose">
+    <p>Why bother with the matrix view? Because the operations we were doing informally become mechanical:
+    composing two layouts is matrix multiplication, inverting a layout is Gaussian elimination over F₂, and —
+    the payoff — <em>"which accesses collide" becomes a question about subspaces</em>.</p>
+
+    <div class="sec-label" style="margin-top:38px">§ 05 · Conflicts as geometry</div>
+    <h2>A bank conflict is a subspace intersection</h2>
+    <p>Two facts, both immediate from linearity:</p>
+    <ul class="checks">
+      <li>Two elements sit in the <strong>same bank</strong> (in different segments) exactly when their offsets differ
+      only in segment bits — that is, when their logical coordinates differ by a vector in
+      <span class="m">span(M_Seg)</span>, the span of the segment columns of M.</li>
+      <li>Two elements are touched by <strong>different threads of the same access</strong> exactly when their logical
+      coordinates differ by a vector in the span of that layout's thread columns —
+      <span class="m">span(A_Thr)</span> for the store, <span class="m">span(B_Thr)</span> for the read.</li>
+    </ul>
+    <p>So a conflict is a nonzero vector that lives in <em>both</em> spans: a direction that simultaneously changes
+    which thread is asking and which segment of the same bank answers. The paper's Lemma&nbsp;9.4 sharpens this into a
+    count: <strong>the access takes exactly |span(M_Seg) ∩ span(Thr)| wavefronts</strong> — the size of the
+    intersection subspace.</p>
+    <p>Our whole story compresses into one table:</p>
+
+    <table class="score">
+      <thead><tr><th>Swizzle</th><th>M_Seg basis</th><th>∩ span(B_Thr) = span{m₀…m₃, n₀}</th><th>Read wavefronts</th></tr></thead>
+      <tbody>
+        <tr><td>Unswizzled</td><td class="m">m₀, m₁, m₂, m₃</td><td>the whole 16-element span — every seg vector is a thread vector</td><td class="bad">2⁴ = 16</td></tr>
+        <tr><td>XOR m</td><td class="m">m₀⊕n₀, m₁⊕n₁, m₂⊕n₂, m₃⊕n₃</td><td>{0, m₀⊕n₀} — one bad direction survives</td><td class="mid">2¹ = 2</td></tr>
+        <tr><td>XOR 2m</td><td class="m">m₀⊕n₁, m₁⊕n₂, m₂⊕n₃, m₃⊕n₄</td><td>{0} — trivial</td><td class="good">2⁰ = 1</td></tr>
+      </tbody>
+    </table>
+
+    <p>Sixteen, two, one: the conflict counts we measured by brute force are powers of two because they were
+    dimensions all along. The store column is omitted because it's always trivial: every nonzero combination of
+    seg vectors carries some <span class="m">m</span> bits, and <span class="m">span(A_Thr)</span> has none — the
+    algebraic form of "within-row permutations can't hurt the store."</p>
+    <p>Don't take the table's word for it. Flip on <strong>"show the algebra"</strong> in the workbench: it lists your
+    current M_Seg basis, computes the intersection with span(B_Thr), and prints
+    2<sup>dim</sup> next to the simulated wavefront count. They agree for every one of the 2²⁰ possible toggle
+    configurations — the lemma holds exactly, as an equality.</p>
+    <p>One more dividend before we move on: the geometry also tells us the <em>rule of the game</em>. A combination of
+    seg vectors <span class="m">⊕(m_j ⊕ c_j)</span> lands in span(B_Thr) precisely when the mask part
+    <span class="m">⊕c_j</span> equals <span class="m">0</span> or <span class="m">n₀</span>. So your swizzle reads
+    conflict-free <strong>iff the four masks, together with n₀, are linearly independent</strong>. The classic
+    swizzle fails because its mask set {n₀, n₁, n₂, n₃} <em>contains</em> n₀; the optimal one's
+    {n₁, n₂, n₃, n₄} doesn't — and neither do plenty of others you can find in the workbench. Optimal swizzles
+    come as a whole family. Which raises the real question: how do you <em>construct</em> a member of
+    that family for layouts you can't eyeball?</p>
+  </div>
+</section>
+
+<section id="part3">
+  <div class="prose">
+    <div class="part-label">Part III — The algorithm</div>
+    <div class="sec-label">§ 06 · The construction, replayed</div>
+    <h2>Optimal swizzling as subspace search</h2>
+    <p>Restate the task in the new language. We must build the memory matrix M — that is, decide which logical
+    directions become <strong>Vec</strong> bits (contiguous, for vectorized access), <strong>Bank</strong> bits, and
+    <strong>Seg</strong> bits — such that:</p>
+    <ul class="checks">
+      <li><span class="m">M_Vec</span> ⊆ <span class="m">A_Reg ∩ B_Reg</span> — only directions that are register
+      directions for <em>both</em> layouts may be vectorized;</li>
+      <li><span class="m">span(M_Vec ∪ M_Seg)</span> meets <span class="m">span(A_Thr)</span> and
+      <span class="m">span(B_Thr)</span> trivially — by Lemma 9.4, that's conflict-free in both directions.</li>
+    </ul>
+    <p>The hard part is the seg bits: we need <span class="m">s</span> independent vectors avoiding the union of two
+    thread spans. How big can such a subspace be? The paper's Lemma 9.5 answers in general: inside
+    <span class="m">F₂ᵈ</span>, the largest subspace avoiding span(U) ∪ span(V) has dimension
+    <span class="m">d − max(dim U, dim V)</span>. Here: <span class="m">9 − max(5, 5) = 4</span> — exactly the four
+    seg bits we need. Conflict-free is achievable, with zero slack. The algorithm of §5.4 is a recipe for
+    manufacturing that subspace:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="tag"><b></b>Vectorization</div>
+        <div><p>Take <span class="m">V</span> = basis of <span class="m">A_Reg ∩ B_Reg</span>. Vec bits are the most
+        valuable real estate (wider loads, fewer instructions), so they're claimed first. Here
+        span{m₀…m₃} ∩ span{n₁…n₄} = {0}: A's registers walk rows, B's walk column pairs, no shared direction —
+        <span class="m">v = 0</span>, scalar accesses. The algorithm maximizes what the layouts permit; they permit
+        none.</p></div>
+      </div>
+      <div class="step">
+        <div class="tag"><b></b>Space sizes</div>
+        <div><p><span class="m">b = log₂(128/(2ᵛ·w)) = 5</span> bank bits, <span class="m">s = 9 − 0 − 5 = 4</span>
+        seg bits. The arithmetic just says: one segment = one full stripe of the 32 banks.</p></div>
+      </div>
+      <div class="step">
+        <div class="tag"><b></b>Transaction split</div>
+        <div><p>If accesses were vectorized beyond 4 bytes, the hardware would split each warp request into multiple
+        transactions, and the thread bits it splits on get a free pass — they're removed before the conflict analysis
+        (<span class="m">A_Bank</span>, <span class="m">B_Bank</span>). Here <span class="m">2ᵛ·w = 4</span> bytes:
+        no split, no free pass, <span class="m">A_Bank = A_Thr</span>, <span class="m">B_Bank = B_Thr</span>.</p></div>
+      </div>
+      <div class="step">
+        <div class="tag"><b></b>Sort the thread bits</div>
+        <div>
+          <p>Split the two thread sets three ways — shared, A-only, B-only:</p>
+          <p><span class="m">I = A_Thr ∩ B_Thr</span> = <span class="chip hot">n₀</span> — a thread direction for
+          <em>both</em> sides. Stepping a segment along n₀ would put two simultaneous threads (of either access) into
+          the same bank. It is set aside, untouchable. This is rule three of the hand-derivation —
+          "leave the read's bits alone" — discovered mechanically.</p>
+          <p><span class="m">E = A_Thr ∖ B_Thr</span> = <span class="chip">n₁</span><span class="chip">n₂</span><span class="chip">n₃</span><span class="chip">n₄</span>
+          &nbsp;·&nbsp; <span class="m">F = B_Thr ∖ A_Thr</span> = <span class="chip">m₀</span><span class="chip">m₁</span><span class="chip">m₂</span><span class="chip">m₃</span></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="tag"><b></b>Pair and XOR</div>
+        <div>
+          <p>Pair E with F and XOR: <span class="m">H = {e_i ⊕ f_i}</span>. Why does this dodge both spans? An H vector
+          flips a thread bit that only A uses <em>and</em> a thread bit that only B uses, <em>together</em>. Seen from A,
+          it has an F-component A's threads can't produce; seen from B, an E-component B's threads can't produce. Stepping
+          one segment changes the writing thread <em>and</em> the reading thread — which is exactly the meaning of
+          "same bank, different segment, different thread": no conflict, by construction, for both accesses at once.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="tag"><b></b>Top up and assemble</div>
+        <div>
+          <p>If the two thread spans don't fill the whole space, any complement basis <span class="m">C</span> is also
+          fair game (those directions are thread-invisible to both sides). Here the spans cover everything:
+          <span class="m">C = ∅</span>. We need <span class="m">s = 4</span> vectors and have
+          <span class="m">|H| + |C| = 4</span>: take all of H. <span class="m">M_Seg = H</span>. (When
+          <span class="m">|H| + |C| &lt; s</span>, conflict-free is impossible and the algorithm pads Seg from
+          <span class="m">A_Bank</span>, accepting the minimum unavoidable conflicts.)</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="tag"><b></b>Banks last</div>
+        <div><p>Complete to a basis of <span class="m">F₂⁹</span> for the bank bits; the canonical pick is
+        <span class="chip">n₀</span><span class="chip">n₁</span><span class="chip">n₂</span><span class="chip">n₃</span><span class="chip">n₄</span>.
+        Bank choice can't create conflicts — only Vec and Seg appear in the lemma — so any completion works.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pairing prose">
+    <div class="ptitle">The pairing, at a glance</div>
+    <div class="setline"><span class="nm">A_Thr</span><span class="chip hot">n₀</span> <span class="chip">n₁</span> <span class="chip">n₂</span> <span class="chip">n₃</span> <span class="chip">n₄</span></div>
+    <div class="setline"><span class="nm">B_Thr</span><span class="chip hot">n₀</span> <span class="chip">m₀</span> <span class="chip">m₁</span> <span class="chip">m₂</span> <span class="chip">m₃</span></div>
+    <div class="bridge">↑ n₀ is in both → protected, never folded (I)</div>
+    <div class="pairs">
+      <div class="pr"><span class="chip">n₁</span><span class="op">⊕</span><span class="chip">m₀</span><span class="to">→</span><span class="chip hot">n₁⊕m₀</span></div>
+      <div class="pr"><span class="chip">n₂</span><span class="op">⊕</span><span class="chip">m₁</span><span class="to">→</span><span class="chip hot">n₂⊕m₁</span></div>
+      <div class="pr"><span class="chip">n₃</span><span class="op">⊕</span><span class="chip">m₂</span><span class="to">→</span><span class="chip hot">n₃⊕m₂</span></div>
+      <div class="pr"><span class="chip">n₄</span><span class="op">⊕</span><span class="chip">m₃</span><span class="to">→</span><span class="chip hot">n₄⊕m₃</span></div>
+    </div>
+    <div class="bridge" style="margin-top:14px;margin-left:0">H = M_Seg &nbsp;·&nbsp; segment bit j flips m<sub>j</sub> and n<sub>j+1</sub> together &nbsp;⇒&nbsp; offset = 32·m + (n ⊕ 2m)</div>
+  </div>
+
+  <div class="prose">
+    <p>And there it is — the same <span class="m">n ⊕ 2m</span> we reached by staring at parities in Part I, only now
+    nothing was stared at. Every move was forced: the intersection told us what to protect, the set differences told
+    us what to pair, the XOR made each pair invisible to both thread spans, and a dimension count certified the
+    result optimal before we ever simulated a single access. Note the algorithm returns one canonical member of the
+    family ("pair in ascending order" is a convention); the workbench's independence rule describes the whole family,
+    and the recipe is simply a constructive proof that the family is non-empty whenever Lemma 9.5 says it can be.</p>
+
+    <div class="sec-label" style="margin-top:38px">§ 07 · What scales</div>
+    <h2>Why the algebra wins</h2>
+    <p>For this example, intuition got there. But every crutch we leaned on was specific: two tidy layouts, one warp,
+    scalar accesses, a conflict you could see in a 16×32 picture. Production kernels hand the compiler an mma fragment
+    layout on one side and a vectorized 128-bit blocked layout on the other, across eight warps, in fp8 — and "which
+    bits does the read use for simultaneous threads" is no longer something anyone eyeballs. The linear-layout
+    formulation never needed the picture:</p>
+    <ul class="checks">
+      <li>Any distributed layout — blocked, mma, wgmma, mfma, sliced — is just another matrix, so the <em>same</em>
+      seven steps run unchanged on inputs no human pattern-matches.</li>
+      <li>Vectorization is just step 1, claiming <span class="m">A_Reg ∩ B_Reg</span> before the
+      seg search starts, with hardware transaction splits handled by deleting the bits hardware serializes anyway.</li>
+      <li>When conflict-free is impossible, the dimension count says so <em>and</em> says how close you can get —
+      the algorithm degrades to provably-minimal conflicts instead of silently shipping a 2-way leftover.</li>
+    </ul>
+    <p>That's the real moral of the one-bit shift. The classic swizzle is fine as far as it goes — one point in a family, picked
+    without consulting the read layout. Linear layouts make the family — and the consultation — computable.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap prose">
+    <div class="sec-label">References</div>
+    <ul class="refs">
+      <li>K. Zhou, M. Lezcano-Casado, A. P. Goucher, et&nbsp;al. <a href="https://arxiv.org/abs/2505.23819"><em>Linear Layouts: Robust Code Generation of Efficient Tensor Computation Using F₂</em></a>, ASPLOS '26 — definitions in §4, the swizzling algorithm in §5.4, Lemmas 9.4 &amp; 9.5 in the appendix.</li>
+      <li>Lei Zhang, <a href="https://www.lei.chat/posts/triton-linear-layout-concept/"><em>Triton Linear Layout: Concept</em></a> — the 16×32 example and the bits-as-strides intuition this post builds on.</li>
+      <li><a href="./one-bit-off.html"><em>One Bit Off</em></a> — the companion post, with the full Bank Scope (including the physical shared-memory view) and the verification details.</li>
+      <li>Triton's <a href="https://github.com/triton-lang/triton/blob/main/include/triton/Tools/LinearLayout.h"><code>LinearLayout.h</code></a> — the in-tree formal definition and implementation.</li>
+    </ul>
+    <p class="fin">Every verdict on this page — simulated and algebraic — is computed live by the page itself; the
+    lemma's prediction and the brute-force count agree on all 2²⁰ workbench configurations. A "wavefront" is one
+    conflict-free pass through the bank hardware.</p>
+  </div>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+  'use strict';
+
+  /* ===== vectors: 9-bit ints, bits 0..4 = n0..n4, bits 5..8 = m0..m3 ===== */
+  function chipHTML(v, hot){
+    if(v===0) return '<span class="chip dim">0</span>';
+    const parts=[];
+    for(let i=0;i<5;i++) if(v>>i&1) parts.push('n<sub>'+i+'</sub>');
+    for(let j=0;j<4;j++) if(v>>(5+j)&1) parts.push('m<sub>'+j+'</sub>');
+    return '<span class="chip'+(hot?' hot':'')+'">'+parts.join('⊕')+'</span>';
+  }
+  function spanSet(vs){
+    const s=new Set([0]);
+    for(const v of vs){ for(const e of Array.from(s)) s.add(e^v); }
+    return s;
+  }
+  const inBThr = v => (v & 0b11110)===0;   // n-part within span{n0}, m-part free
+  const inAThr = v => (v>>5)===0;          // m-part zero
+
+  /* ===== swizzle state: C = four 5-bit masks (what m_j folds into) ===== */
+  const state = { C:[0,0,0,0], ac:'read', r:0, algebra:false };
+  const PRESETS = { none:[0,0,0,0], xorm:[1,2,4,8], xor2m:[2,4,8,16] };
+
+  const fmask = m => { let x=0; for(let j=0;j<4;j++) if(m>>j&1) x^=state.C[j]; return x; };
+  const off   = (m,n) => 32*m + (n ^ fmask(m));
+
+  function accessSet(kind, r){
+    const cells=[];
+    for(let t=0;t<32;t++){
+      cells.push(kind==='store' ? {m:r, n:t, t} : {m:t&15, n:2*r+(t>>4), t});
+    }
+    return cells;
+  }
+  function simulate(kind){
+    let worst=0;
+    for(let r=0;r<16;r++){
+      const hits=new Array(32).fill(0);
+      for(const c of accessSet(kind,r)) hits[off(c.m,c.n)&31]++;
+      worst=Math.max(worst, Math.max.apply(null,hits));
+    }
+    return worst;
+  }
+  function segBasis(){ return [0,1,2,3].map(j => (1<<(5+j)) ^ state.C[j]); }
+  function predicted(kind){
+    let c=0;
+    for(const v of spanSet(segBasis())) if(kind==='read' ? inBThr(v) : inAThr(v)) c++;
+    return c;
+  }
+
+  /* ===== colors ===== */
+  function bankBg(bank){
+    const hue=(bank>>1)*22.5, light=(bank&1)?66:81;
+    return 'hsl('+hue+',58%,'+light+'%)';
+  }
+  function bankFg(bank){
+    const hue=(bank>>1)*22.5;
+    return 'hsl('+hue+',45%,'+((bank&1)?14:30)+'%)';
+  }
+
+  /* ===== labeled grid builder (derivation figures, ownership views) ===== */
+  function labeledGrid(host, opts){
+    // opts: rows, cols, cell(r,c)->{bg,fg,label,title,ring,pad,empty}, topLab(c), leftLab(r)
+    const cols=opts.cols, tmpl='30px repeat('+cols+',1fr)';
+    const top=document.createElement('div'); top.className='lg-axis'; top.style.gridTemplateColumns=tmpl;
+    top.appendChild(document.createElement('div'));
+    for(let c=0;c<cols;c++){
+      const d=document.createElement('div');
+      d.textContent=opts.topLab?opts.topLab(c):'';
+      top.appendChild(d);
+    }
+    host.appendChild(top);
+    for(let r=0;r<opts.rows;r++){
+      const row=document.createElement('div'); row.className='lg-row'; row.style.gridTemplateColumns=tmpl;
+      const ll=document.createElement('div'); ll.className='lg-left';
+      ll.textContent=opts.leftLab?opts.leftLab(r):'';
+      row.appendChild(ll);
+      for(let c=0;c<cols;c++){
+        const info=opts.cell(r,c)||{empty:true};
+        const d=document.createElement('div'); d.className='lg-cell';
+        if(info.empty){ d.classList.add('empty'); }
+        else if(info.pad){ d.classList.add('padcell'); d.textContent='×'; d.title=info.title||'padding — wasted slot'; }
+        else{
+          d.style.background=info.bg;
+          if(info.fg) d.style.color=info.fg;
+          if(info.label!==undefined) d.textContent=info.label;
+          if(info.title) d.title=info.title;
+          if(info.ring) d.classList.add('ring');
+        }
+        row.appendChild(d);
+      }
+      host.appendChild(row);
+    }
+  }
+  function figBlock(hostId, title, gridOpts, cap){
+    const host=document.getElementById(hostId);
+    if(title){ const t=document.createElement('div'); t.className='dfig-title'; t.innerHTML=title; host.appendChild(t); }
+    if(gridOpts) labeledGrid(host, gridOpts);
+    if(cap){ const c=document.createElement('div'); c.className='dfig-cap'; c.innerHTML=cap; host.appendChild(c); }
+  }
+  const slotAxis = c => (c%4===0)?('b'+c):'';
+
+  /* ===== §03 figures: rotation, padding, XOR anatomy ===== */
+  (function deriveFigs(){
+    // Rotation: memory-slot view, slot k of row m holds element n = (k - m) mod 32
+    figBlock('figRotate',
+      'Rotate row m by m slots &nbsp;·&nbsp; bank(m, n) = (n + m) mod 32',
+      { rows:8, cols:32,
+        topLab:slotAxis, leftLab:r=>'m'+r,
+        cell:(m,k)=>{
+          const n=(k-m+32)&31;
+          return { bg:bankBg(n), fg:bankFg(n), label:n, ring:n===0,
+                   title:'row '+m+', bank '+k+' holds element (m='+m+', n='+n+')' };
+        } },
+      'Memory-slot view, first eight rows: horizontal position = bank, color &amp; number = which column the element '+
+      'came from (its bank in the row-major layout). Every row is the same sequence, slid one slot further — so '+
+      'column 0\u2019s elements (ringed) march down the diagonal, one bank per row. Sixteen rows, sixteen distinct banks: '+
+      'the column is spread.');
+
+    // Padding: physical memory in rows of 32 banks; tensor rows are 33 long, pads hatched
+    figBlock('figPad',
+      'Pad rows to 33 &nbsp;·&nbsp; offset = 33·m + n &nbsp;⇒&nbsp; same effect, by accident',
+      { rows:5, cols:32,
+        topLab:slotAxis, leftLab:r=>'',
+        cell:(r,c)=>{
+          const o=r*32+c;
+          if(o>=4*33) return {empty:true};
+          const m=(o/33)|0, n=o%33;
+          if(n===32) return {pad:true, title:'offset '+o+' — the padding slot at the end of row '+m};
+          return { bg:bankBg(n&31), fg:bankFg(n&31), label:n, ring:n===0,
+                   title:'offset '+o+' = bank '+c+' holds element (m='+m+', n='+n+')' };
+        } },
+      'The same idea without touching the data: keep rows in order but make them 33 elements long, then lay the '+
+      'offsets over 32 banks (first four rows shown). Each row snakes one bank further right than the last — '+
+      'column 0 (ringed) drifts down the diagonal again — and the hatched × is the price: one dead slot per row, '+
+      'plus a ×33 in every address computation.');
+
+    // XOR anatomy: arc strips for masks 0..3 on the first 16 slots
+    function arcsSVG(mask){
+      if(!mask) return '<svg width="525" height="10" viewBox="0 0 525 10" aria-hidden="true"></svg>';
+      let p='';
+      for(let k=0;k<16;k++){
+        const j=k^mask;
+        if(j<=k||j>15) continue;
+        const x1=k*33+15, x2=j*33+15, h=Math.min(19, 9+(x2-x1)/6);
+        p+='<path d="M '+x1+' 21 Q '+((x1+x2)/2)+' '+(21-h)+' '+x2+' 21"/>';
+      }
+      return '<svg width="525" height="22" viewBox="0 0 525 22" fill="none" stroke="#22282C" stroke-width="1.2" aria-hidden="true">'+p+'</svg>';
+    }
+    const xorHost=document.getElementById('figXor');
+    const t1=document.createElement('div'); t1.className='dfig-title';
+    t1.innerHTML='What ⊕ does inside a row &nbsp;·&nbsp; slot k receives element k ⊕ mask &nbsp;(first 16 slots)';
+    xorHost.appendChild(t1);
+    const MASKINFO=[
+      [0,'unchanged'],
+      [1,'flip bit 0 — swap neighbors'],
+      [2,'flip bit 1 — swap across pairs'],
+      [3,'flip both — swap pairs of pairs, reversed'],
+    ];
+    for(const mi of MASKINFO){
+      const mask=mi[0];
+      const row=document.createElement('div'); row.className='maskrow';
+      const lab=document.createElement('div'); lab.className='mr-label';
+      lab.innerHTML='<b>row m='+mask+' · ⊕'+mask+'</b> — '+mi[1];
+      row.appendChild(lab);
+      const strip=document.createElement('div'); strip.className='maskstrip';
+      strip.innerHTML=arcsSVG(mask);
+      const slots=document.createElement('div'); slots.className='slots';
+      for(let k=0;k<16;k++){
+        const n=k^mask;
+        const d=document.createElement('div');
+        d.style.background=bankBg(n); d.style.color=bankFg(n);
+        d.textContent=n;
+        d.title='slot '+k+' ← element n='+n+' (k ⊕ '+mask+')';
+        slots.appendChild(d);
+      }
+      strip.appendChild(slots);
+      row.appendChild(strip);
+      xorHost.appendChild(row);
+    }
+    const cap1=document.createElement('div'); cap1.className='dfig-cap';
+    cap1.innerHTML='XOR never moves an element outside its row — it pairs slots up and swaps them, with the swap '+
+      'distance set by which bit you flip. The arcs are the swaps; composing bits composes swaps.';
+    xorHost.appendChild(cap1);
+    figBlock('figXor',
+      'All 32 slots, rows 0–7 &nbsp;·&nbsp; slot k of row m holds element n = k ⊕ m',
+      { rows:8, cols:32,
+        topLab:slotAxis, leftLab:r=>'m'+r,
+        cell:(m,k)=>{
+          const n=(k^m)&31;
+          return { bg:bankBg(n), fg:bankFg(n), label:n, ring:n===0,
+                   title:'row '+m+', bank '+k+' holds element (m='+m+', n='+n+')' };
+        } },
+      'The staircase, assembled: each row is the original rainbow reshuffled by its own mask, with the swap blocks '+
+      'doubling in size as the row index\u2019s bits climb. Column 0 (ringed) again visits a different bank in every '+
+      'row — it sits at slot m of row m — but now via one xor instead of an add-and-modulo, and the layout never '+
+      'leaves the power-of-two grid.');
+  })();
+
+  /* ===== §04 ownership views for layouts A and B ===== */
+  (function ownershipFigs(){
+    figBlock('ownA', 'Layout A — who owns what',
+      { rows:16, cols:32,
+        topLab:c=>(c%4===0)?('n'+c):'', leftLab:r=>'m'+r,
+        cell:(m,n)=>{
+          const t=n, r=m;
+          return { bg:bankBg(t), fg:bankFg(t), label:r, ring:t===9,
+                   title:'(m='+m+', n='+n+') ← thread t'+t+', register r'+r };
+        } }, null);
+    figBlock('ownB', 'Layout B — who owns what',
+      { rows:16, cols:32,
+        topLab:c=>(c%4===0)?('n'+c):'', leftLab:r=>'m'+r,
+        cell:(m,n)=>{
+          const t=m+16*(n&1), r=n>>1;
+          return { bg:bankBg(t), fg:bankFg(t), label:r, ring:t===9,
+                   title:'(m='+m+', n='+n+') ← thread t'+t+', register r'+r };
+        } }, null);
+  })();
+
+  /* ===== hero motif: first 8 rows under the three presets ===== */
+  (function motif(){
+    const host=document.getElementById('motif');
+    const meta=[
+      {C:PRESETS.none,  name:'Unswizzled', expr:'bank = n',      v:'columns are vertical stripes — 16-way', cls:'bad'},
+      {C:PRESETS.xorm,  name:'XOR m',      expr:'bank = n ⊕ m',  v:'the staircase — but pairs still clash: 2-way', cls:'mid'},
+      {C:PRESETS.xor2m, name:'XOR 2m',     expr:'bank = n ⊕ 2m', v:'the paired staircase — conflict-free', cls:'good'},
+    ];
+    for(const cfg of meta){
+      const f = m => { let x=0; for(let j=0;j<4;j++) if(m>>j&1) x^=cfg.C[j]; return x; };
+      const panel=document.createElement('div'); panel.className='panel';
+      panel.innerHTML='<div class="panel-title"><b>'+cfg.name+'</b> · '+cfg.expr+'</div>';
+      const grid=document.createElement('div'); grid.className='rows8';
+      for(let m=0;m<8;m++) for(let n=0;n<32;n++){
+        const cell=document.createElement('span');
+        cell.style.background=bankBg((n ^ f(m)) & 31);
+        grid.appendChild(cell);
+      }
+      panel.appendChild(grid);
+      const vd=document.createElement('div'); vd.className='verdict '+cfg.cls; vd.textContent='→ '+cfg.v;
+      panel.appendChild(vd);
+      host.appendChild(panel);
+    }
+  })();
+
+  /* ===== generic matrix renderer ===== */
+  function matrixHTML(title, colGroups, rowGroups, classAt){
+    // colGroups/rowGroups: [{name, labels:[...]}]
+    const colLabels=[].concat.apply([], colGroups.map(g=>g.labels));
+    const rowLabels=[].concat.apply([], rowGroups.map(g=>g.labels));
+    const colStarts=[]; let acc=0;
+    for(const g of colGroups){ colStarts.push(acc); acc+=g.labels.length; }
+    const rowStarts=[]; acc=0;
+    for(const g of rowGroups){ rowStarts.push(acc); acc+=g.labels.length; }
+    const isColBlock=c=>colStarts.indexOf(c)>0;
+    const isRowBlock=r=>rowStarts.indexOf(r)>0;
+    let h='<table class="matrix"><tr><th class="title" colspan="'+(colLabels.length+1)+'">'+title+'</th></tr><tr><th></th>';
+    colGroups.forEach((g,i)=>{ h+='<th colspan="'+g.labels.length+'"'+(i>0?' class="blockL"':'')+'>'+g.name+'</th>'; });
+    h+='</tr><tr><th></th>';
+    colLabels.forEach((l,c)=>{ h+='<th'+(isColBlock(c)?' class="blockL"':'')+'>'+l+'</th>'; });
+    h+='</tr>';
+    rowLabels.forEach((rl,r)=>{
+      h+='<tr><th'+(isRowBlock(r)?' class="blockT"':'')+'>'+rl+'</th>';
+      colLabels.forEach((cl,c)=>{
+        const cls=classAt(r,c);
+        const blocks=(isColBlock(c)?' blockL':'')+(isRowBlock(r)?' blockT':'');
+        h+='<td class="'+cls+blocks+'">'+(cls==='zero'?0:1)+'</td>';
+      });
+      h+='</tr>';
+    });
+    return h+'</table>';
+  }
+  const N5={name:'n',labels:['n₀','n₁','n₂','n₃','n₄']}, M4={name:'m',labels:['m₀','m₁','m₂','m₃']};
+
+  // A: cols Reg r0..r3 (0-3), Thr t0..t4 (4-8); rows n0..n4 (0-4), m0..m3 (5-8)
+  document.getElementById('matrixA').innerHTML = matrixHTML('A — store',
+    [{name:'Reg',labels:['r₀','r₁','r₂','r₃']},{name:'Thr',labels:['t₀','t₁','t₂','t₃','t₄']}],
+    [N5,M4],
+    (r,c)=>{
+      if(c<4)  return (r===5+c) ? 'one' : 'zero';        // r_i -> m_i
+      return (r===c-4) ? 'one' : 'zero';                  // t_i -> n_i
+    });
+
+  // B: r_i -> n_{i+1}; t0..t3 -> m_j; t4 -> n0
+  document.getElementById('matrixB').innerHTML = matrixHTML('B — read',
+    [{name:'Reg',labels:['r₀','r₁','r₂','r₃']},{name:'Thr',labels:['t₀','t₁','t₂','t₃','t₄']}],
+    [N5,M4],
+    (r,c)=>{
+      if(c<4)  return (r===c+1) ? 'one' : 'zero';         // r_i -> n_{i+1}
+      if(c<8)  return (r===5+(c-4)) ? 'one' : 'zero';     // t_0..3 -> m_j
+      return (r===0) ? 'one' : 'zero';                    // t4 -> n0
+    });
+
+  function renderM(){
+    document.getElementById('matrixM').innerHTML = matrixHTML('M — memory (live from the workbench)',
+      [{name:'Bank',labels:['k₀','k₁','k₂','k₃','k₄']},{name:'Seg',labels:['s₀','s₁','s₂','s₃']}],
+      [N5,M4],
+      (r,c)=>{
+        if(c<5) return (r===c) ? 'one' : 'zero';          // k_i -> n_i
+        const j=c-5;
+        if(r>=5) return (r===5+j) ? 'one' : 'zero';        // s_j -> m_j
+        return (state.C[j]>>r & 1) ? 'cone' : 'zero';      // s_j -> mask bits (C block)
+      });
+  }
+
+  /* ===== workbench DOM ===== */
+  const cg=document.getElementById('cgrid');
+  (function buildCGrid(){
+    let h='<tr><th></th>';
+    for(let i=0;i<5;i++) h+='<th>n<sub>'+i+'</sub></th>';
+    h+='<th></th></tr>';
+    for(let j=0;j<4;j++){
+      h+='<tr><td class="rowlab">m<sub>'+j+'</sub> →</td>';
+      for(let i=0;i<5;i++){
+        h+='<td><button class="bit" data-j="'+j+'" data-i="'+i+'" aria-pressed="false" aria-label="fold m'+j+' into n'+i+'">·</button></td>';
+      }
+      h+='<td class="rowmask" id="rowmask'+j+'"></td></tr>';
+    }
+    cg.innerHTML=h;
+    cg.addEventListener('click', e=>{
+      const b=e.target.closest('button.bit'); if(!b) return;
+      const j=+b.dataset.j, i=+b.dataset.i;
+      state.C[j]^=(1<<i);
+      render();
+    });
+  })();
+  document.querySelectorAll('.presets button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const p=btn.dataset.preset;
+      state.C = (p==='random')
+        ? [0,0,0,0].map(()=>Math.floor(Math.random()*32))
+        : PRESETS[p].slice();
+      render();
+    });
+  });
+
+  // grid + bars DOM (built once)
+  const gridEl=document.getElementById('grid'), axisTop=document.getElementById('axisTop');
+  const barsEl=document.getElementById('bars'), barsAxis=document.getElementById('barsAxis');
+  const cellEls=[], barEls=[];
+  axisTop.appendChild(document.createElement('div'));
+  for(let c=0;c<32;c++){ const d=document.createElement('div'); d.textContent=(c%4===0)?('n'+c):''; axisTop.appendChild(d); }
+  for(let row=0;row<16;row++){
+    const rowEl=document.createElement('div'); rowEl.className='grow';
+    const lab=document.createElement('div'); lab.className='rlab'; lab.textContent='m'+row; rowEl.appendChild(lab);
+    const rc=[];
+    for(let col=0;col<32;col++){ const cd=document.createElement('div'); cd.className='cell'; rowEl.appendChild(cd); rc.push(cd); }
+    gridEl.appendChild(rowEl); cellEls.push(rc);
+  }
+  const blab=document.createElement('div'); blab.className='blab'; blab.textContent='hits'; barsEl.appendChild(blab);
+  for(let b=0;b<32;b++){ const bar=document.createElement('div'); bar.className='bar'; barsEl.appendChild(bar); barEls.push(bar); }
+  barsAxis.appendChild(document.createElement('div'));
+  for(let b=0;b<32;b++){ const d=document.createElement('div'); d.textContent=(b%4===0)?('b'+b):''; barsAxis.appendChild(d); }
+
+  function wireSeg(attr, key){
+    document.querySelectorAll('[data-'+attr+']').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state[key]=btn.getAttribute('data-'+attr);
+        document.querySelectorAll('[data-'+attr+']').forEach(b=>b.setAttribute('aria-pressed', b===btn?'true':'false'));
+        render();
+      });
+    });
+  }
+  wireSeg('ac','ac');
+  document.getElementById('rstep').addEventListener('input', e=>{ state.r=+e.target.value; render(); });
+  document.getElementById('algToggle').addEventListener('change', e=>{ state.algebra=e.target.checked; render(); });
+
+  function verdictClass(w){ return w===1?'good':(w===2?'mid':'bad'); }
+  function verdictText(w){ return w===1?'conflict-free · 1 wavefront':(w+'-way conflict · '+w+' wavefronts'); }
+
+  /* ===== render ===== */
+  function render(){
+    // toggle grid + per-row masks
+    document.querySelectorAll('#cgrid button.bit').forEach(b=>{
+      const on = !!(state.C[+b.dataset.j]>>(+b.dataset.i) & 1);
+      b.setAttribute('aria-pressed', on?'true':'false');
+      b.textContent = on?'1':'·';
+    });
+    for(let j=0;j<4;j++){
+      document.getElementById('rowmask'+j).innerHTML =
+        state.C[j]===0 ? 'mask = 0' : 'mask = '+chipHTML(state.C[j]).replace('class="chip"','class="chip ghost"');
+    }
+
+    // verdicts (worst over all r)
+    const ws=simulate('store'), wr=simulate('read');
+    document.getElementById('verdicts').innerHTML =
+      '<div class="v"><span class="k">Store, every step</span><b class="'+verdictClass(ws)+'">'+verdictText(ws)+'</b></div>'+
+      '<div class="v"><span class="k">Read, every step</span><b class="'+verdictClass(wr)+'">'+verdictText(wr)+'</b></div>';
+
+    // algebra panel
+    const alg=document.getElementById('algebra');
+    alg.classList.toggle('hidden', !state.algebra);
+    if(state.algebra){
+      const seg=segBasis();
+      const inter=Array.from(spanSet(seg)).filter(inBThr);
+      const pr=predicted('read');
+      const dim=Math.round(Math.log2(pr));
+      alg.innerHTML =
+        '<div class="row"><span class="k">M_Seg basis</span>'+seg.map(v=>chipHTML(v,true)).join(' ')+'</div>'+
+        '<div class="row"><span class="k">∩ span(B_Thr)</span>'+
+          (pr===1 ? '<span class="chip dim">trivial — {0}</span>'
+                  : inter.filter(v=>v!==0).map(v=>chipHTML(v)).join(' '))+'</div>'+
+        '<div class="row"><span class="k">Lemma 9.4</span>read wavefronts = |intersection| = 2<sup>'+dim+'</sup> = '+
+          '<span class="agree '+verdictClass(pr)+'">'+pr+'</span>'+
+          ' &nbsp;·&nbsp; simulated above: <span class="agree '+verdictClass(wr)+'">'+wr+'</span>'+
+          ' &nbsp;'+(pr===wr?'— they always agree':'')+'</div>';
+    }
+
+    // grid
+    const acc=accessSet(state.ac, state.r);
+    const hits=new Array(32).fill(0);
+    const hitBy=new Map();
+    for(const c of acc){
+      const o=off(c.m,c.n);
+      hits[o&31]++;
+      hitBy.set(c.m+','+c.n, c.t);
+    }
+    for(let m=0;m<16;m++) for(let n=0;n<32;n++){
+      const el=cellEls[m][n], o=off(m,n), bank=o&31;
+      el.style.background=bankBg(bank);
+      const t=hitBy.get(m+','+n);
+      el.classList.toggle('hitA', t!==undefined && t<16);
+      el.classList.toggle('hitB', t!==undefined && t>=16);
+      el.title='(m='+m+', n='+n+') → offset '+o+' = segment '+(o>>5)+', bank '+bank+(t!==undefined?' · accessed by t'+t:'');
+    }
+
+    // bars
+    for(let b=0;b<32;b++){
+      const bar=barEls[b];
+      bar.style.height = hits[b] ? Math.max(4, hits[b]/16*56)+'px' : '2px';
+      bar.className = 'bar '+(hits[b]>1?'conf':hits[b]===1?'ok':'');
+      bar.title='bank '+b+': '+hits[b]+' hit'+(hits[b]===1?'':'s');
+    }
+
+    document.getElementById('rval').textContent='r = '+state.r;
+    document.getElementById('rstep').value=state.r;
+
+    renderM();
+  }
+
+  // start on the classic swizzle so the leftover conflict is the first thing people see
+  state.C = PRESETS.xorm.slice();
+  render();
+})();
+</script>
+</body>
+</html>
