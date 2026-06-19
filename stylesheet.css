@@ -206,6 +206,7 @@ em {
 
 .profile-img {
   width: 100%;
+  height: auto; /* override the img height attr so aspect-ratio keeps it square */
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: var(--radius-lg);
