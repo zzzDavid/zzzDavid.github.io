@@ -59,9 +59,23 @@
         </nav>
       </div>
       <div class="hero-photo">
-        <img id="profileImage" alt="Niansong Zhang" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="profile-img">
+        <img id="profileImage" alt="Niansong Zhang" width="380" height="380" fetchpriority="high" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="profile-img">
       </div>
     </header>
+    <script>
+      // Profile images (Cloudinary transforms keep these ~20-40KB for the 190px slot)
+      var images = [
+        'pfp/2_b6ruqx.jpg', 'pfp/3_amx33p.jpg', 'pfp/4_us0zlo.jpg',
+        'pfp/IMG_2930_Medium_ebwk21.jpg', 'pfp/IMG_5881_w0rk1c.jpg', 'pfp/1-edit_atfdfm.png'
+      ].map(function (p) {
+        return 'https://res.cloudinary.com/dxzx2bxch/image/upload/f_auto,q_auto,c_fill,g_auto,w_400,h_400/' + p;
+      });
+      // Rotate the image immediately so the browser starts fetching it right away
+      var lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
+      var nextIndex = (lastIndex + 1) % images.length;
+      localStorage.setItem('lastImageIndex', nextIndex);
+      document.getElementById('profileImage').src = images[nextIndex];
+    </script>
 
     <!-- News -->
     <section class="section" id="news">
@@ -386,31 +400,17 @@
     </div>
 
     <footer class="site-footer">
-      <p>Last updated: April, 2026</p>
-      <script type='text/javascript' id='clustrmaps' src='//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=a&t=n&d=sjlxOgqjkUplCToaRRAAI93wAVbxkgAduu04NCiPG3c&co=e0e0e0&cmo=787878&cmn=6600ff&ct=121212'></script>
+      <p>Last updated: June, 2026</p>
     </footer>
 
   </main>
 
   <script>
-    // Profile images
-    var images = [
-      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984403/pfp/2_b6ruqx.jpg',
-      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984399/pfp/3_amx33p.jpg',
-      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984399/pfp/4_us0zlo.jpg',
-      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746227083/pfp/IMG_2930_Medium_ebwk21.jpg',
-      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228101/pfp/IMG_5881_w0rk1c.jpg',
-      'https://res.cloudinary.com/dxzx2bxch/image/upload/v1774984900/pfp/1-edit_atfdfm.png'
-    ];
+    // `images` is defined and the load-time rotation runs in the inline script
+    // next to the <img>, so the browser starts fetching the photo immediately.
 
     // Default image per theme
     var themeImage = { warm: 0, blue: 3, contemporary: 4 };
-
-    // On page load: rotate image as before
-    var lastIndex = parseInt(localStorage.getItem('lastImageIndex')) || 0;
-    var nextIndex = (lastIndex + 1) % images.length;
-    localStorage.setItem('lastImageIndex', nextIndex);
-    document.getElementById('profileImage').src = images[nextIndex];
 
     // Theme switcher
     function setTheme(theme, fromClick) {

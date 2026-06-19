@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.zzzdavid.tech/fonts/hikerTM/demo.html</loc>
+    
+    <lastmod>2026-06-19T01:15:24.576Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/GumbelSoftmax/</loc>
     
     <lastmod>2025-07-14T23:04:23.676Z</lastmod>
@@ -30,6 +37,13 @@
   </url>
   
   <url>
+    <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
+    
+    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
@@ -38,13 +52,6 @@
   
   <url>
     <loc>https://www.zzzdavid.tech/all-tags/index.html</loc>
-    
-    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
     
@@ -86,14 +93,14 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/NAS/</loc>
+    <loc>https://www.zzzdavid.tech/Readings/</loc>
     
     <lastmod>2022-08-26T19:32:11.147Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/Readings/</loc>
+    <loc>https://www.zzzdavid.tech/NAS/</loc>
     
     <lastmod>2022-08-26T19:32:11.147Z</lastmod>
     

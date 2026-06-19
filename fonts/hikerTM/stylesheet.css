@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'hiker TM';
+    src: url('hikerTM-Regular.eot');
+    src: local('hiker TM Regular'), local('hikerTM-Regular'),
+        url('hikerTM-Regular.eot?#iefix') format('embedded-opentype'),
+        url('hikerTM-Regular.woff2') format('woff2'),
+        url('hikerTM-Regular.woff') format('woff'),
+        url('hikerTM-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
