@@ -201,7 +201,7 @@ em {
 
 .hero-photo {
   flex-shrink: 0;
-  width: 190px;
+  width: 220px;
 }
 
 .profile-img {
@@ -721,7 +721,7 @@ em {
   }
 
   .hero-photo {
-    width: 140px;
+    width: 165px;
   }
 
   .info-list li {
@@ -796,7 +796,7 @@ em {
   }
 
   .hero-photo {
-    width: 120px;
+    width: 140px;
   }
 }
 
