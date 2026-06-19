@@ -1,0 +1,444 @@
+/* =====================================================================
+   paper — Hexo theme stylesheet  (hand-written, single file)
+
+   KEY CLASSES / SELECTORS (keep consistent across templates):
+     layout ........ .wrap (980px shell) · .prose (700px reading column)
+     nav ........... .topnav · .topnav-inner · .brand · .navlinks · .navtoggle
+     hero .......... header.hero · .eyebrow · h1 · .dek · .byline
+     post list ..... .postlist · .post-item · .pi-eyebrow · .pi-title
+                     .pi-dek · .pi-more
+     paginator ..... .paginator · .pg-prev · .pg-next · .pg-cur
+     post meta ..... .post-tags · .chip · .post-nav · .pn-prev · .pn-next
+     sections ...... .sec-label · .listing-head
+     prose body .... .article-body  (styles all markdown: h1-h4, p, ul/ol,
+                     blockquote, table, img, hr, a, code, figure.highlight)
+     footer ........ footer.site-footer · .foot-links · .fin
+   ===================================================================== */
+
+:root{
+  --paper:#F6F6F1;
+  --card:#FFFFFF;
+  --ink:#22282C;
+  --muted:#5C6870;
+  --rule:#DDE1D6;
+  --accent:#2C4FC0;
+  --bad:#CE4628;
+  --warn:#B07A12;
+  --good:#208757;
+  --code-bg:#EDEFE6;
+  /* darker token variants for AA contrast on --code-bg */
+  --good-code:#1A6E47;
+  --warn-code:#8A5E0A;
+  --bad-code:#B03A1E;
+  --comment-code:#5A656C;
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to right, rgba(34,40,44,.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34,40,44,.045) 1px, transparent 1px);
+  background-size:28px 28px;
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17.5px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  font-optical-sizing:auto;
+}
+
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+.prose{max-width:700px;margin-left:auto;margin-right:auto}
+
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2.5px}
+
+/* skip link — first focusable element for keyboard/AT users */
+.skip-link{position:absolute;left:-9999px}
+.skip-link:focus{
+  left:12px;top:8px;z-index:60;background:var(--card);
+  border:1px solid var(--ink);border-radius:6px;padding:8px 12px;color:var(--ink);
+}
+main:focus{outline:none}
+
+/* global keyboard focus ring (WCAG 2.4.7) */
+a:focus-visible,
+.chip:focus-visible,
+.pg-prev:focus-visible,
+.pg-next:focus-visible,
+.navlink:focus-visible,
+.pi-more:focus-visible,
+.pn-prev:focus-visible,
+.pn-next:focus-visible,
+.foot-links a:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:3px;
+}
+
+/* =====================================================================
+   TOP NAV  (slim, sticky, hairline rule — no sidebar)
+   ===================================================================== */
+.topnav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(246,246,241,.86);
+  backdrop-filter:saturate(140%) blur(8px);
+  -webkit-backdrop-filter:saturate(140%) blur(8px);
+  border-bottom:1px solid var(--rule);
+}
+.topnav-inner{
+  max-width:980px;margin:0 auto;padding:0 20px;
+  height:56px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.brand{
+  font-family:var(--display);font-weight:700;font-size:1.02rem;letter-spacing:-.01em;
+  color:var(--ink);text-decoration:none;white-space:nowrap;
+}
+.brand:hover{color:var(--ink)}
+.navlinks{
+  display:flex;align-items:center;gap:22px;list-style:none;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;
+}
+.navlinks a{
+  color:var(--muted);text-decoration:none;
+  padding:4px 0;border-bottom:1.5px solid transparent;transition:color .12s,border-color .12s;
+}
+.navlinks a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.navlinks a.is-active{color:var(--ink);border-bottom-color:var(--accent)}
+.navlinks a .ext{font-size:.85em;opacity:.55;vertical-align:1px}
+
+.navtoggle{
+  display:none;border:1px solid var(--ink);background:var(--card);border-radius:6px;
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);
+  padding:9px 13px;min-height:40px;cursor:pointer;
+}
+.navtoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* =====================================================================
+   HERO  (post + index headers)
+   ===================================================================== */
+header.hero{padding:72px 0 30px;border-bottom:1px solid var(--rule)}
+.eyebrow{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);font-weight:600;
+}
+header.hero h1{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(2.3rem,5.8vw,3.7rem);
+  line-height:1.04;letter-spacing:-.02em;margin:14px 0 18px;color:var(--ink);
+}
+header.hero h1 a{color:inherit;text-decoration:none}
+.dek{font-size:1.22rem;line-height:1.5;color:var(--ink);max-width:64ch}
+.byline{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.byline a{color:var(--muted)}
+.byline .sep{padding:0 8px;opacity:.5}
+
+/* =====================================================================
+   BLOG INDEX / LISTINGS  (editorial post rows)
+   ===================================================================== */
+.listing{padding:18px 0 0}
+.listing-head{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin:38px 0 4px;
+}
+.postlist{list-style:none}
+.post-item{padding:30px 0;border-bottom:1px solid var(--rule)}
+.post-item:first-child{padding-top:18px}
+.pi-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:9px;font-variant-numeric:tabular-nums;
+}
+.pi-eyebrow .cat{color:var(--accent);font-weight:600}
+.pi-eyebrow .sep{padding:0 7px;opacity:.5}
+.pi-title{
+  font-family:var(--display);font-weight:700;font-size:1.55rem;line-height:1.12;
+  letter-spacing:-.01em;margin-bottom:10px;
+}
+.pi-title a{color:var(--ink);text-decoration:none}
+.pi-title a:hover{color:var(--accent)}
+.pi-dek{font-size:1.05rem;line-height:1.55;color:var(--ink);max-width:66ch}
+.pi-dek p{margin-bottom:8px}
+.pi-dek p:last-child{margin-bottom:0}
+.pi-more{
+  display:inline-block;margin-top:12px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  font-weight:600;color:var(--accent);text-decoration:none;
+}
+.pi-more:hover{text-decoration:underline}
+.pi-more .arr{transition:transform .12s}
+.pi-more:hover .arr{transform:translateX(3px)}
+
+.empty-note{
+  font-family:var(--mono);font-size:13px;color:var(--muted);
+  padding:40px 0;border-bottom:1px solid var(--rule);
+}
+
+/* =====================================================================
+   PAGINATOR
+   ===================================================================== */
+.paginator{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin:34px 0 0;padding:24px 0 8px;
+  font-family:var(--mono);font-size:12.5px;
+}
+.paginator a,.paginator span{text-decoration:none}
+.pg-prev,.pg-next{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--ink);border-radius:6px;background:var(--card);
+  color:var(--ink);font-weight:600;padding:11px 16px;transition:background .12s;
+}
+.pg-prev:hover,.pg-next:hover{background:var(--paper)}
+.pg-disabled{visibility:hidden}
+.pg-cur{color:var(--muted);letter-spacing:.08em}
+
+/* =====================================================================
+   SINGLE ARTICLE — meta after the body
+   ===================================================================== */
+.sec-label{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:10px;
+}
+.chip{
+  display:inline-block;font-family:var(--mono);font-size:.82em;font-weight:600;
+  background:var(--card);border:1px solid var(--ink);border-radius:5px;
+  padding:1px 9px;margin:2px 3px 2px 0;white-space:nowrap;color:var(--ink);text-decoration:none;
+}
+a.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+.post-foot{margin-top:54px;padding-top:30px;border-top:1px solid var(--rule)}
+.post-tags{margin-bottom:6px}
+
+.post-nav{
+  display:flex;justify-content:space-between;gap:18px;margin-top:34px;
+  border-top:1px solid var(--rule);padding-top:22px;
+}
+.pn-prev,.pn-next{max-width:48%;text-decoration:none;display:block}
+.pn-next{text-align:right;margin-left:auto}
+.pn-k{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:5px;
+}
+.pn-t{font-family:var(--display);font-weight:600;font-size:1rem;color:var(--ink);line-height:1.2}
+.pn-prev:hover .pn-t,.pn-next:hover .pn-t{color:var(--accent)}
+
+/* =====================================================================
+   ARTICLE BODY — full markdown styling
+   ===================================================================== */
+/* The whole body IS the 700px reading column, centered once. Children then
+   flow at a single consistent measure — no per-child centering to fight
+   (element margins like `16px 0` no longer knock items to the left edge). */
+.article-body{max-width:700px;margin:0 auto;padding-top:30px}
+
+/* section eyebrow + part pill — the reference posts' core hierarchy device.
+   Authors place these directly above an h2 to reproduce the reference rhythm. */
+.article-body .sec-label{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin:38px 0 10px;
+}
+.article-body .part-label{
+  font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink);border:1.5px solid var(--ink);display:inline-block;
+  padding:4px 14px;border-radius:999px;margin-bottom:14px;background:var(--card);
+}
+.article-body .sec-label:first-child,
+.article-body .part-label:first-child{margin-top:0}
+
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4{font-family:var(--display);color:var(--ink);letter-spacing:-.01em}
+.article-body h1{font-weight:700;font-size:2rem;line-height:1.12;margin:40px 0 16px}
+.article-body h2{font-weight:700;font-size:1.75rem;line-height:1.15;margin:42px 0 16px}
+.article-body h3{font-weight:600;font-size:1.15rem;margin:30px 0 8px}
+.article-body h4{font-weight:600;font-size:1.05rem;margin:24px 0 6px}
+.article-body h2:first-child,
+.article-body h3:first-child{margin-top:0}
+
+.article-body p{margin-bottom:14px}
+.article-body a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2.5px}
+.article-body strong{font-weight:600}
+.article-body em{font-style:italic}
+
+/* lists */
+.article-body ul,
+.article-body ol{margin:16px 0;padding-left:1.4em}
+.article-body li{margin-bottom:8px}
+.article-body li::marker{color:var(--accent)}
+.article-body ol li::marker{font-family:var(--mono);font-size:.9em;color:var(--accent)}
+.article-body ul ul,.article-body ol ol,
+.article-body ul ol,.article-body ol ul{margin:8px 0}
+
+/* blockquote — accent left border (matches .formula/callout pattern) */
+.article-body blockquote{
+  margin:22px 0;padding:14px 20px;
+  background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:6px;color:var(--ink);
+}
+.article-body blockquote p:last-child{margin-bottom:0}
+.article-body blockquote cite,
+.article-body blockquote footer{
+  display:block;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;font-style:normal;
+}
+
+/* horizontal rule */
+.article-body hr{
+  border:none;border-top:1px solid var(--rule);margin:42px auto;max-width:700px;
+}
+
+/* images — responsive, framed */
+.article-body img{
+  display:block;max-width:100%;height:auto;margin:24px auto;border-radius:6px;
+  border:1px solid var(--rule);background:var(--card);
+}
+.article-body figure{margin:24px auto}
+.article-body figure img{margin:0 auto}
+.article-body figure video{display:block;max-width:100%;height:auto;margin:0 auto;border-radius:6px;border:1px solid var(--rule);background:var(--card)}
+/* full-measure image (ported {% wide_image %}) */
+.article-body .fig-wide{max-width:880px}
+
+/* highlighted inline text (ported {% hl_text %}) */
+.article-body .highlight-text{background:rgba(176,122,18,.18);padding:0 3px;border-radius:3px}
+
+/* callout box (ported {% alert %}) — reuses the blockquote accent pattern */
+.article-body .alert{
+  margin:22px auto;padding:14px 20px;
+  background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:6px;color:var(--ink);
+}
+.article-body .alert > :last-child{margin-bottom:0}
+.article-body .alert.warning{border-left-color:var(--warn)}
+.article-body .alert.danger{border-left-color:var(--bad)}
+.article-body .alert.success{border-left-color:var(--good)}
+.article-body figcaption{
+  font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;margin-top:10px;
+}
+/* left-aligned explanatory caption variant (references' .dfig-cap) */
+.article-body figcaption.left,
+.article-body .dfig-cap{
+  text-align:left;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.55;
+}
+
+/* inline code */
+.article-body code,
+.article-body .m{
+  font-family:var(--mono);font-size:.86em;background:var(--code-bg);
+  padding:1.5px 5px;border-radius:4px;color:var(--ink);
+}
+
+/* MathJax — never clip, allow horizontal scroll on overflow */
+.article-body mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.article-body mjx-container[display="true"]{margin:18px 0}
+
+/* tables (plain markdown tables) */
+.article-body table{
+  border-collapse:collapse;width:100%;margin:22px 0;font-size:.95rem;background:var(--card);
+  display:block;overflow-x:auto;font-variant-numeric:tabular-nums;
+}
+.article-body table th,
+.article-body table td{
+  border:1px solid var(--rule);padding:9px 14px;text-align:left;vertical-align:top;
+}
+.article-body table th{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--paper);font-weight:600;
+}
+
+/* =====================================================================
+   CODE BLOCKS — Hexo `figure.highlight` (gutter + code, line numbers)
+   ===================================================================== */
+.article-body figure.highlight,
+.article-body pre{
+  max-width:700px;margin:22px auto;
+  background:var(--code-bg);
+  border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:6px;overflow-x:auto;
+  font-family:var(--mono);font-size:13.5px;line-height:1.55;
+}
+.article-body pre{padding:14px 18px;color:var(--ink)}
+.article-body pre code{background:none;padding:0;font-size:1em}
+
+.article-body figure.highlight{padding:0}
+.article-body figure.highlight table{
+  border:none;margin:0;width:100%;background:none;display:table;overflow:visible;
+  border-collapse:collapse;font-size:13.5px;
+}
+.article-body figure.highlight td{border:none;padding:0;vertical-align:top}
+.article-body figure.highlight pre{
+  border:none;border-radius:0;background:none;margin:0;padding:14px 0;max-width:none;
+}
+.article-body figure.highlight .gutter{
+  width:1%;white-space:nowrap;user-select:none;-webkit-user-select:none;
+}
+.article-body figure.highlight .gutter pre{
+  padding-left:14px;padding-right:14px;color:var(--comment-code);text-align:right;
+  border-right:1px solid var(--rule);
+}
+.article-body figure.highlight .code{width:100%}
+.article-body figure.highlight .code pre{padding-left:16px;padding-right:18px}
+.article-body figure.highlight .line{display:block;line-height:1.55}
+/* Hexo emits both block .line spans AND <br> separators — hide the
+   redundant <br> so lines aren't double-spaced (gutter + code stay aligned). */
+.article-body figure.highlight br{display:none}
+.article-body figure.highlight figcaption{
+  text-align:left;padding:8px 16px;border-bottom:1px solid var(--rule);
+  font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0;
+}
+.article-body figure.highlight figcaption a{float:right;color:var(--accent)}
+
+/* highlight.js / Hexo token colors — muted, paper-friendly */
+.article-body .hljs-comment,.article-body .comment,.article-body .hljs-quote{color:var(--comment-code);font-style:italic}
+.article-body .hljs-keyword,.article-body .keyword,
+.article-body .hljs-selector-tag,.article-body .hljs-built_in,.article-body .built_in{color:var(--accent);font-weight:600}
+.article-body .hljs-string,.article-body .string,.article-body .hljs-attr{color:var(--good-code)}
+.article-body .hljs-number,.article-body .number,.article-body .hljs-literal{color:var(--warn-code)}
+.article-body .hljs-title,.article-body .title,.article-body .hljs-function .hljs-title{color:var(--ink);font-weight:600}
+.article-body .hljs-type,.article-body .type,.article-body .hljs-class{color:var(--bad-code)}
+.article-body .hljs-meta{color:var(--comment-code)}
+
+/* =====================================================================
+   FOOTER
+   ===================================================================== */
+footer.site-footer{margin-top:64px;padding:34px 0 70px;border-top:1px solid var(--rule)}
+.foot-links{
+  display:flex;flex-wrap:wrap;gap:18px;list-style:none;
+  font-family:var(--mono);font-size:12.5px;
+}
+.foot-links a{color:var(--muted);text-decoration:none}
+.foot-links a:hover{color:var(--ink)}
+.fin{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:22px;max-width:74ch}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width:720px){
+  body{font-size:16.5px}
+  header.hero{padding:46px 0 24px}
+  /* enlarge text tap targets on touch (~44px) */
+  .pi-more,.foot-links a,.pg-prev,.pg-next,.byline a{
+    min-height:40px;display:inline-flex;align-items:center;
+  }
+  .navtoggle{display:inline-block}
+  .navlinks{
+    position:absolute;top:56px;left:0;right:0;
+    flex-direction:column;align-items:flex-start;gap:0;
+    background:var(--paper);border-bottom:1px solid var(--rule);
+    padding:6px 20px 14px;display:none;
+  }
+  .navlinks.open{display:flex}
+  .navlinks li{width:100%}
+  .navlinks a{display:block;width:100%;padding:11px 0;border-bottom:1px solid var(--rule)}
+  .navlinks a:hover{border-bottom-color:var(--rule)}
+  .navlinks li:last-child a{border-bottom:none}
+  .pi-title{font-size:1.32rem}
+  .post-nav{flex-direction:column;gap:18px}
+  .pn-prev,.pn-next{max-width:100%}
+  .pn-next{text-align:left}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important}
+  html{scroll-behavior:auto}
+}

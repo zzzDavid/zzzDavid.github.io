@@ -234,8 +234,41 @@
     html{scroll-behavior:auto}
   }
 </style>
+  <!-- paper-theme top nav (added to match the blog) -->
+  <style>
+  .topnav{position:sticky;top:0;z-index:50;background:rgba(246,246,241,.86);backdrop-filter:saturate(140%) blur(8px);-webkit-backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid var(--rule)}
+  .topnav-inner{max-width:980px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .topnav .brand{font-family:var(--display);font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink);text-decoration:none;white-space:nowrap}
+  .topnav .navlinks{display:flex;align-items:center;gap:22px;list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
+  .topnav .navlinks a{color:var(--muted);text-decoration:none;padding:4px 0;border-bottom:1.5px solid transparent;transition:color .12s,border-color .12s}
+  .topnav .navlinks a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  .topnav .navlinks a .ext{font-size:.85em;opacity:.55;vertical-align:1px}
+  .topnav .navtoggle{display:none;border:1px solid var(--ink);background:var(--card);border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);padding:9px 13px;min-height:40px;cursor:pointer}
+  .topnav a:focus-visible,.topnav .navtoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  @media (max-width:720px){
+    .topnav .navtoggle{display:inline-block}
+    .topnav .navlinks{position:absolute;top:56px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;background:var(--paper);border-bottom:1px solid var(--rule);padding:6px 20px 14px;display:none}
+    .topnav .navlinks.open{display:flex}
+    .topnav .navlinks li{width:100%}
+    .topnav .navlinks a{display:block;width:100%;padding:11px 0;border-bottom:1px solid var(--rule)}
+    .topnav .navlinks li:last-child a{border-bottom:none}
+  }
+  </style>
 </head>
 <body>
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="/">Niansong Zhang</a>
+    <button class="navtoggle" id="navtoggle" aria-expanded="false" aria-controls="navlinks">Menu</button>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/archives/">Archives</a></li>
+      <li><a href="/">About</a></li>
+      <li><a href="https://github.com/zzzDavid" target="_blank" rel="noopener">GitHub <span class="ext">↗</span></a></li>
+      <li><a href="https://scholar.google.com/citations?hl=en&amp;user=jakQwdcAAAAJ" target="_blank" rel="noopener">Scholar <span class="ext">↗</span></a></li>
+    </ul>
+  </div>
+</nav>
 
 <header>
   <div class="wrap">
@@ -1104,6 +1137,17 @@
   // start on the classic swizzle so the leftover conflict is the first thing people see
   state.C = PRESETS.xorm.slice();
   render();
+})();
+</script>
+<script>
+(function(){
+  var t=document.getElementById('navtoggle'),m=document.getElementById('navlinks');
+  if(!t||!m)return;
+  function close(){m.classList.remove('open');t.setAttribute('aria-expanded','false');}
+  t.addEventListener('click',function(){var o=m.classList.toggle('open');t.setAttribute('aria-expanded',o?'true':'false');});
+  m.addEventListener('click',function(e){if(e.target.closest('a'))close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.classList.contains('open')){close();t.focus();}});
+  document.addEventListener('click',function(e){if(m.classList.contains('open')&&!e.target.closest('.topnav'))close();});
 })();
 </script>
 </body>
