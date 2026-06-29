@@ -401,6 +401,7 @@
 
     <footer class="site-footer">
       <p>Last updated: June, 2026</p>
+      <p><a href="/stats/">Visitor map &rarr;</a></p>
     </footer>
 
   </main>
@@ -438,6 +439,22 @@
       dot.addEventListener('click', function() {
         setTheme(this.dataset.theme, true);
       });
+    });
+  </script>
+
+  <!-- Self-hosted visitor analytics. Dashboard at /stats/ . -->
+  <script>
+    window.VISITOR_CONFIG = {
+      SUPABASE_URL: "https://fvhopieakzmqpxsglimc.supabase.co",
+      SUPABASE_ANON_KEY: "sb_publishable_diZk3SRdYbaglNikaZW92g_8iLU44zZ",
+      MAP_IMAGE: "https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
+      THROTTLE_MINUTES: 30
+    };
+  </script>
+  <script src="/js/visitor-tracker.js" defer></script>
+  <script>
+    window.addEventListener('load', function () {
+      if (window.VisitorTracker) VisitorTracker.record();
     });
   </script>
 </body>
