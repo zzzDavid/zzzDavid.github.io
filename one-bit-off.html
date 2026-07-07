@@ -792,5 +792,19 @@
   document.addEventListener('click',function(e){if(m.classList.contains('open')&&!e.target.closest('.topnav'))close();});
 })();
 </script>
+<!-- Self-hosted visitor analytics. Dashboard at /stats/ . See visitor-stats-SETUP.md -->
+<script>
+  window.VISITOR_CONFIG = {
+    SUPABASE_URL: "https://fvhopieakzmqpxsglimc.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_diZk3SRdYbaglNikaZW92g_8iLU44zZ",
+    THROTTLE_MINUTES: 30
+  };
+</script>
+<script src="/js/visitor-tracker.js" defer></script>
+<script>
+  window.addEventListener('load', function () {
+    if (window.VisitorTracker) VisitorTracker.record();
+  });
+</script>
 </body>
 </html>

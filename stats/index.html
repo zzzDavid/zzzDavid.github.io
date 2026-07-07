@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visitor Map · Niansong Zhang</title>
+  <meta name="robots" content="noindex">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Palette / type mirror themes/paper/source/css/style.css exactly. */
+    :root{
+      --paper:#F6F6F1;
+      --card:#FFFFFF;
+      --ink:#22282C;
+      --muted:#5C6870;
+      --rule:#DDE1D6;
+      --accent:#2C4FC0;
+      --code-bg:#EDEFE6;
+      --display:'Space Grotesk',system-ui,sans-serif;
+      --body:'Source Serif 4',Georgia,serif;
+      --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      background-color:var(--paper);
+      background-image:
+        linear-gradient(to right, rgba(34,40,44,.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34,40,44,.045) 1px, transparent 1px);
+      background-size:28px 28px;
+      color:var(--ink);
+      font-family:var(--body);
+      font-size:17.5px;
+      line-height:1.65;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      font-optical-sizing:auto;
+    }
+
+    .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+    a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2.5px}
+    a:focus-visible,.navtoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+    /* ---- top nav (identical to the blog) -------------------------------- */
+    .topnav{position:sticky;top:0;z-index:50;background:rgba(246,246,241,.86);backdrop-filter:saturate(140%) blur(8px);-webkit-backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid var(--rule)}
+    .topnav-inner{max-width:980px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .topnav .brand{font-family:var(--display);font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink);text-decoration:none;white-space:nowrap}
+    .topnav .navlinks{display:flex;align-items:center;gap:22px;list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
+    .topnav .navlinks a{color:var(--muted);text-decoration:none;padding:4px 0;border-bottom:1.5px solid transparent;transition:color .12s,border-color .12s}
+    .topnav .navlinks a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+    .topnav .navlinks a .ext{font-size:.85em;opacity:.55;vertical-align:1px}
+    .topnav .navtoggle{display:none;border:1px solid var(--ink);background:var(--card);border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);padding:9px 13px;min-height:40px;cursor:pointer}
+    @media (max-width:720px){
+      .topnav .navtoggle{display:inline-block}
+      .topnav .navlinks{position:absolute;top:56px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;background:var(--paper);border-bottom:1px solid var(--rule);padding:6px 20px 14px;display:none}
+      .topnav .navlinks.open{display:flex}
+      .topnav .navlinks li{width:100%}
+      .topnav .navlinks a{display:block;width:100%;padding:11px 0;border-bottom:1px solid var(--rule)}
+      .topnav .navlinks li:last-child a{border-bottom:none}
+    }
+
+    /* ---- hero (matches header.hero on posts) ----------------------------- */
+    header.hero{padding:72px 0 30px;border-bottom:1px solid var(--rule)}
+    .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600}
+    header.hero h1{
+      font-family:var(--display);font-weight:700;
+      font-size:clamp(2.3rem,5.8vw,3.7rem);
+      line-height:1.04;letter-spacing:-.02em;margin:14px 0 18px;color:var(--ink);
+    }
+    .dek{font-size:1.22rem;line-height:1.5;color:var(--ink);max-width:64ch}
+    .byline{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+    .byline a{color:var(--muted)}
+
+    /* ---- section labels (theme's .sec-label) ----------------------------- */
+    .sec-label{
+      font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--accent);font-weight:600;margin:38px 0 14px;
+    }
+
+    /* ---- stat cards ------------------------------------------------------ */
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+      gap:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--rule);
+      border-radius:6px;
+      padding:18px 20px;
+    }
+    .card .num{
+      font-family:var(--display);font-weight:700;font-size:2.1rem;line-height:1;
+      letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums;
+    }
+    .card .label{
+      font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--muted);margin-top:9px;
+    }
+
+    /* ---- map ------------------------------------------------------------- */
+    .map-frame{
+      position:relative;
+      background:var(--card);
+      border:1px solid var(--rule);
+      border-radius:6px;
+      overflow:hidden;
+      aspect-ratio:2 / 1;
+    }
+    #map{display:block;width:100%;height:100%}
+    .map-loading{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-family:var(--mono);font-size:12.5px;color:var(--muted);
+    }
+
+    /* ---- breakdown panels ------------------------------------------------ */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+      gap:14px;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--rule);
+      border-radius:6px;
+      padding:18px 20px;
+    }
+    .panel h2{
+      font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--muted);margin-bottom:12px;
+    }
+    .row{
+      display:flex;align-items:center;gap:10px;
+      padding:4px 0;font-size:.88rem;
+    }
+    .row .name{
+      flex:0 0 auto;min-width:90px;max-width:45%;color:var(--ink);
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .row .bar-track{flex:1 1 auto;height:6px;background:var(--code-bg);border-radius:3px;overflow:hidden}
+    .row .bar{height:100%;background:var(--accent);border-radius:3px}
+    .row .val{
+      flex:0 0 auto;min-width:34px;text-align:right;
+      font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;
+    }
+    .empty{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+
+    /* ---- footer (matches footer.site-footer/.fin) ------------------------ */
+    footer.site-footer{margin-top:64px;padding:34px 0 70px;border-top:1px solid var(--rule)}
+    .fin{font-family:var(--mono);font-size:12px;color:var(--muted);max-width:74ch}
+    .fin a{color:var(--muted)}
+
+    @media (max-width:720px){
+      body{font-size:16.5px}
+      header.hero{padding:46px 0 24px}
+      .card .num{font-size:1.7rem}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important;animation:none !important}
+      html{scroll-behavior:auto}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav" aria-label="Primary">
+  <div class="topnav-inner">
+    <a class="brand" href="/">Niansong Zhang</a>
+    <button class="navtoggle" id="navtoggle" aria-expanded="false" aria-controls="navlinks">Menu</button>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/archives/">Archives</a></li>
+      <li><a href="/">About</a></li>
+      <li><a href="https://github.com/zzzDavid" target="_blank" rel="noopener">GitHub <span class="ext">↗</span></a></li>
+      <li><a href="https://scholar.google.com/citations?hl=en&amp;user=jakQwdcAAAAJ" target="_blank" rel="noopener">Scholar <span class="ext">↗</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main">
+  <div class="wrap">
+
+    <header class="hero">
+      <div class="eyebrow">Analytics</div>
+      <h1>Visitor Map</h1>
+      <p class="dek">Where people read from — self-hosted, cookie-free visit counts plotted on a world map.</p>
+      <p class="byline"><a href="/">&larr; back home</a></p>
+    </header>
+
+    <div class="sec-label">At a glance</div>
+    <section class="cards" id="cards">
+      <div class="card"><div class="num" id="stat-total">&middot;</div><div class="label">Total visits</div></div>
+      <div class="card"><div class="num" id="stat-unique">&middot;</div><div class="label">Unique visitors</div></div>
+      <div class="card"><div class="num" id="stat-today">&middot;</div><div class="label">Today</div></div>
+      <div class="card"><div class="num" id="stat-7d">&middot;</div><div class="label">Last 7 days</div></div>
+      <div class="card"><div class="num" id="stat-30d">&middot;</div><div class="label">Last 30 days</div></div>
+      <div class="card"><div class="num" id="stat-countries">&middot;</div><div class="label">Countries</div></div>
+    </section>
+
+    <div class="sec-label">Map</div>
+    <section class="map-section">
+      <div class="map-frame">
+        <canvas id="map" width="1600" height="800"></canvas>
+        <div class="map-loading" id="map-loading">Loading map&hellip;</div>
+      </div>
+    </section>
+
+    <div class="sec-label">Breakdowns</div>
+    <section class="grid">
+      <div class="panel"><h2>Top countries</h2><div id="bd-country"></div></div>
+      <div class="panel"><h2>Top cities</h2><div id="bd-city"></div></div>
+      <div class="panel"><h2>Browser</h2><div id="bd-browser"></div></div>
+      <div class="panel"><h2>OS</h2><div id="bd-os"></div></div>
+      <div class="panel"><h2>Device</h2><div id="bd-device"></div></div>
+      <div class="panel"><h2>Sources</h2><div id="bd-source"></div></div>
+    </section>
+
+    <footer class="site-footer">
+      <p class="fin">
+        Self-hosted analytics &middot; no cookies, no third-party trackers &middot;
+        data stored in <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a>.
+      </p>
+    </footer>
+
+  </div>
+</main>
+
+<!-- ============================================================
+     CONFIG — fill these in after creating your Supabase project
+     (Project Settings -> Data API / API Keys)
+     ============================================================ -->
+<script>
+  window.VISITOR_CONFIG = {
+    SUPABASE_URL: "https://fvhopieakzmqpxsglimc.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_diZk3SRdYbaglNikaZW92g_8iLU44zZ",
+    // Abstract halftone world map: land polygons (Natural Earth 110m via
+    // jsDelivr) stippled as a staggered dot grid in the theme's ink color.
+    MAP_STYLE: "dots",
+    MAP_GEOJSON: "https://cdn.jsdelivr.net/gh/martynafford/natural-earth-geojson/110m/physical/ne_110m_land.json",
+    MAP_LAND_COLOR: "rgba(34,40,44,0.18)",
+    MAP_DOT_STEP: 10,
+    // Fallback backdrop if the GeoJSON fetch fails.
+    MAP_IMAGE: "https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg",
+    MAP_FILTER: "grayscale(65%) contrast(92%)",
+    MAP_FALLBACK_BG: "#EDEFE6",
+    DOT_COLOR: "#2C4FC0",
+    // Don't record more than one visit per this many minutes per browser.
+    THROTTLE_MINUTES: 30
+  };
+</script>
+
+<script src="/js/visitor-tracker.js"></script>
+<script>
+  // Record this visit, then render the dashboard from all stored rows.
+  VisitorTracker.record().finally(VisitorTracker.renderDashboard);
+</script>
+<script>
+(function(){
+  var t=document.getElementById('navtoggle'),m=document.getElementById('navlinks');
+  if(!t||!m)return;
+  function close(){m.classList.remove('open');t.setAttribute('aria-expanded','false');}
+  t.addEventListener('click',function(){var o=m.classList.toggle('open');t.setAttribute('aria-expanded',o?'true':'false');});
+  m.addEventListener('click',function(e){if(e.target.closest('a'))close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.classList.contains('open')){close();t.focus();}});
+  document.addEventListener('click',function(e){if(m.classList.contains('open')&&!e.target.closest('.topnav'))close();});
+})();
+</script>
+</body>
+</html>

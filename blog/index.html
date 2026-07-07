@@ -208,6 +208,26 @@ mjx-container + br {
     
       <li class="post-item">
         <div class="pi-eyebrow">
+          <time datetime="2026-06-09T15:00:00.000Z">Jun 9, 2026</time>
+          <span class="sep">·</span><a class="cat" href="/categories/Tutorial/">Tutorial</a>
+        </div>
+        <h2 class="pi-title"><a href="/link/swizzle-by-hand/">Swizzle by Hand, Swizzle by Algebra</a></h2>
+        <div class="pi-dek"><p>Deriving a conflict-free 16×32 transpose layout by hand, then rebuilding the same answer as linear algebra over F₂.<br></div>
+        <a class="pi-more" href="/link/swizzle-by-hand/">Read <span class="arr">→</span></a>
+      </li>
+    
+      <li class="post-item">
+        <div class="pi-eyebrow">
+          <time datetime="2026-06-09T14:00:00.000Z">Jun 9, 2026</time>
+          <span class="sep">·</span><a class="cat" href="/categories/Tutorial/">Tutorial</a>
+        </div>
+        <h2 class="pi-title"><a href="/link/one-bit-off/">One Bit Off: Deriving the Optimal Swizzle for a 16×32 Transpose</a></h2>
+        <div class="pi-dek"><p>Why the textbook XOR swizzle still bank-conflicts a 16×32 transpose — and how the optimal one fixes it with a single bit shift.<br></div>
+        <a class="pi-more" href="/link/one-bit-off/">Read <span class="arr">→</span></a>
+      </li>
+    
+      <li class="post-item">
+        <div class="pi-eyebrow">
           <time datetime="2024-06-22T01:54:50.000Z">Jun 21, 2024</time>
           <span class="sep">·</span><a class="cat" href="/categories/Personal-Essay/">Personal Essay</a>
         </div>
@@ -286,26 +306,6 @@ mjx-container + br {
         <a class="pi-more" href="/three-d/">Read <span class="arr">→</span></a>
       </li>
     
-      <li class="post-item">
-        <div class="pi-eyebrow">
-          <time datetime="2020-12-06T18:45:23.000Z">Dec 6, 2020</time>
-          <span class="sep">·</span><a class="cat" href="/categories/Readings/">Readings</a>
-        </div>
-        <h2 class="pi-title"><a href="/Readings/">Paper Readings</a></h2>
-        <div class="pi-dek"><p>A reading diary to keep track of papers that I read. Virtualizing FPGAs in the CloudAuthors: Yue Zha, Jing LiVenue: ASPLOS 20Institution: University of Pennsylvania Point-Voxel CNN for Efficient 3D Deep LearningAuthors: …</p></div>
-        <a class="pi-more" href="/Readings/">Read <span class="arr">→</span></a>
-      </li>
-    
-      <li class="post-item">
-        <div class="pi-eyebrow">
-          <time datetime="2020-10-31T04:00:00.000Z">Oct 31, 2020</time>
-          <span class="sep">·</span><a class="cat" href="/categories/Tutorial/">Tutorial</a>
-        </div>
-        <h2 class="pi-title"><a href="/loop_opt/">Loop Optimization in HLS</a></h2>
-        <div class="pi-dek"><p>Loop optimization in Vivado HLS. What is II?II means initiation interval. For a function, II is the number of clock cycles before it could accept new inputs and is generally the most critical performance metric in any sy…</p></div>
-        <a class="pi-more" href="/loop_opt/">Read <span class="arr">→</span></a>
-      </li>
-    
   </ul>
 
 
@@ -372,6 +372,22 @@ mjx-container + br {
     });
   }
 })();
+</script>
+
+<!-- Self-hosted visitor analytics. Dashboard at /stats/ . Same Supabase keys
+     as source/index.html and source/stats/index.html. See visitor-stats-SETUP.md -->
+<script>
+  window.VISITOR_CONFIG = {
+    SUPABASE_URL: "https://fvhopieakzmqpxsglimc.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_diZk3SRdYbaglNikaZW92g_8iLU44zZ",
+    THROTTLE_MINUTES: 30
+  };
+</script>
+<script src="/js/visitor-tracker.js" defer></script>
+<script>
+  window.addEventListener('load', function () {
+    if (window.VisitorTracker) VisitorTracker.record();
+  });
 </script>
 
 <script type="text/x-mathjax-config">

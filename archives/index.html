@@ -172,7 +172,7 @@ mjx-container + br {
     <div class="eyebrow">Archives</div>
     <h1>Archives</h1>
     <p class="dek">Everything, newest first.</p>
-    <div class="byline">13 posts</div>
+    <div class="byline">15 posts</div>
   </div>
 </header>
 
@@ -183,6 +183,26 @@ mjx-container + br {
 
   <ul class="postlist prose">
     
+    
+      <li class="post-item">
+        <div class="pi-eyebrow">
+          <time datetime="2026-06-09T15:00:00.000Z">Jun 9, 2026</time>
+          <span class="sep">·</span><a class="cat" href="/categories/Tutorial/">Tutorial</a>
+        </div>
+        <h2 class="pi-title"><a href="/link/swizzle-by-hand/">Swizzle by Hand, Swizzle by Algebra</a></h2>
+        <div class="pi-dek"><p>Deriving a conflict-free 16×32 transpose layout by hand, then rebuilding the same answer as linear algebra over F₂.<br></div>
+        <a class="pi-more" href="/link/swizzle-by-hand/">Read <span class="arr">→</span></a>
+      </li>
+    
+      <li class="post-item">
+        <div class="pi-eyebrow">
+          <time datetime="2026-06-09T14:00:00.000Z">Jun 9, 2026</time>
+          <span class="sep">·</span><a class="cat" href="/categories/Tutorial/">Tutorial</a>
+        </div>
+        <h2 class="pi-title"><a href="/link/one-bit-off/">One Bit Off: Deriving the Optimal Swizzle for a 16×32 Transpose</a></h2>
+        <div class="pi-dek"><p>Why the textbook XOR swizzle still bank-conflicts a 16×32 transpose — and how the optimal one fixes it with a single bit shift.<br></div>
+        <a class="pi-more" href="/link/one-bit-off/">Read <span class="arr">→</span></a>
+      </li>
     
       <li class="post-item">
         <div class="pi-eyebrow">
@@ -369,6 +389,22 @@ mjx-container + br {
     });
   }
 })();
+</script>
+
+<!-- Self-hosted visitor analytics. Dashboard at /stats/ . Same Supabase keys
+     as source/index.html and source/stats/index.html. See visitor-stats-SETUP.md -->
+<script>
+  window.VISITOR_CONFIG = {
+    SUPABASE_URL: "https://fvhopieakzmqpxsglimc.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_diZk3SRdYbaglNikaZW92g_8iLU44zZ",
+    THROTTLE_MINUTES: 30
+  };
+</script>
+<script src="/js/visitor-tracker.js" defer></script>
+<script>
+  window.addEventListener('load', function () {
+    if (window.VisitorTracker) VisitorTracker.record();
+  });
 </script>
 
 <script type="text/x-mathjax-config">

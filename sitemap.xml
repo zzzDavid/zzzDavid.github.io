@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.zzzdavid.tech/link/one-bit-off/</loc>
+    
+    <lastmod>2026-07-07T19:10:38.252Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.zzzdavid.tech/link/swizzle-by-hand/</loc>
+    
+    <lastmod>2026-07-07T19:10:38.252Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/fonts/hikerTM/demo.html</loc>
     
     <lastmod>2026-06-19T01:15:24.576Z</lastmod>
@@ -37,6 +51,13 @@
   </url>
   
   <url>
+    <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
+    
+    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.zzzdavid.tech/all-archives/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
@@ -45,13 +66,6 @@
   
   <url>
     <loc>https://www.zzzdavid.tech/all-tags/index.html</loc>
-    
-    <lastmod>2022-08-26T19:32:11.151Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.zzzdavid.tech/all-categories/index.html</loc>
     
     <lastmod>2022-08-26T19:32:11.151Z</lastmod>
     
@@ -72,14 +86,14 @@
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/cvpr22/</loc>
+    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
     
     <lastmod>2022-08-26T19:32:11.149Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.zzzdavid.tech/loop_opt/</loc>
+    <loc>https://www.zzzdavid.tech/cvpr22/</loc>
     
     <lastmod>2022-08-26T19:32:11.149Z</lastmod>
     
