@@ -81,6 +81,7 @@
     <section class="section" id="news">
       <h2 class="section-title">News</h2>
       <ul class="news-list">
+        <li>Our ACM TRETS paper <a href="https://dl.acm.org/doi/pdf/10.1145/3656177">FPGA-Based Spatial Acceleration for LLM Inference</a> won the TRETS 2026 Best Paper Award. <time>7/2026</time></li>
         <li>Selected as <a href="https://iclad.ai/lad25-fellows">LAD'25 Fellow</a> at the International Conference on LLM-Aided Design. <time>12/2025</time></li>
         <li>Our ISPD 2025 paper <a href="https://dl.acm.org/doi/pdf/10.1145/3698364.3705346">Cypress</a> won the Best Paper Award. <a href="https://res.cloudinary.com/dxzx2bxch/image/upload/v1746228958/work/ispd_award_ofbpuj.jpg">[Photo]</a> <time>3/2025</time></li>
         <li><a href="https://dl.acm.org/doi/10.1145/3706628.3708870">ARIES</a> nominated for Best Paper Award at FPGA 2025. <time>3/2025</time></li>
@@ -178,6 +179,13 @@
       <div class="pub-list">
 
         <article class="pub">
+          <h3 class="pub-title">Cedar: Learning to Optimize RTL via Accumulating Verified Rewrite Rules</h3>
+          <p class="pub-authors"><strong>Niansong Zhang</strong>, Chenhui Deng, Johannes Maximilian Kuehn, Chia-Tung Ho, Cunxi Yu, Zhiru Zhang, Brucek Khailany</p>
+          <p class="pub-venue">ICCAD 2026 · <em>to appear</em></p>
+          <details class="pub-toggle"><summary>Abstract</summary><p>Cedar extends equality saturation to RTL well beyond prior e-graph work through an LLM-driven optimization loop that accumulates formally verified rewrite rules across designs&mdash;rules discovered while optimizing one circuit are reused on future, unseen ones. Extended e-graph operators and direct semantic rewrites let Cedar handle complex RTL such as multiplexers, FSMs, decoders, and heterogeneous datapaths, while a power-aware extraction cost model enables joint power, delay, and area optimization, with formal equivalence preserved on every design.</p></details>
+        </article>
+
+        <article class="pub">
           <h3 class="pub-title">From Loop Nests to Silicon: Mapping AI Workloads onto AMD NPUs with MLIR-AIR</h3>
           <p class="pub-authors">Erwei Wang, Samuel Bayliss, Andra Bisca, Zachary Blair, Sangeeta Chowdhary, Kristof Denolf, Jeff Fifield, Brandon Freiberger, Erika Hunhoff, Phil James-Roxby, Jack Lo, Joseph Melber, Stephen Neuendorffer, Eddie Richter, Andr&eacute; R&ouml;sti, Javier Setoain, Gagandeep Singh, Endri Taka, Pranathi Vasireddy, Zhewen Yu, <strong>Niansong Zhang</strong>, Jinming Zhuang</p>
           <p class="pub-venue">ACM TRETS · <a href="https://dl.acm.org/doi/10.1145/3785670">paper</a> · <a href="https://github.com/Xilinx/mlir-air">code</a></p>
@@ -232,7 +240,8 @@
         <article class="pub">
           <h3 class="pub-title">Understanding the Potential of FPGA-based Spatial Acceleration for Large Language Model Inference</h3>
           <p class="pub-authors">Hongzheng Chen, Jiahao Zhang, Yixiao Du, Shaojie Xiang, Zichao Yue, <strong>Niansong Zhang</strong>, Yaohui Cai, Zhiru Zhang</p>
-          <p class="pub-venue">ACM TRETS, Vol. 18, No 1, Article 5 · <a href="https://dl.acm.org/doi/pdf/10.1145/3656177">paper</a></p>
+          <p class="pub-venue">ACM TRETS, Vol. 18, No 1, Article 5 (FCCM'24 Journal Track) · <a href="https://dl.acm.org/doi/pdf/10.1145/3656177">paper</a></p>
+          <p class="pub-award"><span class="award-icon">&#x1F3C6;</span> TRETS 2026 Best Paper Award</p>
           <details class="pub-toggle"><summary>Abstract</summary><p>We design a spatial FPGA accelerator for LLM inference that assigns each operator its own hardware block and connects them with on-chip dataflow to cut memory traffic and latency.</p></details>
         </article>
 
@@ -375,6 +384,7 @@
       <section class="section section--compact" id="awards">
         <h2 class="section-title">Awards &amp; Honors</h2>
         <ul class="compact-list">
+          <li>Best Paper Award for ACM TRETS in 2026</li>
           <li>Best Paper Award at ISPD 2025</li>
           <li>Best Paper Nomination at FPGA 2025</li>
           <li>Best Paper Award at FPGA 2024</li>
