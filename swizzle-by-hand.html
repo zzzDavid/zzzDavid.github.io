@@ -211,8 +211,16 @@
   .lg-left{font-family:var(--mono);font-size:9px;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
   .lg-cell{aspect-ratio:1/1;min-width:0;border-radius:2px;font-family:var(--mono);font-size:8.5px;display:flex;align-items:center;justify-content:center}
   .lg-cell.ring{box-shadow:inset 0 0 0 2px var(--ink);font-weight:600}
+  .lg-cell.ring2{box-shadow:inset 0 0 0 2px var(--ink),inset 0 0 0 3.5px #fff;font-weight:600}
   .lg-cell.padcell{background:repeating-linear-gradient(45deg,#E7E9E1 0 4px,#D3D6CC 4px 8px);color:#80897F;font-weight:600}
   .lg-cell.empty{background:transparent}
+  .lg-barlab{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin:14px 0 4px;min-width:620px}
+  .lg-barlab b{color:var(--ink)}
+  .lg-barlab .wf{font-weight:600}
+  .lg-barlab .wf.good{color:var(--good)} .lg-barlab .wf.bad{color:var(--bad)}
+  .lg-bars{display:grid;grid-template-columns:30px repeat(32,1fr);gap:1.5px;align-items:end;height:46px;min-width:620px;border-bottom:1px solid var(--ink)}
+  .lg-bar{border-radius:2px 2px 0 0;font-family:var(--mono);font-size:8.5px;color:#fff;text-align:center;line-height:11px;overflow:hidden}
+  .lg-bar.ok{background:var(--good)} .lg-bar.conf{background:var(--bad)}
   .maskrow{margin-bottom:16px}
   .maskrow .mr-label{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:2px}
   .maskrow .mr-label b{color:var(--ink)}
@@ -324,7 +332,11 @@
     <p>Store row-major and the bank of an element is just its column index. Rows are horizontal, banks are
     vertical — so the store sweeps all 32 banks per step (perfect), while a logical column stacks all 16 of its
     elements into <em>one</em> bank. Reading the pair <span class="m">{2r, 2r+1}</span> jams sixteen threads onto
-    one bank and sixteen onto its neighbor: a <strong>16-way conflict</strong>, thirty banks idle.</p>
+    one bank and sixteen onto its neighbor: a <strong>16-way conflict</strong>, thirty banks idle.
+    Watch the same layout serve the two accesses:</p>
+
+    <div class="dfig" id="figNaiveStore"></div>
+    <div class="dfig" id="figNaiveRead"></div>
 
     <div class="sec-label" style="margin-top:38px">§ 03 · The derivation</div>
     <h2>Deriving the swizzle, step by step</h2>
@@ -783,6 +795,7 @@
           if(info.label!==undefined) d.textContent=info.label;
           if(info.title) d.title=info.title;
           if(info.ring) d.classList.add('ring');
+          if(info.ring2) d.classList.add('ring2');
         }
         row.appendChild(d);
       }
@@ -796,6 +809,86 @@
     if(cap){ const c=document.createElement('div'); c.className='dfig-cap'; c.innerHTML=cap; host.appendChild(c); }
   }
   const slotAxis = c => (c%4===0)?('b'+c):'';
+
+  /* ===== §02 figures: the naive layout under its two accesses ===== */
+  (function naiveFigs(){
+    function barsRow(host, labHTML, counts, cls){
+      const lab=document.createElement('div'); lab.className='lg-barlab'; lab.innerHTML=labHTML;
+      host.appendChild(lab);
+      const bars=document.createElement('div'); bars.className='lg-bars';
+      bars.appendChild(document.createElement('div'));
+      for(let b=0;b<32;b++){
+        const d=document.createElement('div');
+        const c=counts[b];
+        if(c>0){
+          d.className='lg-bar '+cls;
+          d.style.height=Math.max(3, c/16*46)+'px';
+          if(c>=8) d.textContent=c;
+        }
+        d.title='bank '+b+': '+c+' request'+(c===1?'':'s');
+        bars.appendChild(d);
+      }
+      host.appendChild(bars);
+      const axis=document.createElement('div'); axis.className='lg-axis';
+      axis.style.gridTemplateColumns='30px repeat(32,1fr)';
+      axis.style.marginTop='3px';
+      axis.appendChild(document.createElement('div'));
+      for(let b=0;b<32;b++){
+        const d=document.createElement('div'); d.textContent=slotAxis(b);
+        axis.appendChild(d);
+      }
+      host.appendChild(axis);
+    }
+    function caption(host, html){
+      const cap=document.createElement('div'); cap.className='dfig-cap'; cap.innerHTML=html;
+      host.appendChild(cap);
+    }
+
+    // --- the store: one horizontal stripe, no conflict ---
+    figBlock('figNaiveStore',
+      'The store, step r = 0 &nbsp;·&nbsp; thread t writes element (0, t) &nbsp;·&nbsp; no conflict',
+      { rows:16, cols:32,
+        topLab:slotAxis, leftLab:r=>'m'+r,
+        cell:(m,k)=>{
+          const n=k;
+          let title='row '+m+', bank '+k+' holds element (m='+m+', n='+n+')';
+          if(m===0) title+=' — store step 0: thread '+n+' writes this';
+          return { bg:bankBg(n), fg:bankFg(n), label:n, ring:m===0, title:title };
+        } },
+      null);
+    const hostS=document.getElementById('figNaiveStore');
+    barsRow(hostS, 'Bank hits — one per bank &nbsp;→&nbsp; <span class="wf good">1 wavefront</span>',
+      new Array(32).fill(1), 'ok');
+    caption(hostS,
+      'Memory-slot view: each tensor row occupies one 32-slot stripe of shared memory, and '+
+      'horizontal position = bank. The store writes one row per step — the ringed stripe — so its thirty-two '+
+      'threads land in thirty-two <em>different</em> banks, one hit each. Every bank answers in the same cycle: '+
+      'conflict-free, and it stays conflict-free at every step r.');
+
+    // --- the read: two vertical stacks, 16-way conflict ---
+    figBlock('figNaiveRead',
+      'The read, step r = 0 &nbsp;·&nbsp; thread t fetches element (t mod 16, ⌊t/16⌋) &nbsp;·&nbsp; 16-way conflict',
+      { rows:16, cols:32,
+        topLab:slotAxis, leftLab:r=>'m'+r,
+        cell:(m,k)=>{
+          const n=k;
+          const hitA=(n===0), hitB=(n===1);
+          let title='row '+m+', bank '+k+' holds element (m='+m+', n='+n+')';
+          if(hitA) title+=' — read step 0: thread '+m+' wants this';
+          if(hitB) title+=' — read step 0: thread '+(16+m)+' wants this';
+          return { bg:bankBg(n), fg:bankFg(n), label:n, ring:hitA, ring2:hitB, title:title };
+        } },
+      null);
+    const hostR=document.getElementById('figNaiveRead');
+    barsRow(hostR, 'Bank hits — sixteen deep on two banks &nbsp;→&nbsp; <span class="wf bad">16 wavefronts</span>',
+      (()=>{ const h=new Array(32).fill(0); h[0]=16; h[1]=16; return h; })(), 'conf');
+    caption(hostR,
+      'Same layout, other access. Row-major makes every stripe the same left-to-right rainbow, '+
+      'so a logical column is one vertical color — all sixteen of its elements in the same bank. The read wants '+
+      'columns {0, 1}: threads 0–15 (single ring) all knock on bank 0, threads 16–31 (double ring) on bank 1. '+
+      'A bank serves one address per cycle, so each stack of sixteen requests serializes — <b>16 wavefronts</b> '+
+      'where one would do, thirty banks idle. That serialization is a bank conflict.');
+  })();
 
   /* ===== §03 figures: rotation, padding, XOR anatomy ===== */
   (function deriveFigs(){
