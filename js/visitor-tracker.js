@@ -140,12 +140,39 @@
   }
 
   // ---- Fetch all rows ------------------------------------------------------
+  // Supabase caps every REST response at 1000 rows regardless of ?limit=, so
+  // page through with offset until a page comes back short.
   function fetchAll() {
     var cols = "lat,lon,city,country,created_at,browser,os,device,lang,source,tz,vid";
-    return fetch(URL + "/rest/v1/visits?select=" + cols + "&limit=50000", { headers: headers() })
-      .then(function (r) { return r.json(); })
-      .then(function (rows) { return Array.isArray(rows) ? rows : []; })
-      .catch(function () { return []; });
+    var PAGE = 1000;
+
+    function fetchPage(offset, acc) {
+      return fetch(URL + "/rest/v1/visits?select=" + cols +
+        "&order=id.asc&limit=" + PAGE + "&offset=" + offset, { headers: headers() })
+        .then(function (r) { return r.json(); })
+        .then(function (rows) {
+          if (!Array.isArray(rows)) return acc;
+          acc = acc.concat(rows);
+          return rows.length < PAGE ? acc : fetchPage(offset + PAGE, acc);
+        });
+    }
+    return fetchPage(0, []).catch(function () { return []; });
+  }
+
+  // ---- Server-side aggregates (preferred) ----------------------------------
+  // Calls the visit_dashboard() RPC (see supabase-visit-dashboard.sql): one
+  // small payload of pre-aggregated stats instead of every raw row.
+  function fetchDashboard() {
+    var tz = "UTC";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; } catch (e) {}
+    return fetch(URL + "/rest/v1/rpc/visit_dashboard", {
+      method: "POST",
+      headers: headers({ "Content-Type": "application/json" }),
+      body: JSON.stringify({ client_tz: tz })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("rpc failed: " + r.status);
+      return r.json();
+    });
   }
 
   // ---- Aggregation helpers -------------------------------------------------
@@ -200,11 +227,14 @@
     function plot() {
       pts.forEach(function (r) {
         var p = project(r.lat, r.lon);
-        var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
+        // Aggregated points carry a count; grow the glow gently with repeat
+        // visits so hotspots read hotter (raw rows overplot to the same look).
+        var glow = 14 + Math.min(10, Math.log2(r.count || 1) * 3);
+        var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glow);
         g.addColorStop(0, "rgba(" + rgb + ",0.55)");
         g.addColorStop(1, "rgba(" + rgb + ",0)");
         ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, glow, 0, Math.PI * 2); ctx.fill();
 
         ctx.fillStyle = dot;
         ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
@@ -288,43 +318,61 @@
   }
 
   // ---- Dashboard -----------------------------------------------------------
+  var BREAKDOWN_FIELDS = ["country", "city", "browser", "os", "device", "source"];
+
+  function renderFromAggregates(d) {
+    setNum("stat-total", d.stats.total);
+    setNum("stat-unique", d.stats.unique);
+    setNum("stat-today", d.stats.today);
+    setNum("stat-7d", d.stats.d7);
+    setNum("stat-30d", d.stats.d30);
+    setNum("stat-countries", d.stats.countries);
+    BREAKDOWN_FIELDS.forEach(function (f) {
+      renderBreakdown("bd-" + f, (d.breakdowns && d.breakdowns[f]) || []);
+    });
+    drawMap(d.points || []);
+  }
+
+  function renderFromRows(rows) {
+    var now = Date.now();
+    var DAY = 86400000;
+    var startToday = new Date(); startToday.setHours(0, 0, 0, 0);
+
+    var total = rows.length;
+    var uniq = {}; rows.forEach(function (r) { if (r.vid) uniq[r.vid] = 1; });
+    var today = 0, d7 = 0, d30 = 0;
+    rows.forEach(function (r) {
+      var t = new Date(r.created_at).getTime();
+      if (t >= startToday.getTime()) today++;
+      if (now - t <= 7 * DAY) d7++;
+      if (now - t <= 30 * DAY) d30++;
+    });
+    var countries = {}; rows.forEach(function (r) { if (r.country) countries[r.country] = 1; });
+
+    setNum("stat-total", total);
+    setNum("stat-unique", Object.keys(uniq).length);
+    setNum("stat-today", today);
+    setNum("stat-7d", d7);
+    setNum("stat-30d", d30);
+    setNum("stat-countries", Object.keys(countries).length);
+
+    BREAKDOWN_FIELDS.forEach(function (f) {
+      renderBreakdown("bd-" + f, topCounts(rows, f));
+    });
+
+    drawMap(rows);
+  }
+
   function renderDashboard() {
     if (!configured()) {
       var l = document.getElementById("map-loading");
       if (l) l.textContent = "Add your Supabase keys in the page config to see data.";
       return;
     }
-    fetchAll().then(function (rows) {
-      var now = Date.now();
-      var DAY = 86400000;
-      var startToday = new Date(); startToday.setHours(0, 0, 0, 0);
-
-      var total = rows.length;
-      var uniq = {}; rows.forEach(function (r) { if (r.vid) uniq[r.vid] = 1; });
-      var today = 0, d7 = 0, d30 = 0;
-      rows.forEach(function (r) {
-        var t = new Date(r.created_at).getTime();
-        if (t >= startToday.getTime()) today++;
-        if (now - t <= 7 * DAY) d7++;
-        if (now - t <= 30 * DAY) d30++;
-      });
-      var countries = {}; rows.forEach(function (r) { if (r.country) countries[r.country] = 1; });
-
-      setNum("stat-total", total);
-      setNum("stat-unique", Object.keys(uniq).length);
-      setNum("stat-today", today);
-      setNum("stat-7d", d7);
-      setNum("stat-30d", d30);
-      setNum("stat-countries", Object.keys(countries).length);
-
-      renderBreakdown("bd-country", topCounts(rows, "country"));
-      renderBreakdown("bd-city", topCounts(rows, "city"));
-      renderBreakdown("bd-browser", topCounts(rows, "browser"));
-      renderBreakdown("bd-os", topCounts(rows, "os"));
-      renderBreakdown("bd-device", topCounts(rows, "device"));
-      renderBreakdown("bd-source", topCounts(rows, "source"));
-
-      drawMap(rows);
+    // Preferred: one small pre-aggregated payload. Fallback (RPC not deployed
+    // yet): download raw rows and aggregate in the browser.
+    fetchDashboard().then(renderFromAggregates).catch(function () {
+      fetchAll().then(renderFromRows);
     });
   }
 
