@@ -39,28 +39,6 @@
   </entry>
   
   <entry>
-    <title>One Bit Off: Deriving the Optimal Swizzle for a 16×32 Transpose</title>
-    <link href="https://www.zzzdavid.tech/link/one-bit-off//"/>
-    <id>https://www.zzzdavid.tech/link/one-bit-off//</id>
-    <published>2026-06-09T14:00:00.000Z</published>
-    <updated>2026-07-07T19:10:38.252Z</updated>
-    
-    <content type="html"><![CDATA[<p>Why the textbook XOR swizzle still bank-conflicts a 16×32 transpose — and how the optimal one fixes it with a single bit shift.<br><a id="more"></a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Why the textbook XOR swizzle still bank-conflicts a 16×32 transpose — and how the optimal one fixes it with a single bit shift.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Tutorial" scheme="https://www.zzzdavid.tech/categories/Tutorial/"/>
-    
-    
-      <category term="GPU" scheme="https://www.zzzdavid.tech/tags/GPU/"/>
-    
-  </entry>
-  
-  <entry>
     <title>On Being a Teaching Assistant</title>
     <link href="https://www.zzzdavid.tech/ta/"/>
     <id>https://www.zzzdavid.tech/ta/</id>
