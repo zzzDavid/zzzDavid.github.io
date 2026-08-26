@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.zzzdavid.tech/"/>
-  <updated>2026-07-07T19:10:38.252Z</updated>
+  <updated>2025-07-14T23:04:23.676Z</updated>
   <id>https://www.zzzdavid.tech/</id>
   
   <author>
@@ -15,28 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>Swizzle by Hand, Swizzle by Algebra</title>
-    <link href="https://www.zzzdavid.tech/link/swizzle-by-hand//"/>
-    <id>https://www.zzzdavid.tech/link/swizzle-by-hand//</id>
-    <published>2026-06-09T15:00:00.000Z</published>
-    <updated>2026-07-07T19:10:38.252Z</updated>
-    
-    <content type="html"><![CDATA[<p>Deriving a conflict-free 16×32 transpose layout by hand, then rebuilding the same answer as linear algebra over F₂.<br><a id="more"></a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Deriving a conflict-free 16×32 transpose layout by hand, then rebuilding the same answer as linear algebra over F₂.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Tutorial" scheme="https://www.zzzdavid.tech/categories/Tutorial/"/>
-    
-    
-      <category term="GPU" scheme="https://www.zzzdavid.tech/tags/GPU/"/>
-    
-  </entry>
   
   <entry>
     <title>On Being a Teaching Assistant</title>
