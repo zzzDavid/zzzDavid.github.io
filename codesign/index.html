@@ -6,7 +6,7 @@ try {
   if(!response.ok)throw new Error('Recording unavailable');
   const stream=response.body.pipeThrough(new DecompressionStream('gzip'));
   window.CODESIGN_REPLAY=unpackRecording(await new Response(stream).json());
-  await import("./assets/index-BMIn98-q.js");
+  await import("./assets/index-ESYxSyR7.js");
 } catch(error) {
   const message=document.createElement('p');
   message.textContent='The replay could not load. Please reload this page in a current browser.';
@@ -14,5 +14,5 @@ try {
   console.error(error);
 }
 </script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Cvgx0rfp.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-DS-ImmYa.css">
 </head><body><div id="root"></div></body></html>
